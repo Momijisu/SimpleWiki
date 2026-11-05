@@ -1,63 +1,48 @@
-// API tests: run with `npm test`. Each test file gets a fresh wiki in a temp folder.
+// API tests: run with `npm test`. Each test file gets a fresh wiki in a temp
+// folder, signing in through a fake Discord (see helpers.js).
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import { createServer } from '../server/index.js';
+import { startWiki, client as makeClient, signIn } from './helpers.js';
 
-let server, base, dir;
+const person = (id, username) => ({ user: { id, username, avatar: null }, member: { roles: [] } });
+const people = {
+  1: person('1', 'boss'), 2: person('2', 'alice'), 3: person('3', 'bob'), 4: person('4', 'carol'),
+  5: person('5', 'dave'), 6: person('6', 'erin'), 7: person('7', 'Alice'),
+};
+let w, base;
+let admin, alice, bob, anon;
 
 before(async () => {
-  dir = fs.mkdtempSync(path.join(os.tmpdir(), 'simplewiki-test-'));
-  server = createServer({ dataDir: dir });
-  await new Promise((r) => server.listen(0, '127.0.0.1', r));
-  base = `http://127.0.0.1:${server.address().port}`;
+  w = await startWiki(people);
+  base = w.base;
+  [admin, alice, bob, anon] = [makeClient(base), makeClient(base), makeClient(base), makeClient(base)];
 });
-after(() => { server.close(); fs.rmSync(dir, { recursive: true, force: true }); });
+after(() => w.close());
 
-// A client with its own cookie.
-function client() {
-  let cookie = '';
-  const call = async (method, url, body, { raw, header = true } = {}) => {
-    const headers = { cookie };
-    if (header) headers['X-Requested-With'] = 'SimpleWiki';
-    if (body !== undefined) headers['Content-Type'] = 'application/json';
-    const res = await fetch(base + url, { method, headers, body: raw ?? (body === undefined ? undefined : JSON.stringify(body)) });
-    const set = res.headers.get('set-cookie');
-    if (set) cookie = set.split(';')[0];
-    return { status: res.status, data: await res.json().catch(() => null) };
-  };
-  return {
-    get: (u) => call('GET', u), post: (u, b = {}, o) => call('POST', u, b, o), put: (u, b = {}) => call('PUT', u, b), del: (u) => call('DELETE', u),
-    raw: (u, buf) => call('POST', u, undefined, { raw: buf }),
-  };
-}
-
-const admin = client(), alice = client(), bob = client(), anon = client();
 const page = (title, extra = {}) => ({ title, template: 'character', fields: { Age: '30' }, body: 'Text', ...extra });
 
-test('the first account is the admin, later ones are users', async () => {
-  const a = await admin.post('/api/register', { username: 'boss', password: 'password123' });
-  assert.equal(a.data.user.role, 'admin');
-  const b = await alice.post('/api/register', { username: 'alice', password: 'password123' });
-  assert.equal(b.data.user.role, 'user');
-  assert.equal(b.data.user.status, 'active');
-  assert.equal((await bob.post('/api/register', { username: 'ALICE', password: 'password123' })).status, 409, 'usernames are case-insensitive');
-  assert.equal((await bob.post('/api/register', { username: 'bob', password: 'short' })).status, 400);
-  assert.equal((await bob.post('/api/register', { username: 'bob', password: 'password123' })).status, 200);
+test('the first account is the admin, later ones are users named after Discord', async () => {
+  await admin.signIn(1);
+  assert.equal((await admin.get('/api/session')).data.user.role, 'admin');
+  await alice.signIn(2);
+  const a = (await alice.get('/api/session')).data.user;
+  assert.deepEqual([a.username, a.role, a.status], ['alice', 'user', 'active']);
+  await bob.signIn(3);
+  const twin = makeClient(base);
+  await twin.signIn(7);
+  assert.equal((await twin.get('/api/session')).data.user.username, 'Alice2', 'usernames are unique regardless of case');
+});
+
+test('there is no password sign-in or sign-up', async () => {
+  assert.equal((await anon.post('/api/register', { username: 'x', password: 'password123' })).status, 404);
+  assert.equal((await anon.post('/api/login', { username: 'alice', password: '!discord' })).status, 404);
+  assert.equal((await alice.post('/api/me/password', { next: 'password123' })).status, 404);
+  assert.equal((await admin.post('/api/admin/users', { username: 'x', password: 'password123' })).status, 404);
 });
 
 test('changes need the custom header (CSRF guard)', async () => {
   const r = await alice.post('/api/ns/gta/articles', page('No Header'), { header: false });
   assert.equal(r.status, 403);
-});
-
-test('wrong passwords are refused', async () => {
-  const c = client();
-  assert.equal((await c.post('/api/login', { username: 'alice', password: 'nope-nope' })).status, 401);
-  assert.equal((await c.post('/api/login', { username: 'nobody', password: 'nope-nope' })).status, 401);
-  assert.equal((await c.post('/api/login', { username: 'alice', password: 'password123' })).status, 200);
 });
 
 test('people with accounts create and edit articles; visitors only read', async () => {
@@ -153,27 +138,33 @@ test('reverting restores an old version as a new edit', async () => {
 });
 
 test('banned people can’t edit and are signed out', async () => {
-  const carol = client();
-  const reg = await carol.post('/api/register', { username: 'carol', password: 'password123' });
-  assert.equal((await bob.post(`/api/mod/users/${reg.data.user.id}`, { status: 'banned', banReason: 'spam' })).status, 200);
-  const s = await carol.get('/api/session');
-  assert.equal(s.data.user, null, 'their session was ended');
-  await carol.post('/api/login', { username: 'carol', password: 'password123' });
+  const carol = makeClient(base);
+  await carol.signIn(4);
+  const id = (await carol.get('/api/session')).data.user.id;
+  assert.equal((await bob.post(`/api/mod/users/${id}`, { status: 'banned', banReason: 'spam' })).status, 200);
+  assert.equal((await carol.get('/api/session')).data.user, null, 'their session was ended');
+  await carol.signIn(4);
+  const me = (await carol.get('/api/session')).data.user;
+  assert.equal(me.id, id, 'signing in again finds the same, still banned, account');
   const r = await carol.post('/api/ns/gta/articles', page('Spam'));
   assert.equal(r.status, 403);
   assert.match(r.data.error, /spam/);
 });
 
-test('approval mode: new accounts wait for a moderator', async () => {
+test('approval mode: new accounts wait for a moderator; closed mode takes nobody new', async () => {
   await admin.put('/api/admin/settings', { registration: 'approval' });
-  const dave = client();
-  const reg = await dave.post('/api/register', { username: 'dave', password: 'password123' });
-  assert.equal(reg.data.user.status, 'pending');
+  const dave = makeClient(base);
+  await dave.signIn(5);
+  const me = (await dave.get('/api/session')).data.user;
+  assert.equal(me.status, 'pending');
   assert.equal((await dave.post('/api/ns/gta/articles', page('Dave'))).status, 403);
-  await bob.post(`/api/mod/users/${reg.data.user.id}`, { status: 'active' });
+  await bob.post(`/api/mod/users/${me.id}`, { status: 'active' });
   assert.equal((await dave.post('/api/ns/gta/articles', page('Dave'))).status, 200);
   await admin.put('/api/admin/settings', { registration: 'closed' });
-  assert.equal((await client().post('/api/register', { username: 'erin', password: 'password123' })).status, 403);
+  const erin = await signIn(base, 6);
+  assert.match(erin.location, /^\/login\?error=.*closed/);
+  assert.equal(erin.session, '');
+  assert.equal((await dave.signIn(5)) !== '', true, 'people who already have an account still get in');
   await admin.put('/api/admin/settings', { registration: 'open' });
 });
 

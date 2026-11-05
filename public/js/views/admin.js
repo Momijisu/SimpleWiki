@@ -32,14 +32,10 @@ function settingsTab(el) {
       <label class="field"><span>Tagline</span><input name="tagline" value="${esc(s.tagline)}" maxlength="200"></label>
       <label class="field wide"><span>Welcome text on the front page (Markdown)</span><textarea name="welcome" rows="5" maxlength="4000">${esc(s.welcome)}</textarea></label>
       <label class="field"><span>Who can sign up</span><select name="registration">
-        ${opt('open', s.registration, 'Anyone: new accounts can edit straight away')}
-        ${opt('approval', s.registration, 'Anyone, but a moderator approves each account')}
-        ${opt('closed', s.registration, 'Nobody: admins create accounts')}</select></label>
-      <label class="field"><span>How new accounts are made</span><select name="passwordSignup">
-        ${opt('1', s.passwordSignup ? '1' : '0', state.discord ? 'Discord or a username and password' : 'Username and password')}
-        ${opt('0', s.passwordSignup ? '1' : '0', 'Discord only')}</select>
-        <small class="muted">${state.discord ? 'Existing accounts can always sign in with their password.'
-          : 'Discord sign-in isn’t set up. See “Signing in with Discord” in the README.'}</small></label>
+        ${opt('open', s.registration, 'Anyone who signs in with Discord can edit straight away')}
+        ${opt('approval', s.registration, 'Anyone, but a moderator approves each new account')}
+        ${opt('closed', s.registration, 'Nobody new: only people who already have an account')}</select>
+        ${state.discord ? '' : '<small class="banner danger">Discord sign-in isn’t set up, so nobody can sign in. See the README.</small>'}</label>
       <label class="field"><span>Who can read</span><select name="readAccess">
         ${opt('public', s.readAccess, 'Everyone, even without an account')}
         ${opt('members', s.readAccess, 'Only signed-in, approved members')}</select></label>
@@ -50,9 +46,7 @@ function settingsTab(el) {
   $('#settingsForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     try {
-      const data = Object.fromEntries(new FormData(e.target));
-      data.passwordSignup = data.passwordSignup === '1';
-      await api.put('/api/admin/settings', data);
+      await api.put('/api/admin/settings', Object.fromEntries(new FormData(e.target)));
       await loadSession();
       renderChrome();
       toast('Settings saved.');

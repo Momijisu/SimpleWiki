@@ -1,32 +1,31 @@
 // Fills an EMPTY wiki with example articles, so you can see how it looks.
 //   DATA_DIR=./demo-data node tools/demo.js
-// Creates an admin account "admin" with the password printed at the end.
-import crypto from 'node:crypto';
+// The articles are written by a "demo" account. Afterwards, sign in with
+// Discord and make yourself admin with:  node tools/role.js <your name> admin
 import { createServer } from '../server/index.js';
+import { createSession } from '../server/auth.js';
 
 const server = createServer();
 if (server.db.prepare('SELECT COUNT(*) AS n FROM users').get().n) {
   console.error('This wiki already has accounts. Point DATA_DIR at an empty folder to try the demo.');
   process.exit(1);
 }
+// A local account to write as. It has no Discord account, so nobody can sign in as it.
+const id = Number(server.db.prepare("INSERT INTO users (username, role, status, created_at) VALUES ('demo', 'admin', 'active', ?)").run(Date.now()).lastInsertRowid);
+const cookie = `sw_session=${createSession(server.db, id)}`;
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const base = `http://127.0.0.1:${server.address().port}`;
-let cookie = '';
 async function call(method, path, body) {
   const res = await fetch(base + path, {
     method, headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'SimpleWiki', cookie },
     body: body && JSON.stringify(body),
   });
-  const set = res.headers.get('set-cookie');
-  if (set) cookie = set.split(';')[0];
   const data = await res.json();
   if (!res.ok) throw new Error(`${path}: ${data.error}`);
   return data;
 }
 const article = (ns, title, template, fields, body) => call('POST', `/api/ns/${ns}/articles`, { title, template, fields, body });
 
-const password = crypto.randomBytes(6).toString('base64url');
-await call('POST', '/api/register', { username: 'admin', password });
 await call('PUT', '/api/admin/settings', { siteName: 'Southside RP Wiki', tagline: 'Every story from every city we’ve played.' });
 await call('PUT', '/api/admin/namespaces/gta', { name: 'Los Santos 4.0', tagline: 'The current city: 2026 onwards.', sort: 0 });
 await call('POST', '/api/admin/namespaces', { slug: 'gta3', name: 'Los Santos 3.0', tagline: 'The 2023–2025 city, kept for the record.', theme: 'gta', sort: 1, archived: true });
@@ -217,5 +216,9 @@ await article('rdr', 'Ember', 'horse', { Breed: 'American Paint', Coat: 'Chestnu
 Silas’s horse. Bites deputies, specifically.
 `);
 
+server.db.prepare('DELETE FROM sessions WHERE user_id = ?').run(id);
 server.close();
-console.log(`\nDemo wiki ready. Sign in as  admin / ${password}  and change the password under Account.\n`);
+console.log(`
+Demo wiki ready. To sign in, set up Discord (see the README), sign in once, then make yourself admin:
+  DATA_DIR=${process.env.DATA_DIR || 'data'} node tools/role.js <your Discord username> admin
+`);

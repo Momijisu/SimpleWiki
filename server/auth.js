@@ -1,27 +1,10 @@
-// Passwords (scrypt) and sessions (random token in an HttpOnly cookie; only
-// its SHA-256 is stored, so a leaked database can't be used to sign in).
+// Sessions: a random token in an HttpOnly cookie. Only its SHA-256 is stored,
+// so a leaked database can't be used to sign in. (People sign in through
+// Discord; see discord.js.)
 import crypto from 'node:crypto';
 
 const SESSION_DAYS = 30;
 export const COOKIE = 'sw_session';
-
-export function hashPassword(password) {
-  const salt = crypto.randomBytes(16);
-  const hash = crypto.scryptSync(password, salt, 64, { N: 16384, r: 8, p: 1 });
-  return `scrypt$${salt.toString('base64')}$${hash.toString('base64')}`;
-}
-
-export function verifyPassword(password, stored) {
-  const [kind, salt, hash] = String(stored).split('$');
-  if (kind !== 'scrypt' || !salt || !hash) return false;
-  const expected = Buffer.from(hash, 'base64');
-  const actual = crypto.scryptSync(password, Buffer.from(salt, 'base64'), expected.length, { N: 16384, r: 8, p: 1 });
-  return crypto.timingSafeEqual(expected, actual);
-}
-
-// A hash to compare against when the username doesn't exist, so a wrong
-// username takes as long as a wrong password.
-export const DUMMY_HASH = hashPassword(crypto.randomBytes(12).toString('hex'));
 
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
 
@@ -62,14 +45,6 @@ export function sessionCookie(token, secure) {
 
 export function clearCookie(secure) {
   return `${COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure ? '; Secure' : ''}`;
-}
-
-export function validUsername(name) {
-  return typeof name === 'string' && /^[A-Za-z0-9_.-]{3,32}$/.test(name);
-}
-
-export function validPassword(pw) {
-  return typeof pw === 'string' && pw.length >= 8 && pw.length <= 200;
 }
 
 // Small fixed-window rate limiter, kept in memory.

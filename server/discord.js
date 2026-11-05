@@ -1,6 +1,6 @@
-// "Sign in with Discord" (OAuth2 authorization-code flow).
+// "Sign in with Discord" (OAuth2 authorization-code flow): the only way to sign in.
 //
-// Turned on by DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET. Optional:
+// Needs DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET. Optional:
 //   DISCORD_GUILD_ID        only members of this Discord server can sign in
 //   DISCORD_MOD_ROLE_IDS    Discord role ids (comma-separated) that make someone a wiki moderator
 //   DISCORD_ADMIN_ROLE_IDS  ... and a wiki admin
@@ -15,9 +15,9 @@ const list = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boole
 export function discordConfig(opts = {}) {
   const env = process.env;
   const c = {
-    clientId: opts.clientId ?? env.DISCORD_CLIENT_ID,
-    clientSecret: opts.clientSecret ?? env.DISCORD_CLIENT_SECRET,
-    guildId: opts.guildId ?? env.DISCORD_GUILD_ID ?? '',
+    clientId: opts.clientId ?? env.DISCORD_CLIENT_ID?.trim(),
+    clientSecret: opts.clientSecret ?? env.DISCORD_CLIENT_SECRET?.trim(),
+    guildId: opts.guildId ?? env.DISCORD_GUILD_ID?.trim() ?? '',
     modRoles: opts.modRoles ?? list(env.DISCORD_MOD_ROLE_IDS),
     adminRoles: opts.adminRoles ?? list(env.DISCORD_ADMIN_ROLE_IDS),
     // Overridable for tests.
@@ -29,7 +29,7 @@ export function discordConfig(opts = {}) {
 }
 
 const STATE_COOKIE = 'sw_oauth';
-const pending = new Map(); // state -> {next, linkUserId, expires}
+const pending = new Map(); // state -> {next, expires}
 setInterval(() => { const now = Date.now(); for (const [k, v] of pending) if (v.expires < now) pending.delete(k); }, 60_000).unref();
 const callbackLimit = auth.limiter(30, 60_000);
 
@@ -46,6 +46,9 @@ function freeUsername(db, wanted) {
 }
 
 export function createDiscordHandlers({ db, config, publicUrl, isHttps, ipOf, parseCookies, audit }) {
+  if (!config.enabled) {
+    console.warn('Discord sign-in is not set up, so nobody can sign in. Set DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET (see the README).');
+  }
   const redirectUri = (req) => `${publicUrl || `${isHttps(req) ? 'https' : 'http'}://${req.headers.host}`}/auth/discord/callback`;
 
   function redirect(res, location, cookies = []) {
@@ -55,13 +58,11 @@ export function createDiscordHandlers({ db, config, publicUrl, isHttps, ipOf, pa
   const errorTo = (res, req, message) =>
     redirect(res, `/login?error=${encodeURIComponent(message)}`, [`${STATE_COOKIE}=; Path=/auth/discord; HttpOnly; SameSite=Lax; Max-Age=0`]);
 
-  // GET /auth/discord?next=/w/gta[&link=1]
+  // GET /auth/discord?next=/w/gta
   function start(req, res, url) {
-    if (!config.enabled) return errorTo(res, req, 'Discord sign-in isn’t set up on this wiki.');
-    const token = parseCookies(req.headers.cookie)[auth.COOKIE];
-    const user = url.searchParams.get('link') ? auth.userFromToken(db, token) : null;
+    if (!config.enabled) return errorTo(res, req, 'Discord sign-in isn’t set up on this wiki yet.');
     const state = crypto.randomBytes(24).toString('base64url');
-    pending.set(state, { next: safeNext(url.searchParams.get('next')), linkUserId: user?.id ?? null, expires: Date.now() + 10 * 60_000 });
+    pending.set(state, { next: safeNext(url.searchParams.get('next')), expires: Date.now() + 10 * 60_000 });
     const params = new URLSearchParams({
       response_type: 'code', client_id: config.clientId, redirect_uri: redirectUri(req), state, prompt: 'none',
       scope: config.guildId ? 'identify guilds.members.read' : 'identify',
@@ -77,7 +78,7 @@ export function createDiscordHandlers({ db, config, publicUrl, isHttps, ipOf, pa
 
   // GET /auth/discord/callback?code=…&state=…
   async function callback(req, res, url) {
-    if (!config.enabled) return errorTo(res, req, 'Discord sign-in isn’t set up on this wiki.');
+    if (!config.enabled) return errorTo(res, req, 'Discord sign-in isn’t set up on this wiki yet.');
     if (!callbackLimit(ipOf(req))) return errorTo(res, req, 'Too many sign-in attempts. Wait a minute and try again.');
     const state = url.searchParams.get('state') || '';
     const cookieState = parseCookies(req.headers.cookie)[STATE_COOKIE] || '';
@@ -126,14 +127,6 @@ export function createDiscordHandlers({ db, config, publicUrl, isHttps, ipOf, pa
 
     const owner = db.prepare('SELECT * FROM users WHERE discord_id = ?').get(me.id);
 
-    // Linking Discord to the account that's already signed in.
-    if (p.linkUserId) {
-      if (owner && owner.id !== p.linkUserId) return errorTo(res, req, 'That Discord account is already linked to another wiki account.');
-      db.prepare('UPDATE users SET discord_id = ?, discord_name = ?, discord_avatar = ? WHERE id = ?').run(me.id, name, avatar, p.linkUserId);
-      audit(db, { id: p.linkUserId }, 'link-discord', name);
-      return redirect(res, '/account?linked=1', [clearState]);
-    }
-
     let user = owner;
     if (!user) {
       const s = getSettings(db);
@@ -144,7 +137,7 @@ export function createDiscordHandlers({ db, config, publicUrl, isHttps, ipOf, pa
       const username = freeUsername(db, me.username);
       const r = db.prepare(`INSERT INTO users (username, pass_hash, role, status, created_at, discord_id, discord_name, discord_avatar, role_source)
                             VALUES (?, '!discord', ?, ?, ?, ?, ?, ?, ?)`)
-        .run(username, role, status, Date.now(), me.id, name, avatar, first ? 'manual' : syncRoles ? 'discord' : 'manual');
+        .run(username, role, status, Date.now(), me.id, name, avatar, !first && syncRoles ? 'discord' : 'manual');
       user = db.prepare('SELECT * FROM users WHERE id = ?').get(Number(r.lastInsertRowid));
       audit(db, user, 'register', username, `${status}, via Discord`);
     } else {

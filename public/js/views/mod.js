@@ -86,8 +86,7 @@ export async function viewMod() {
 
 async function usersTab(body, initial) {
   body.innerHTML = `
-    <div class="row"><input type="search" id="userSearch" placeholder="Find a user or Discord name…" value="${esc(initial)}">
-      ${isAdmin() ? `<button class="btn" id="addUser">${icon('user-plus')} Add an account</button>` : ''}</div>
+    <div class="row"><input type="search" id="userSearch" placeholder="Find a user or Discord name…" value="${esc(initial)}"></div>
     <div id="userList"></div>`;
   const load = async () => {
     const { users } = await api.get(`/api/mod/users?q=${encodeURIComponent($('#userSearch').value)}`);
@@ -105,8 +104,7 @@ async function usersTab(body, initial) {
           <td class="row">${canTouch ? `
             ${u.status === 'pending' ? `<button class="btn small primary" data-status="active" data-id="${u.id}">Approve</button>` : ''}
             ${u.status === 'banned' ? `<button class="btn small" data-status="active" data-id="${u.id}">Unban</button>`
-              : `<button class="btn small danger" data-status="banned" data-id="${u.id}" data-name="${esc(u.username)}">Ban</button>`}
-            ${isAdmin() ? `<button class="btn small ghost" data-reset="${u.id}" data-name="${esc(u.username)}">Reset password</button>` : ''}` : ''}</td>
+              : `<button class="btn small danger" data-status="banned" data-id="${u.id}" data-name="${esc(u.username)}">Ban</button>`}` : ''}</td>
         </tr>`;
       }).join('')}</tbody></table>`;
   };
@@ -120,27 +118,10 @@ async function usersTab(body, initial) {
   body.addEventListener('click', async (e) => {
     const b = e.target.closest('button');
     if (!b) return;
-    if (b.id === 'addUser') {
-      return dialog({
-        title: 'Add an account', submit: 'Create',
-        body: `<label class="field"><span>Username</span><input name="username" required></label>
-          <label class="field"><span>Temporary password</span><input name="password" required minlength="8"></label>
-          <label class="field"><span>Role</span><select name="role"><option>user</option><option>mod</option><option>admin</option></select></label>
-          <p class="muted small">Send them the password privately and ask them to change it under Account.</p>`,
-        onSubmit: async (f) => { await api.post('/api/admin/users', Object.fromEntries(f)); toast('Account created.'); load(); },
-      });
-    }
-    if (b.dataset.reset) {
-      return dialog({
-        title: `New password for ${b.dataset.name}`, submit: 'Set password',
-        body: '<label class="field"><span>Temporary password</span><input name="password" required minlength="8"></label><p class="muted small">This signs them out everywhere.</p>',
-        onSubmit: async (f) => { await api.post(`/api/admin/users/${b.dataset.reset}/password`, { password: f.get('password') }); toast('Password set.'); },
-      });
-    }
     if (b.dataset.status === 'banned') {
       return dialog({
         title: `Ban ${b.dataset.name}?`, submit: 'Ban', danger: true,
-        body: '<label class="field"><span>Reason (they’ll see it)</span><input name="reason" maxlength="1000" required></label><p class="muted small">They can still read, but can’t edit or report. Their edits stay; revert them from each article’s history.</p>',
+        body: '<label class="field"><span>Reason (they’ll see it)</span><input name="reason" maxlength="1000" required></label><p class="muted small">They can still read, but can’t edit or report, and can’t get back in with a new account from the same Discord account. Their edits stay; revert them from each article’s history.</p>',
         onSubmit: async (f) => { await api.post(`/api/mod/users/${b.dataset.id}`, { status: 'banned', banReason: f.get('reason') }); toast('Banned.'); load(); },
       });
     }

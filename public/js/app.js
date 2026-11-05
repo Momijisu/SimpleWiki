@@ -7,7 +7,7 @@ import { viewNamespace, viewList, viewWanted } from './views/namespace.js';
 import { viewArticle, viewHistory, viewRevision } from './views/article.js';
 import { viewEditor, confirmLeave } from './views/editor.js';
 import { viewSearch, viewRecent } from './views/lists.js';
-import { viewLogin, viewRegister, viewUser, viewAccount } from './views/people.js';
+import { viewLogin, viewUser, viewAccount } from './views/people.js';
 import { viewMod } from './views/mod.js';
 import { viewAdmin } from './views/admin.js';
 import { newArticleDialog } from './views/picker.js';
@@ -19,7 +19,7 @@ const view = $('#view');
 const ROUTES = [
   [/^\/$/, () => viewPortal()],
   [/^\/login$/, () => viewLogin()],
-  [/^\/register$/, () => viewRegister()],
+  [/^\/register$/, () => navigate('/login', true)],
   [/^\/search$/, (m, q) => viewSearch(q.get('q') || '', q.get('ns') || '')],
   [/^\/recent$/, (m, q) => viewRecent(q.get('ns') || '')],
   [/^\/u\/([^/]+)$/, (m) => viewUser(decodeURIComponent(m[1]))],
@@ -192,7 +192,7 @@ function renderSidebar() {
     ${isMod() ? `<div class="side-label">Tools</div><nav class="side-nav">
       <a href="/mod" data-link>${icon('gavel')} Moderation</a>
       ${isAdmin() ? `<a href="/admin" data-link>${icon('crown')} Admin</a>` : ''}</nav>` : ''}
-    <div class="side-foot">${state.user ? '' : `<a href="/register" data-link>Create an account</a> to write.`}</div>`;
+    <div class="side-foot">${state.user ? '' : `<a href="/login?next=${encodeURIComponent(location.pathname)}" data-link>Sign in with Discord</a> to write.`}</div>`;
   for (const a of $$('.side-nav a', side)) {
     const href = a.getAttribute('href');
     if (href === location.pathname + location.search || (href === location.pathname && !location.search)) a.classList.add('active');

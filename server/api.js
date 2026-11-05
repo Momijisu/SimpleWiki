@@ -20,8 +20,6 @@ export const THEMES = {
 };
 
 const LIMITS = { title: 120, body: 200_000, field: 2000, fields: 60, comment: 300, reason: 1000, bio: 2000 };
-const loginLimit = auth.limiter(10, 60_000);
-const registerLimit = auth.limiter(20, 3_600_000);
 const editLimit = auth.limiter(60, 60_000);
 const reportLimit = auth.limiter(10, 3_600_000);
 const uploadLimit = auth.limiter(30, 3_600_000);
@@ -50,7 +48,7 @@ const isAdmin = (u) => !!u && u.status === 'active' && u.role === 'admin';
 const isActive = (u) => !!u && u.status === 'active';
 
 function requireUser(ctx) {
-  if (!ctx.user) fail(401, 'Please sign in first.');
+  if (!ctx.user) fail(401, 'Please sign in with Discord first.');
   if (ctx.user.status === 'banned') fail(403, `Your account is banned${ctx.user.ban_reason ? `: ${ctx.user.ban_reason}` : '.'}`);
   if (ctx.user.status === 'pending') fail(403, 'Your account is waiting for a moderator to approve it.');
   return ctx.user;
@@ -92,7 +90,7 @@ const userName = (db, id) => (id ? q(db, 'SELECT username FROM users WHERE id = 
 function publicUser(u) {
   return u && {
     id: u.id, username: u.username, role: u.role, status: u.status, banReason: u.status === 'banned' ? u.ban_reason : null,
-    discordName: u.discord_name || null, avatar: u.discord_avatar || null, hasPassword: !String(u.pass_hash).startsWith('!'),
+    discordName: u.discord_name || null, avatar: u.discord_avatar || null,
   };
 }
 
@@ -210,38 +208,6 @@ route('GET', '/api/session', (ctx) => {
   };
 });
 
-route('POST', '/api/register', (ctx) => {
-  const { db, body } = ctx;
-  const s = getSettings(db);
-  const first = !q(db, 'SELECT COUNT(*) AS n FROM users').get().n;
-  if (s.registration === 'closed' && !first) fail(403, 'Sign-ups are closed. Ask an admin for an account.');
-  if (!s.passwordSignup && ctx.discord?.enabled && !first) fail(403, 'New accounts are made by signing in with Discord.');
-  if (!registerLimit(ctx.ip)) fail(429, 'Too many new accounts from your connection. Try again later.');
-  const { username, password } = body;
-  if (!auth.validUsername(username)) fail(400, 'Usernames are 3–32 letters, numbers, dots, dashes or underscores.');
-  if (!auth.validPassword(password)) fail(400, 'Passwords need at least 8 characters.');
-  if (q(db, 'SELECT 1 FROM users WHERE username = ?').get(username)) fail(409, 'That username is taken.');
-  // The very first account becomes the admin.
-  const role = first ? 'admin' : 'user';
-  const status = first || s.registration === 'open' ? 'active' : 'pending';
-  const r = q(db, 'INSERT INTO users (username, pass_hash, role, status, created_at) VALUES (?, ?, ?, ?, ?)')
-    .run(username, auth.hashPassword(password), role, status, Date.now());
-  const id = Number(r.lastInsertRowid);
-  audit(db, { id }, 'register', username, status);
-  ctx.setSession(auth.createSession(db, id));
-  return { user: publicUser(q(db, 'SELECT * FROM users WHERE id = ?').get(id)) };
-});
-
-route('POST', '/api/login', (ctx) => {
-  const { db, body } = ctx;
-  if (!loginLimit(ctx.ip)) fail(429, 'Too many sign-in attempts. Wait a minute and try again.');
-  const u = typeof body.username === 'string' ? q(db, 'SELECT * FROM users WHERE username = ?').get(body.username) : null;
-  const ok = auth.verifyPassword(String(body.password || ''), u ? u.pass_hash : auth.DUMMY_HASH);
-  if (!u || !ok) fail(401, 'Wrong username or password.');
-  ctx.setSession(auth.createSession(db, u.id));
-  return { user: publicUser(u) };
-});
-
 route('POST', '/api/logout', (ctx) => {
   auth.destroySession(ctx.db, ctx.token);
   ctx.setSession(null);
@@ -252,27 +218,6 @@ route('PUT', '/api/me', (ctx) => {
   const u = requireUser(ctx);
   const bio = str(ctx.body.bio, LIMITS.bio, 'Your bio');
   q(ctx.db, 'UPDATE users SET bio = ? WHERE id = ?').run(bio, u.id);
-  return { ok: true };
-});
-
-route('POST', '/api/me/password', (ctx) => {
-  if (!ctx.user) fail(401, 'Please sign in first.');
-  const { current, next } = ctx.body;
-  // Accounts made through Discord have no password yet, so there's nothing to confirm.
-  const hasPassword = !String(ctx.user.pass_hash).startsWith('!');
-  if (hasPassword && !auth.verifyPassword(String(current || ''), ctx.user.pass_hash)) fail(400, 'Your current password is wrong.');
-  if (!auth.validPassword(next)) fail(400, 'Passwords need at least 8 characters.');
-  q(ctx.db, 'UPDATE users SET pass_hash = ? WHERE id = ?').run(auth.hashPassword(next), ctx.user.id);
-  auth.destroyUserSessions(ctx.db, ctx.user.id);
-  ctx.setSession(auth.createSession(ctx.db, ctx.user.id));
-  return { ok: true };
-});
-
-route('POST', '/api/me/unlink-discord', (ctx) => {
-  if (!ctx.user) fail(401, 'Please sign in first.');
-  if (String(ctx.user.pass_hash).startsWith('!')) fail(400, 'Set a password first, or you’d have no way to sign in.');
-  q(ctx.db, 'UPDATE users SET discord_id = NULL, discord_name = NULL, discord_avatar = NULL WHERE id = ?').run(ctx.user.id);
-  audit(ctx.db, ctx.user, 'unlink-discord', ctx.user.discord_name || '');
   return { ok: true };
 });
 
@@ -705,30 +650,6 @@ route('POST', '/api/mod/users/:id', (ctx) => {
 
 // ---- admin
 
-route('POST', '/api/admin/users', (ctx) => {
-  const me = requireAdmin(ctx);
-  const { username, password, role = 'user' } = ctx.body;
-  if (!auth.validUsername(username)) fail(400, 'Usernames are 3–32 letters, numbers, dots, dashes or underscores.');
-  if (!auth.validPassword(password)) fail(400, 'Passwords need at least 8 characters.');
-  if (!['user', 'mod', 'admin'].includes(role)) fail(400, 'Unknown role.');
-  if (q(ctx.db, 'SELECT 1 FROM users WHERE username = ?').get(username)) fail(409, 'That username is taken.');
-  q(ctx.db, 'INSERT INTO users (username, pass_hash, role, status, created_at) VALUES (?, ?, ?, ?, ?)')
-    .run(username, auth.hashPassword(password), role, 'active', Date.now());
-  audit(ctx.db, me, 'create-user', username, role);
-  return { ok: true };
-});
-
-route('POST', '/api/admin/users/:id/password', (ctx) => {
-  const me = requireAdmin(ctx);
-  const target = q(ctx.db, 'SELECT * FROM users WHERE id = ?').get(Number(ctx.params.id));
-  if (!target) fail(404, 'There is no such user.');
-  if (!auth.validPassword(ctx.body.password)) fail(400, 'Passwords need at least 8 characters.');
-  q(ctx.db, 'UPDATE users SET pass_hash = ? WHERE id = ?').run(auth.hashPassword(ctx.body.password), target.id);
-  auth.destroyUserSessions(ctx.db, target.id);
-  audit(ctx.db, me, 'reset-password', target.username);
-  return { ok: true };
-});
-
 route('PUT', '/api/admin/settings', (ctx) => {
   const me = requireAdmin(ctx);
   const b = ctx.body;
@@ -748,7 +669,6 @@ route('PUT', '/api/admin/settings', (ctx) => {
     if (!THEMES[b.defaultTheme]) fail(400, 'Unknown theme.');
     next.defaultTheme = b.defaultTheme;
   }
-  if (b.passwordSignup !== undefined) next.passwordSignup = !!b.passwordSignup;
   const ins = q(ctx.db, 'INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
   for (const [k, v] of Object.entries(next)) ins.run(k, JSON.stringify(v));
   audit(ctx.db, me, 'settings', '', Object.keys(next).join(', '));

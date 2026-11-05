@@ -1,6 +1,6 @@
 # SimpleWiki
 
-**A wiki for your roleplay community.** It runs on your own server. Anyone with an account can write, and admins and moderators keep it in order.
+**A wiki for your roleplay community.** It runs on your own server. Anyone who signs in with Discord can write, and admins and moderators keep it in order.
 
 It's built for GTA and RDR roleplay servers. Characters, gangs, businesses, police, medical services and server events each get a ready-made template with an infobox. Each version of your server gets its own namespace, with its own look. Use one for the current city, another for the old one, and another for the Wild West server.
 
@@ -29,14 +29,14 @@ It's built for GTA and RDR roleplay servers. Characters, gangs, businesses, poli
 - Every namespace has a theme, so the old GTA city and the RDR server each look like themselves. Readers can override the theme for themselves.
 - All themes share one layout, so adding a theme only means picking colours and fonts
 
-**Sign in**
-- **Sign in with Discord**, optionally limited to members of your Discord server
-- Discord roles can make people wiki moderators or admins (e.g. your staff role)
-- Username and password sign-in too, or switch it off for new accounts and use Discord only
+**Sign in with Discord**
+- The only way in: no passwords to manage or leak. The first sign-in makes the account, named after the person's Discord username.
+- Optionally only members of your Discord server can sign in
+- Discord roles can make people wiki moderators or admins, e.g. your staff role
 
 **Moderate**
-- Roles: **user**, **moderator** and **admin**. The first account to sign up becomes the admin.
-- Sign-ups can be open to anyone, need a moderator's approval, or be closed (admins create accounts). The wiki can be public or for members only.
+- Roles: **user**, **moderator** and **admin**. The first person to sign in becomes the admin.
+- New accounts can be open to anyone, need a moderator's approval, or be closed to newcomers. The wiki can be public or for members only.
 - Full history of every article, with diffs and one-click restore of any version
 - Protect an article so only moderators (or admins) can edit it
 - Delete and restore articles. Nothing is lost; deleted articles are hidden from everyone but moderators.
@@ -58,19 +58,33 @@ It's built for GTA and RDR roleplay servers. Characters, gangs, businesses, poli
 
 You need **Node.js 22.13 or newer**, and nothing else: there are no packages to install and nothing to build. The database is SQLite and is built into Node.
 
+Everyone signs in with Discord, so first [make a Discord application](#signing-in-with-discord) (five minutes, free) to get a client id and secret. Then:
+
 ```sh
 git clone https://github.com/Momijisu/SimpleWiki.git
 cd SimpleWiki
+cp .env.example .env      # on Windows: copy .env.example .env
+```
+
+Open `.env` in a text editor, paste in `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET`, and save it. Then start the wiki:
+
+```sh
 npm start
 ```
 
-Open http://localhost:8080 and **create the first account straight away: it becomes the admin.** Then go to **Admin** to name your wiki, set up your namespaces and choose who can sign up.
+Run `npm start` inside the `SimpleWiki` folder; anywhere else, npm can't find the wiki. Open http://localhost:8080 and **sign in straight away: the first person to sign in becomes the admin.** Then go to **Admin** to name your wiki, set up your namespaces and choose who can join.
 
-To look around first, fill an empty wiki with example articles (a GTA city, an archived old city and an RDR town):
+To look around first, fill an empty wiki with example articles (a GTA city, an archived old city and an RDR town). Do this before your first sign-in:
 
 ```sh
-DATA_DIR=./demo-data npm run demo
-DATA_DIR=./demo-data npm start
+npm run demo
+npm start
+```
+
+The example articles are written by a "demo" account that nobody can sign in as. So sign in with Discord, then make yourself admin from the command line:
+
+```sh
+npm run role -- <your Discord username> admin
 ```
 
 ### With Docker
@@ -95,35 +109,42 @@ Put it behind a reverse proxy that adds HTTPS (Caddy, nginx or Cloudflare) and s
 | `TRUST_PROXY` | off | Set to `1` behind a reverse proxy, so rate limits see real visitor addresses and cookies are marked secure |
 | `PUBLIC_URL` | (from the request) | Your wiki's address, for link previews |
 | `COOKIE_SECURE` | auto | `1` forces secure cookies; `0` turns them off |
-| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | | Turn on "Sign in with Discord" (see below) |
+| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | | **Required.** From your Discord application (see below) |
 | `DISCORD_GUILD_ID` | | Only members of this Discord server can sign in |
 | `DISCORD_MOD_ROLE_IDS`, `DISCORD_ADMIN_ROLE_IDS` | | Discord role ids, separated by commas, that make someone a wiki moderator or admin |
 
-Everything else, such as the wiki's name, sign-ups, read access, namespaces and templates, is set in the browser under **Admin**.
+These go in `.env` (see [.env.example](.env.example)), or are set as normal environment variables. Everything else, such as the wiki's name, who can join, read access, namespaces and templates, is set in the browser under **Admin**.
 
 ### Signing in with Discord
 
 1. Go to the [Discord Developer Portal](https://discord.com/developers/applications) and choose **New Application**. Name it after your wiki; players see this name when they sign in.
 2. Open **OAuth2**. Copy the **Client ID**, then **Reset Secret** and copy the **Client Secret**.
 3. Under **Redirects**, add your wiki's address followed by `/auth/discord/callback`, e.g. `https://wiki.example.com/auth/discord/callback`. It has to match exactly, so set `PUBLIC_URL` to the same address. For local testing use `http://localhost:8080/auth/discord/callback`.
-4. Start the wiki with the two values:
-   ```sh
-   DISCORD_CLIENT_ID=… DISCORD_CLIENT_SECRET=… PUBLIC_URL=https://wiki.example.com npm start
-   ```
-   "Sign in with Discord" now appears on the sign-in page.
+4. Put the two values in `.env` (and, on a real server, set `PUBLIC_URL` to the wiki's address), then `npm start`.
+   Without them nobody can sign in. The server says so when it starts, and the sign-in page says so too.
 
 Optional extras:
 
 - **Only your community:** turn on *Developer Mode* in Discord (Settings → Advanced), right-click your server and choose **Copy Server ID**, then set `DISCORD_GUILD_ID` to it. People who aren't in the server are turned away, and so are new members who haven't passed membership screening yet.
 - **Staff become moderators:** with `DISCORD_GUILD_ID` set, right-click a role (Server Settings → Roles) and choose **Copy Role ID**. List the ids in `DISCORD_MOD_ROLE_IDS` or `DISCORD_ADMIN_ROLE_IDS`, separated by commas. Roles are checked each time someone signs in. If they lose the Discord role, they lose the wiki role too. A role an admin gives someone by hand in the wiki is never taken away by Discord.
-- **Discord only:** go to Admin → Site → *How new accounts are made* and choose *Discord only*. Existing accounts can still sign in with their password.
 
 How it behaves:
 
-- A new account takes its username from the person's Discord username, adjusted if it's already taken. Your sign-up setting still applies: open, approval or closed.
-- Anyone with a password account can link Discord under **Account**. Discord accounts can add a password there too, to have both ways in.
+- The first sign-in makes the account. Its username comes from the person's Discord username, adjusted if it's already taken. Your setting for new accounts applies: open, approval or closed.
+- Banning someone bans their Discord account. Making a new wiki account needs a different Discord account.
 - Only moderators, and the person themselves, can see which Discord account a wiki account belongs to. Moderators can search for people by Discord name or id.
 - The wiki only asks Discord for the person's name and avatar, plus their roles in your server when `DISCORD_GUILD_ID` is set. It never posts anything and doesn't keep Discord's access token.
+
+### Giving someone a role from the server
+
+If the only admin leaves, or you want to set roles before your Discord roles are sorted, run this where the database is:
+
+```sh
+DATA_DIR=./data npm run role                      # list moderators and admins
+DATA_DIR=./data npm run role -- tony admin        # by wiki name, Discord name or Discord id
+```
+
+The person needs to have signed in once. Normally you change roles in the browser under Moderation → People.
 
 ### Backups
 
@@ -157,21 +178,21 @@ An article called **Main page** becomes its namespace's front page.
 
 ```sh
 npm run dev    # restarts when server files change
-npm test       # API tests: accounts, permissions, moderation, links, uploads
+npm test       # API tests against a fake Discord: sign-in, permissions, moderation, links, uploads
 ```
 
 | Folder | What's there |
 |---|---|
-| `server/` | The HTTP server (`index.js`), the JSON API (`api.js`), the database (`db.js`), sign-in (`auth.js`), the starter templates |
+| `server/` | The HTTP server (`index.js`), the JSON API (`api.js`), the database (`db.js`), Discord sign-in (`discord.js`), sessions (`auth.js`), the starter templates |
 | `public/` | The app: plain ES modules, no build step. `js/views/` has one file per kind of page; `css/themes.css` holds the themes. |
-| `tools/` | Demo content and backups |
+| `tools/` | Demo content, backups and the `role` command |
 
 ### Security notes
 
-- Passwords are hashed with scrypt. The session cookie is HttpOnly and SameSite, and only a hash of it is stored.
+- There are no passwords: Discord vouches for who people are. Sign-in uses OAuth2 with a one-time state tied to a cookie. The session cookie is HttpOnly and SameSite, and only a hash of it is stored.
 - Every change needs a custom request header, which blocks cross-site request forgery. A strict Content-Security-Policy is sent on every response.
 - Markdown is cleaned with DOMPurify before it's shown. Uploads must really be PNG, JPEG, GIF or WebP, are renamed at random, and are served with `nosniff`.
-- Sign-in, sign-up, editing, uploads and reports are rate-limited.
+- Sign-in, editing, uploads and reports are rate-limited.
 
 ## License
 

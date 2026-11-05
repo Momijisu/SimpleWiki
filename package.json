@@ -7,10 +7,11 @@
   "license": "MIT",
   "engines": { "node": ">=22.13" },
   "scripts": {
-    "start": "node --disable-warning=ExperimentalWarning server/index.js",
-    "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
-    "backup": "node --disable-warning=ExperimentalWarning tools/backup.js",
-    "demo": "node --disable-warning=ExperimentalWarning tools/demo.js",
+    "start": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning server/index.js",
+    "dev": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning --watch server/index.js",
+    "backup": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning tools/backup.js",
+    "role": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning tools/role.js",
+    "demo": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning tools/demo.js",
     "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.js"
   }
 }

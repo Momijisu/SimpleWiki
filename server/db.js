@@ -8,7 +8,7 @@ const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
   id          INTEGER PRIMARY KEY,
   username    TEXT NOT NULL UNIQUE COLLATE NOCASE,
-  pass_hash   TEXT NOT NULL,
+  pass_hash   TEXT NOT NULL DEFAULT '!discord', -- unused: accounts sign in through Discord
   role        TEXT NOT NULL DEFAULT 'user',      -- user | mod | admin
   status      TEXT NOT NULL DEFAULT 'active',    -- active | pending | banned
   ban_reason  TEXT,
@@ -134,7 +134,6 @@ export const DEFAULT_SETTINGS = {
   registration: 'open',      // open | approval | closed
   readAccess: 'public',      // public | members
   defaultTheme: 'gta',
-  passwordSignup: true,      // false: new accounts only through Discord (when it's set up)
   welcome: 'Welcome! Pick a version of the server below to start reading. Anyone with an account can write and edit articles.',
 };
 
