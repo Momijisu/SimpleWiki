@@ -25,6 +25,10 @@ local MAX_IMAGES = 5
 -- Width the pictures are sent at (the infobox scales them to fit).
 local IMAGE_WIDTH = '400px'
 
+-- Shown when an infobox has no picture. Upload it once as File:Image unavailable.png;
+-- until it exists, infoboxes without a picture simply show none. Set to nil to turn off.
+local PLACEHOLDER_IMAGE = 'Image unavailable.png'
+
 -- ===================================================================
 -- The three infoboxes
 -- ===================================================================
@@ -259,10 +263,17 @@ local function block(s)
 	return s
 end
 
-local function fileLink(name, caption)
+local function fileLink(name, caption, class)
 	if name:match('^%[%[') then return name end
 	name = name:gsub('^[Ff]ile:', ''):gsub('^[Ii]mage:', '')
-	return string.format('[[File:%s|%s|alt=%s]]', name, IMAGE_WIDTH, caption or '')
+	return string.format('[[File:%s|%s|alt=%s%s]]', name, IMAGE_WIDTH, caption or '', class and ('|class=' .. class) or '')
+end
+
+-- Is the placeholder uploaded? (Checked once per page.)
+local function placeholderExists()
+	if not PLACEHOLDER_IMAGE then return false end
+	local t = mw.title.new(PLACEHOLDER_IMAGE, 'File')
+	return t ~= nil and t.file ~= nil and t.file.exists
 end
 
 -- ===================================================================
@@ -310,7 +321,11 @@ local function render(frame, typeName)
 			})
 		end
 	end
-	if #images == 1 then
+	if #images == 0 and placeholderExists() then
+		-- No picture given: the placeholder, kept out of search thumbnails (notpageimage).
+		box:tag('div'):addClass('rp-ib-image'):addClass('rp-ib-placeholder')
+			:wikitext(string.format('[[File:%s|%s|alt=No image|link=|class=notpageimage]]', PLACEHOLDER_IMAGE, IMAGE_WIDTH))
+	elseif #images == 1 then
 		local fig = box:tag('div'):addClass('rp-ib-image')
 		fig:wikitext(fileLink(images[1].file, images[1].caption))
 		if images[1].caption then fig:tag('div'):addClass('rp-ib-caption'):wikitext(images[1].caption) end

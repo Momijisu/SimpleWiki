@@ -15,7 +15,9 @@ ParserFunctions, Scribunto, TemplateStyles, TemplateData, TabberNeue, ShortDescr
    `python3 mediawiki/build.py`
 2. On the wiki, go to **Special:Import** and upload `dist/infoboxes.xml`. The form asks for an
    **interwiki prefix**: type anything short, like `tpl` (it only labels who made the edits).
-3. Open **Template:Infobox character** to see its documentation, a copy-and-paste blank and an example.
+3. Upload `files/Image_unavailable.png` at **Special:Upload** with exactly that name. Infoboxes
+   without a picture show it; until it's uploaded they just show no picture.
+4. Open **Template:Infobox character** to see its documentation, a copy-and-paste blank and an example.
 
 ## What's where
 
