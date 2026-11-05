@@ -1,281 +1,177 @@
-/* Themes. Each one is only a set of variables, so they all share the same
-   layout. A theme applies to <html data-theme="…"> and to any element with
-   data-theme (the namespace cards on the front page use that). To add a
-   theme: copy a block, change the values, and add it to THEMES in server/api.js. */
+/* Themes. Each one is only a set of tokens, so they all share one layout.
+   Surfaces are tinted towards the theme's hue, from surface-0 (the page) to
+   surface-4 (the most raised). A theme applies to <html data-theme="…"> and
+   to any element with data-theme (the namespace cards use that).
+   To add a theme: copy a block, change the values, and add it to THEMES in server/api.js. */
 
 @font-face { font-family: "Oswald"; src: url(../fonts/oswald-latin-500-normal.woff2) format("woff2"); font-weight: 500; font-display: swap; }
 @font-face { font-family: "Oswald"; src: url(../fonts/oswald-latin-600-normal.woff2) format("woff2"); font-weight: 600; font-display: swap; }
 @font-face { font-family: "Oswald"; src: url(../fonts/oswald-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-400-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
-@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-500-normal.woff2) format("woff2"); font-weight: 500; font-display: swap; }
-@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-600-normal.woff2) format("woff2"); font-weight: 600; font-display: swap; }
-@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
 @font-face { font-family: "Rye"; src: url(../fonts/rye-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Alegreya"; src: url(../fonts/alegreya-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Alegreya"; src: url(../fonts/alegreya-latin-400-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: "Alegreya"; src: url(../fonts/alegreya-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "Alegreya Sans"; src: url(../fonts/alegreya-sans-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Alegreya Sans"; src: url(../fonts/alegreya-sans-latin-400-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
-@font-face { font-family: "Alegreya Sans"; src: url(../fonts/alegreya-sans-latin-500-normal.woff2) format("woff2"); font-weight: 500 600; font-display: swap; }
-@font-face { font-family: "Alegreya Sans"; src: url(../fonts/alegreya-sans-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+
+:root {
+  --font: "Roboto Flex", "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+}
 
 /* ================================================================ Los Santos
-   Neon-and-sunset city at night: near-black, hot pink and orange, condensed
-   capitals. */
+   Night city: blue-violet dark surfaces, hot pink for actions, sunset glow,
+   condensed capitals for titles. */
 :root, [data-theme="gta"] {
   color-scheme: dark;
-  --bg: #0c0b11;
-  --bg-img: radial-gradient(1200px 600px at 90% -10%, rgba(255, 61, 139, .13), transparent 60%),
-            radial-gradient(900px 500px at -10% 110%, rgba(64, 120, 255, .10), transparent 60%);
-  --bg-size: auto;
-  --chrome: rgba(10, 9, 14, .92);
-  --chrome-text: #f5f2f7;
-  --chrome-muted: #8f8a9a;
-  --chrome-rule: rgba(255, 255, 255, .14);
-  --chrome-input: rgba(255, 255, 255, .07);
-  --chrome-border: 0;
-  --chrome-shadow: 0 2px 0 0 #ff3d8b, 0 3px 0 0 #ffb02e, 0 10px 30px rgba(255, 61, 139, .12);
-  --side-bg: rgba(16, 14, 22, .7);
-  --surface: #17151f;
-  --surface-2: #1f1c29;
-  --input-bg: #121019;
-  --img-bg: #24202f;
-  --hover: rgba(255, 255, 255, .06);
-  --active-bg: rgba(255, 61, 139, .12);
-  --chip-bg: rgba(255, 255, 255, .08);
-  --banner-bg: #1a1724;
-  --code-bg: rgba(255, 255, 255, .07);
-  --th-bg: rgba(255, 61, 139, .12);
-  --mark-bg: rgba(255, 176, 46, .35);
-  --rule: rgba(255, 255, 255, .08);
-  --rule-strong: rgba(255, 255, 255, .16);
-  --text: #f0edf4;
-  --text-2: #c9c3d3;
-  --muted: #8d879a;
-  --heading: #ffffff;
-  --accent: #ff3d8b;
-  --accent-fill: linear-gradient(100deg, #ff3d8b, #ff6a4d);
-  --accent-ink: #ffffff;
-  --accent-2: #ffb02e;
-  --link: #63d0ff;
-  --link-missing: #ff7a7a;
-  --ooc: #a98bff;
-  --danger: #ff4f5e;
-  --ok: #45d483;
-  --warn: #ffb02e;
+  --surface-0: oklch(14% 0.014 275);
+  --surface-1: oklch(19% 0.018 275);
+  --surface-2: oklch(24% 0.024 275);
+  --surface-3: oklch(31% 0.03 275);
+  --surface-4: oklch(40% 0.036 275);
+  --text: oklch(86% 0.022 275);
+  --text-strong: oklch(98% 0.006 275);
+  --text-subtle: oklch(72% 0.03 275);
+  --border: oklch(28% 0.022 275);
+  --border-strong: oklch(38% 0.03 275);
+  --accent: oklch(70% 0.2 355);
+  --accent-fill: linear-gradient(100deg, oklch(64% 0.23 355), oklch(68% 0.19 30));
+  --accent-ink: #fff;
+  --link: oklch(78% 0.12 225);
+  --link-missing: oklch(72% 0.16 20);
+  --ooc: oklch(74% 0.13 295);
+  --ok: oklch(76% 0.16 150);
+  --warn: oklch(80% 0.15 75);
+  --danger: oklch(65% 0.2 22);
+  --mark-bg: oklch(70% 0.15 75 / .35);
+  --backdrop: oklch(8% 0.01 275 / .6);
+  --shadow: 0 16px 48px oklch(5% 0.02 275 / .6);
   --font-display: "Oswald", "Arial Narrow", Impact, sans-serif;
-  --font-body: "Barlow", "Segoe UI", system-ui, sans-serif;
-  --font-ui: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --font-h2: var(--font);
+  --h2-weight: 500;
   --display-weight: 600;
   --display-transform: uppercase;
-  --display-spacing: .02em;
-  --btn-transform: uppercase;
-  --btn-spacing: .06em;
-  --brand-font: 700 22px/1 "Oswald", Impact, sans-serif;
+  --display-spacing: .01em;
+  --title-size: 32px;
+  --hero-size: clamp(34px, 5vw, 56px);
   --brand-mark: linear-gradient(135deg, #ff3d8b, #ffb02e);
   --brand-clip: polygon(18% 0, 100% 0, 82% 100%, 0 100%);
-  --radius: 4px;
-  --radius-pill: 999px;
-  --panel-border: 1px solid rgba(255, 255, 255, .08);
-  --shadow: 0 18px 50px rgba(0, 0, 0, .55);
-  --title-rule: 0;
-  --h2-rule: 2px solid rgba(255, 61, 139, .45);
-  --infobox-bg: #15131c;
-  --infobox-border: 1px solid rgba(255, 255, 255, .1);
-  --infobox-head-bg: linear-gradient(100deg, #ff3d8b, #ff7b3a 60%, #ffb02e);
-  --infobox-head-text: #fff;
-  --infobox-section-bg: rgba(255, 255, 255, .05);
-  --infobox-section-text: #ffb02e;
-  --hero-fill: linear-gradient(95deg, #ff3d8b 10%, #ff7b3a 50%, #ffd23e 90%);
-  --hero-clip: text;
-  --hero-color: transparent;
-  --card-bg: linear-gradient(160deg, #1d1828 0%, #14111c 55%, #2a1020 100%);
+  --hero-bg: radial-gradient(900px 420px at 85% -10%, oklch(62% 0.22 355 / .35), transparent 65%),
+             radial-gradient(700px 380px at 20% 120%, oklch(72% 0.17 55 / .22), transparent 65%), var(--surface-0);
+  --hero-overlay: radial-gradient(circle, oklch(100% 0 0 / .05) 1px, transparent 1.5px) 0 0 / 22px 22px;
+  --card-bg: linear-gradient(160deg, var(--surface-2), var(--surface-1) 60%);
   --card-stripe: linear-gradient(90deg, #ff3d8b, #ffb02e);
-  --toast-bg: #f0edf4;
-  --toast-text: #121019;
 }
-[data-theme="gta"] .article-head h1, [data-theme="gta"] .page-head h1 { position: relative; }
-[data-theme="gta"] .article-head::after { content: ""; display: block; width: 120px; height: 4px; margin-top: 14px;
-  background: linear-gradient(90deg, #ff3d8b, #ffb02e); transform: skewX(-20deg); }
-[data-theme="gta"] .ns-card { border-radius: 6px; }
-[data-theme="gta"] .ns-card-title { font-size: 38px; }
-[data-theme="gta"] .infobox-title { font-size: 22px; text-shadow: 0 2px 0 rgba(0, 0, 0, .2); }
-[data-theme="gta"] .btn.primary { box-shadow: 0 4px 18px rgba(255, 61, 139, .25); }
 
 /* ================================================================ Frontier
-   1899 frontier: parchment, ink, oxblood, wanted-poster infoboxes. */
+   1899: warm paper, ink-brown text, oxblood actions, a slab-serif for titles. */
 [data-theme="rdr"] {
   color-scheme: light;
-  --bg: #e8dbbd;
-  --bg-img: radial-gradient(ellipse at 50% 40%, rgba(246, 236, 210, .9), rgba(226, 205, 162, .9) 85%), url(../img/parchment.png);
-  --bg-size: 100% 100%, 420px;
-  --chrome: #1d140d;
-  --chrome-text: #f1e4c6;
-  --chrome-muted: #a38f70;
-  --chrome-rule: rgba(241, 228, 198, .22);
-  --chrome-input: rgba(241, 228, 198, .08);
-  --chrome-border: 3px double #8a6a3f;
-  --chrome-shadow: 0 6px 18px rgba(40, 25, 10, .35);
-  --side-bg: rgba(233, 219, 186, .55);
-  --surface: rgba(250, 243, 226, .72);
-  --surface-2: rgba(244, 233, 207, .9);
-  --input-bg: #fbf5e6;
-  --img-bg: #d8c7a2;
-  --hover: rgba(90, 60, 25, .08);
-  --active-bg: rgba(155, 28, 28, .09);
-  --chip-bg: rgba(90, 60, 25, .12);
-  --banner-bg: rgba(250, 243, 226, .8);
-  --code-bg: rgba(90, 60, 25, .1);
-  --th-bg: rgba(90, 60, 25, .12);
-  --mark-bg: rgba(212, 160, 60, .45);
-  --rule: rgba(92, 64, 36, .2);
-  --rule-strong: rgba(92, 64, 36, .38);
-  --text: #2a1d12;
-  --text-2: #4a3622;
-  --muted: #7a6448;
-  --heading: #22160c;
-  --accent: #9b1c1c;
-  --accent-fill: #9b1c1c;
-  --accent-ink: #f8eedb;
-  --accent-2: #8a5a1c;
-  --link: #8a2b16;
-  --link-missing: #c23b22;
-  --ooc: #3d5a80;
-  --danger: #b3261e;
-  --ok: #3f7a3a;
-  --warn: #b7791f;
+  --surface-0: oklch(95.5% 0.018 80);
+  --surface-1: oklch(98% 0.012 80);
+  --surface-2: oklch(92% 0.024 78);
+  --surface-3: oklch(87% 0.03 76);
+  --surface-4: oklch(80% 0.036 74);
+  --text: oklch(30% 0.03 60);
+  --text-strong: oklch(20% 0.03 55);
+  --text-subtle: oklch(48% 0.035 65);
+  --border: oklch(86% 0.03 75);
+  --border-strong: oklch(76% 0.04 70);
+  --accent: oklch(45% 0.15 28);
+  --accent-fill: oklch(45% 0.15 28);
+  --accent-ink: oklch(97% 0.015 80);
+  --link: oklch(45% 0.14 35);
+  --link-missing: oklch(55% 0.18 28);
+  --ooc: oklch(48% 0.1 250);
+  --ok: oklch(50% 0.12 145);
+  --warn: oklch(60% 0.13 70);
+  --danger: oklch(50% 0.18 28);
+  --mark-bg: oklch(80% 0.12 85 / .55);
+  --backdrop: oklch(25% 0.03 60 / .45);
+  --shadow: 0 16px 40px oklch(30% 0.04 60 / .22);
   --font-display: "Rye", "Rockwell", Georgia, serif;
-  --font-body: "Alegreya", Georgia, serif;
-  --font-ui: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --font-h2: "Alegreya", Georgia, serif;
+  --h2-weight: 700;
   --display-weight: 400;
   --display-transform: none;
   --display-spacing: .01em;
-  --btn-transform: none;
-  --btn-spacing: .02em;
-  --brand-font: 400 22px/1 "Rye", Georgia, serif;
-  --brand-mark: radial-gradient(circle at 50% 50%, #f1e4c6 0 22%, #9b1c1c 23% 60%, #d9b97d 61%);
+  --title-size: 32px;
+  --hero-size: clamp(32px, 4.6vw, 52px);
+  --brand-mark: radial-gradient(circle, oklch(95% 0.02 80) 0 22%, oklch(45% 0.15 28) 23% 60%, oklch(78% 0.08 80) 61%);
   --brand-clip: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  --radius: 2px;
-  --radius-pill: 2px;
-  --panel-border: 1px solid rgba(92, 64, 36, .35);
-  --shadow: 0 14px 40px rgba(60, 40, 15, .35);
-  --panel-shadow: 0 1px 0 rgba(255, 255, 255, .4) inset;
-  --title-rule: 3px double rgba(92, 64, 36, .55);
-  --h2-rule: 1px solid rgba(92, 64, 36, .4);
-  --infobox-bg: #f4e9cf;
-  --infobox-border: 4px double #5c4024;
-  --infobox-head-bg: #22160c;
-  --infobox-head-text: #f1e4c6;
-  --infobox-section-bg: rgba(92, 64, 36, .14);
-  --infobox-section-text: #5c4024;
-  --hero-fill: none;
-  --hero-clip: border-box;
-  --hero-color: #22160c;
-  --hero-shadow: 2px 2px 0 rgba(155, 28, 28, .25);
-  --tagline-style: italic;
-  --card-bg: radial-gradient(ellipse at 40% 30%, rgba(250, 242, 220, .88), rgba(222, 199, 152, .88)), url(../img/parchment.png) center / 300px, #e2cfa4;
-  --card-stripe: repeating-linear-gradient(90deg, #9b1c1c 0 14px, #22160c 14px 18px);
-  --toast-bg: #22160c;
-  --toast-text: #f1e4c6;
+  --hero-bg: radial-gradient(ellipse at 50% 30%, oklch(97% 0.02 82 / .85), oklch(88% 0.04 75 / .9) 90%), url(../img/parchment.png) 0 0 / 360px, var(--surface-2);
+  --card-bg: var(--surface-1);
+  --card-stripe: repeating-linear-gradient(90deg, oklch(45% 0.15 28) 0 14px, oklch(25% 0.03 55) 14px 18px);
 }
-[data-theme="rdr"] .infobox-title { letter-spacing: .03em; }
-[data-theme="rdr"] .infobox-img img { filter: sepia(.25) contrast(1.05); }
-[data-theme="rdr"] .infobox-kind { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .2em; font-weight: 400; color: #9b1c1c; }
-[data-theme="rdr"] .article-head, [data-theme="rdr"] .ns-hero { text-align: center; }
-[data-theme="rdr"] .article-actions { justify-content: center; }
-[data-theme="rdr"] .article-head .kicker::before, [data-theme="rdr"] .article-head .kicker::after { content: " ✦ "; color: var(--accent); }
-[data-theme="rdr"] .prose h2::before { content: "❧ "; color: var(--accent); font-size: .8em; }
-[data-theme="rdr"] .ns-card { border: 1px solid #5c4024; outline: 1px solid rgba(92, 64, 36, .4); outline-offset: -7px; }
-[data-theme="rdr"] .ns-card-kicker { color: #9b1c1c; }
-[data-theme="rdr"] .tile .icon { color: var(--accent-2); }
-[data-theme="rdr"] .prose { font-size: 18px; }
-[data-theme="rdr"] #searchInput { font-style: italic; }
+[data-theme="rdr"] .prose h2 { letter-spacing: .01em; }
+[data-theme="rdr"] .infobox { border-width: 3px; border-style: double; border-color: var(--border-strong); }
+[data-theme="rdr"] .infobox-img img { filter: sepia(.2) contrast(1.04); }
+[data-theme="rdr"] .btn.primary:hover { filter: brightness(1.12); }
 
 /* ================================================================ Classic
-   Plain and quiet, for anything that isn't GTA or RDR. Follows the device's
+   Cool blue-grey, close to a standard modern wiki. Follows the device's
    light/dark setting. */
 [data-theme="classic"] {
   color-scheme: light;
-  --bg: #f6f7f9;
-  --bg-img: none;
-  --chrome: #ffffff;
-  --chrome-text: #1d2430;
-  --chrome-muted: #7c8696;
-  --chrome-rule: #d8dde5;
-  --chrome-input: #f1f3f6;
-  --chrome-border: 1px solid #e1e5eb;
-  --side-bg: #fbfcfd;
-  --surface: #ffffff;
-  --surface-2: #f4f6f8;
-  --input-bg: #ffffff;
-  --img-bg: #e9edf2;
-  --hover: #eef1f5;
-  --active-bg: #e8f0fa;
-  --chip-bg: #edf0f4;
-  --banner-bg: #ffffff;
-  --code-bg: #eef1f5;
-  --th-bg: #f1f4f8;
-  --mark-bg: #fff2a8;
-  --rule: #e3e7ed;
-  --rule-strong: #cfd6df;
-  --text: #1d2430;
-  --text-2: #3d4757;
-  --muted: #6e7889;
-  --heading: #111722;
-  --accent: #2f6db5;
-  --accent-fill: #2f6db5;
-  --accent-ink: #ffffff;
-  --accent-2: #5f7a99;
-  --link: #2462a8;
-  --link-missing: #c0392b;
-  --ooc: #7a5cc7;
-  --danger: #c0392b;
-  --ok: #2e8b57;
-  --warn: #c98a12;
-  --font-display: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
-  --font-body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
-  --font-ui: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
-  --display-weight: 700;
+  --surface-0: #fff;
+  --surface-1: oklch(98% 0.005 230);
+  --surface-2: oklch(94% 0.012 230);
+  --surface-3: oklch(90% 0.02 230);
+  --surface-4: oklch(84% 0.028 230);
+  --text: oklch(25% 0.015 230);
+  --text-strong: oklch(13% 0.01 230);
+  --text-subtle: oklch(45% 0.03 230);
+  --border: oklch(89% 0.01 230);
+  --border-strong: oklch(80% 0.015 230);
+  --accent: oklch(53% 0.17 230);
+  --accent-fill: oklch(53% 0.17 230);
+  --accent-ink: #fff;
+  --link: oklch(50% 0.16 230);
+  --link-missing: oklch(55% 0.19 25);
+  --ooc: oklch(50% 0.15 300);
+  --ok: oklch(55% 0.14 150);
+  --warn: oklch(65% 0.14 70);
+  --danger: oklch(55% 0.2 25);
+  --mark-bg: oklch(90% 0.13 95);
+  --backdrop: oklch(20% 0.02 230 / .4);
+  --shadow: 0 14px 40px oklch(30% 0.03 230 / .16);
+  --font-display: var(--font);
+  --font-h2: var(--font);
+  --h2-weight: 500;
+  --display-weight: 500;
   --display-transform: none;
   --display-spacing: 0;
-  --btn-transform: none;
-  --btn-spacing: 0;
-  --brand-font: 700 21px/1 "Alegreya Sans", system-ui, sans-serif;
-  --brand-mark: #2f6db5;
+  --title-size: 28px;
+  --hero-size: clamp(32px, 4.6vw, 50px);
+  --brand-mark: oklch(53% 0.17 230);
   --brand-clip: none;
-  --radius: 6px;
-  --radius-pill: 999px;
-  --panel-border: 1px solid #e3e7ed;
-  --shadow: 0 12px 36px rgba(20, 30, 50, .14);
-  --title-rule: 1px solid #e3e7ed;
-  --h2-rule: 1px solid #e3e7ed;
-  --infobox-bg: #f8fafc;
-  --infobox-border: 1px solid #d8dee6;
-  --infobox-head-bg: #e8f0fa;
-  --infobox-head-text: #1d2430;
-  --infobox-section-bg: #eef2f7;
-  --infobox-section-text: #3d4757;
-  --hero-fill: none;
-  --hero-clip: border-box;
-  --hero-color: #111722;
-  --hero-shadow: none;
-  --card-bg: #ffffff;
-  --card-stripe: #2f6db5;
-  --toast-bg: #1d2430;
-  --toast-text: #ffffff;
+  --hero-bg: radial-gradient(800px 400px at 80% -20%, oklch(53% 0.17 230 / .12), transparent 70%), var(--surface-1);
+  --hero-overlay: none;
+  --card-bg: var(--surface-1);
+  --card-stripe: oklch(53% 0.17 230);
 }
 @media (prefers-color-scheme: dark) {
   [data-theme="classic"] {
     color-scheme: dark;
-    --bg: #121418; --chrome: #181b20; --chrome-text: #e6e9ee; --chrome-rule: #2c313a; --chrome-input: #20242b; --chrome-border: 1px solid #262a31;
-    --side-bg: #15181c; --surface: #1a1d22; --surface-2: #20242a; --input-bg: #15181c; --img-bg: #262b33; --hover: #22262d; --active-bg: #1d2a3b;
-    --chip-bg: #262b33; --banner-bg: #1a1d22; --code-bg: #22262d; --th-bg: #20252c; --mark-bg: #5a4d12;
-    --rule: #262a31; --rule-strong: #343a44; --text: #e3e6eb; --text-2: #c0c6cf; --muted: #8a93a1; --heading: #f3f5f8;
-    --accent: #5b9be0; --accent-fill: #3d7cc4; --link: #7cb3ee; --link-missing: #ef7b6c;
-    --panel-border: 1px solid #262a31; --title-rule: 1px solid #262a31; --h2-rule: 1px solid #2c313a;
-    --infobox-bg: #171a1f; --infobox-border: 1px solid #2c313a; --infobox-head-bg: #1d2a3b; --infobox-head-text: #e6e9ee;
-    --infobox-section-bg: #1f242b; --infobox-section-text: #c0c6cf; --hero-color: #f3f5f8; --card-bg: #1a1d22;
-    --toast-bg: #e6e9ee; --toast-text: #121418;
+    --surface-0: oklch(11% 0.01 230);
+    --surface-1: oklch(17% 0.012 230);
+    --surface-2: oklch(22% 0.02 230);
+    --surface-3: oklch(30% 0.028 230);
+    --surface-4: oklch(39% 0.035 230);
+    --text: oklch(84% 0.028 230);
+    --text-strong: oklch(98% 0.005 230);
+    --text-subtle: oklch(73% 0.035 230);
+    --border: oklch(25% 0.008 260);
+    --border-strong: oklch(34% 0.015 240);
+    --accent: oklch(72% 0.108 230);
+    --accent-fill: oklch(53% 0.17 230);
+    --link: oklch(72% 0.108 230);
+    --link-missing: oklch(70% 0.15 25);
+    --ooc: oklch(74% 0.12 300);
+    --ok: oklch(74% 0.14 150);
+    --warn: oklch(80% 0.13 75);
+    --danger: oklch(66% 0.19 25);
+    --mark-bg: oklch(60% 0.12 95 / .4);
+    --backdrop: oklch(5% 0.01 230 / .6);
+    --shadow: 0 16px 48px oklch(3% 0.01 230 / .6);
+    --hero-bg: radial-gradient(800px 400px at 80% -20%, oklch(60% 0.15 230 / .22), transparent 70%), var(--surface-0);
   }
 }

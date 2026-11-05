@@ -30,7 +30,16 @@ function settingsTab(el) {
     <form class="panel form-grid" id="settingsForm">
       <label class="field"><span>Wiki name</span><input name="siteName" value="${esc(s.siteName)}" maxlength="60" required></label>
       <label class="field"><span>Tagline</span><input name="tagline" value="${esc(s.tagline)}" maxlength="200"></label>
-      <label class="field wide"><span>Welcome text on the front page (Markdown)</span><textarea name="welcome" rows="5" maxlength="4000">${esc(s.welcome)}</textarea></label>
+      <div class="field wide"><span>Logo (shown round on the front pages and in the menu)</span>
+        <div class="row"><span class="front-logo mini">${s.logo ? `<img src="${esc(s.logo)}" alt="">` : '<span class="brand-mark"></span>'}</span>
+          <input type="hidden" name="logo" value="${esc(s.logo || '')}">
+          <button type="button" class="btn" id="logoUpload">${icon('upload-simple')} Upload a picture</button>
+          ${s.logo ? '<button type="button" class="btn ghost" id="logoRemove">Remove</button>' : ''}</div></div>
+      <label class="field wide"><span>Front page text (Markdown). The first part is the introduction; each <code>## Heading</code> becomes a card: rules, links, updates…</span>
+        <textarea name="welcome" rows="10" maxlength="4000">${esc(s.welcome)}</textarea></label>
+      <label class="field wide"><span>Footer text</span><textarea name="footer" rows="2" maxlength="2000">${esc(s.footer || '')}</textarea></label>
+      <label class="field wide"><span>Links in the footer, one per line as <code>Label | https://…</code> (Discord, YouTube, TikTok, Twitch, X… get their icons)</span>
+        <textarea name="socialLinks" rows="4" maxlength="3000" placeholder="Discord | https://discord.gg/…">${esc(s.socialLinks || '')}</textarea></label>
       <label class="field"><span>Who can sign up</span><select name="registration">
         ${opt('open', s.registration, 'Anyone who signs in with Discord can edit straight away')}
         ${opt('approval', s.registration, 'Anyone, but a moderator approves each new account')}
@@ -43,6 +52,20 @@ function settingsTab(el) {
         ${Object.entries(state.themes).map(([k, l]) => opt(k, s.defaultTheme, l)).join('')}</select></label>
       <div class="wide"><button class="btn primary">Save settings</button></div>
     </form>`;
+  $('#logoUpload').addEventListener('click', () => {
+    const input = Object.assign(document.createElement('input'), { type: 'file', accept: 'image/png,image/jpeg,image/gif,image/webp' });
+    input.onchange = async () => {
+      if (!input.files[0]) return;
+      try {
+        const { url } = await api.upload(input.files[0]);
+        $('[name=logo]').value = url;
+        $('.front-logo.mini').innerHTML = `<img src="${esc(url)}" alt="">`;
+        toast('Uploaded. Save the settings to use it.');
+      } catch (err) { toast(err.message, 'error'); }
+    };
+    input.click();
+  });
+  $('#logoRemove')?.addEventListener('click', () => { $('[name=logo]').value = ''; $('.front-logo.mini').innerHTML = '<span class="brand-mark"></span>'; });
   $('#settingsForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     try {

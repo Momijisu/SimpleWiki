@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS namespaces (
   sort        INTEGER NOT NULL DEFAULT 0,
   archived    INTEGER NOT NULL DEFAULT 0,          -- read-only for everyone but mods
   hidden      INTEGER NOT NULL DEFAULT 0,          -- only mods can see it
+  featured    TEXT NOT NULL DEFAULT '',            -- slug of the article featured on its front page
   created_at  INTEGER NOT NULL
 );
 CREATE TABLE IF NOT EXISTS templates (
@@ -134,6 +135,9 @@ export const DEFAULT_SETTINGS = {
   registration: 'open',      // open | approval | closed
   readAccess: 'public',      // public | members
   defaultTheme: 'gta',
+  logo: '',                  // an uploaded picture, shown round on the front page and in the rail
+  footer: 'This wiki is written by the players of our roleplay server. Everything here is in-character unless it says otherwise.',
+  socialLinks: '',           // one per line: Label | https://…
   welcome: 'Welcome! Pick a version of the server below to start reading. Anyone with an account can write and edit articles.',
 };
 
@@ -159,6 +163,8 @@ const MIGRATIONS = [
     ALTER TABLE users ADD COLUMN discord_name TEXT;
     ALTER TABLE users ADD COLUMN discord_avatar TEXT;
     ALTER TABLE users ADD COLUMN role_source TEXT NOT NULL DEFAULT 'manual';`),
+  // 2: a featured article on each namespace's front page
+  (db) => db.exec("ALTER TABLE namespaces ADD COLUMN featured TEXT NOT NULL DEFAULT ''"),
 ];
 
 function migrate(db) {

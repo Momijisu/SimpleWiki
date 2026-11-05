@@ -2,6 +2,7 @@
 //   DATA_DIR=./demo-data node tools/demo.js
 // The articles are written by a "demo" account. Afterwards, sign in with
 // Discord and make yourself admin with:  node tools/role.js <your name> admin
+import fs from 'node:fs';
 import { createServer } from '../server/index.js';
 import { createSession } from '../server/auth.js';
 
@@ -24,20 +25,64 @@ async function call(method, path, body) {
   if (!res.ok) throw new Error(`${path}: ${data.error}`);
   return data;
 }
-const article = (ns, title, template, fields, body) => call('POST', `/api/ns/${ns}/articles`, { title, template, fields, body });
+const article = (ns, title, template, fields, body, image = '') => call('POST', `/api/ns/${ns}/articles`, { title, template, fields, body, image });
+async function upload(file) {
+  const res = await fetch(`${base}/api/upload`, {
+    method: 'POST', headers: { 'X-Requested-With': 'SimpleWiki', 'Content-Type': 'image/png', cookie },
+    body: fs.readFileSync(new URL(`./demo-assets/${file}`, import.meta.url)),
+  });
+  return (await res.json()).url;
+}
+const logo = await upload('logo.png');
+const saints = await upload('saints.png');
 
-await call('PUT', '/api/admin/settings', { siteName: 'Southside RP Wiki', tagline: 'Every story from every city we’ve played.' });
+await call('PUT', '/api/admin/settings', {
+  siteName: 'Southside RP Wiki', tagline: 'Every story from every city we’ve played.', logo,
+  footer: 'The Southside RP Wiki is written by the players of the Southside roleplay community. Everything here is in-character unless it says otherwise.',
+  socialLinks: 'Discord | https://discord.gg/example\nYouTube | https://www.youtube.com/@example\nTikTok | https://www.tiktok.com/@example\nTwitch | https://www.twitch.tv/example\nWebsite | https://example.com',
+  welcome: `## What is Southside RP?
+Southside RP is a story-first roleplay community. This wiki is where players write up their characters, crews, businesses and the
+events that shaped each city, across every version of the server.
+
+## How to help
+- [[gta:Main page|Los Santos 4.0]]
+- [[rdr:Main page|Cedar Falls 1899]]
+- [Join the Discord](https://discord.gg/example)
+`,
+});
 await call('PUT', '/api/admin/namespaces/gta', { name: 'Los Santos 4.0', tagline: 'The current city: 2026 onwards.', sort: 0 });
 await call('POST', '/api/admin/namespaces', { slug: 'gta3', name: 'Los Santos 3.0', tagline: 'The 2023–2025 city, kept for the record.', theme: 'gta', sort: 1, archived: true });
 await call('PUT', '/api/admin/namespaces/rdr', { name: 'Cedar Falls 1899', tagline: 'The Wild West server.', sort: 2 });
 
 // ---- Los Santos 4.0
 await article('gta', 'Main page', 'page', {}, `
-Welcome to **Los Santos 4.0**, the current city. Start with the [[Southside Saints]], the [[Los Santos Police Department]] or the
+## What is Los Santos 4.0?
+The current city, open since January 2026. Start with the [[Southside Saints]], the [[Los Santos Police Department]] or the
 [[Harbor Bank Heist]] that kicked off the summer.
 
-> [!ooc] New to the server?
-> Read the rules on Discord first. Anyone with an account can write here; keep it in character unless you use an OOC box like this one.
+This wiki is for players to show off their characters, crews and storylines, and to keep a record of everything that happens in the city.
+
+## Wiki rules
+- Everything here is out-of-character information. Don’t use it in character.
+- No OOC drama or toxicity, in articles or anywhere else.
+- Don’t discuss bans or ban reasons.
+- Don’t remove content from a page unless it’s false.
+- Don’t edit-war. If you disagree with someone, take it to a moderator on Discord.
+
+## Latest update: 4.2
+- New casino games
+- Beekeeping and hunting jobs
+- Blaine County Sheriff’s Office
+- Weazel News vans
+- Reworked phone
+- [[Harbor Bank Heist|The Harbor heist]] is now repeatable
+
+## Official links
+- [Discord](https://discord.gg/example)
+- [Server rules](https://example.com/rules)
+- [Interactive map](https://example.com/map)
+- [YouTube](https://www.youtube.com/@example)
+- [Twitch](https://www.twitch.tv/example)
 `);
 await article('gta', 'Tony Ramirez', 'character', {
   'Full name': 'Antonio “Tony” Ramirez', Nicknames: 'Two-Times', Age: '34', Gender: 'Male', Nationality: 'American',
@@ -215,6 +260,11 @@ await article('rdr', 'Ember', 'horse', { Breed: 'American Paint', Coat: 'Chestnu
 ## Overview
 Silas’s horse. Bites deputies, specifically.
 `);
+
+// A picture for the Saints, and feature them on the Los Santos front page.
+const s = await call('GET', '/api/ns/gta/article/southside-saints');
+await call('PUT', '/api/ns/gta/article/southside-saints', { ...s.article, image: saints, baseRev: s.article.revId, comment: 'Added the crew logo' });
+await call('POST', '/api/ns/gta/article/southside-saints/feature', { on: true });
 
 server.db.prepare('DELETE FROM sessions WHERE user_id = ?').run(id);
 server.close();

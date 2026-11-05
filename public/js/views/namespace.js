@@ -2,45 +2,48 @@ import { esc, plain } from '../util.js';
 import * as api from '../api.js';
 import { icon } from '../icons.js';
 import { state, md, templatesFor, template, canWrite, isMod } from '../state.js';
-import { view, setTitle, changeList, articleCard, articleHref, when } from './common.js';
+import { view, setTitle, changeList, articleHref, when } from './common.js';
+import { frontHero, cardsFromHtml, card, stat } from './frontpage.js';
 
 export async function viewNamespace(slug) {
   const info = await api.get(`/api/ns/${slug}`);
-  const main = info.main;
   const ns = info.namespace;
   setTitle(ns.name);
-  const tpls = templatesFor(ns);
-  const mainHtml = main
-    ? `<article class="prose main-page">${md(main.body, ns.slug, main.existing)}</article>
-       ${main.canEdit ? `<p class="edit-main"><a href="/w/${ns.slug}/main-page/edit" data-link>${icon('pencil-simple')} Edit this introduction</a></p>` : ''}`
-    : `${ns.tagline ? `<p class="hero-tagline">${esc(ns.tagline)}</p>` : ''}
-       ${info.canCreate ? `<p class="muted">Tip: write an article called <b>Main page</b> and it appears here as this namespace’s introduction.
-         <a href="/w/${ns.slug}/~new?template=page&title=Main%20page" data-link>Write it now</a>.</p>` : ''}`;
+  const main = info.main;
+  const cards = main ? cardsFromHtml(md(main.body, ns.slug, main.existing)) : [];
+  const intro = cards.shift();
+  const f = info.featured;
+  const featured = f ? `<a class="fcard fcard-featured" href="${articleHref(ns.slug, f.slug)}" data-link>
+      ${f.image ? `<img src="${esc(f.image)}" alt="">` : `<span class="fcard-featured-icon">${icon(template(f.template).icon)}</span>`}
+      <span class="fcard-featured-text"><small>Featured</small><b>${esc(f.title)}</b></span></a>` : '';
+  const startEditing = card(`<a href="${info.canCreate ? `/w/${ns.slug}/~new` : '/login'}" data-link>Start editing ${icon('caret-right')}</a>`, `
+      <p>${esc(state.settings.siteName)} is written by people like you.${info.canCreate ? ' Pick a template and start writing.' : ' Sign in with Discord to start.'}</p>
+      <div class="stats">${stat(info.stats.articles, 'Articles')}${stat(info.stats.edits, 'Edits')}${stat(info.stats.editors, 'Writers')}</div>`, 'fcard-accent');
+  const recent = card('Recent changes', `${changeList(info.recent.slice(0, 6), { showNs: false })}
+      <p class="fcard-more"><a href="/recent?ns=${ns.slug}" data-link>All recent changes ${icon('arrow-right')}</a></p>`);
+  const newest = info.newest.length ? card('New articles', `<ul class="link-list">${info.newest.map((x) =>
+      `<li><a href="${articleHref(ns.slug, x.slug)}" data-link>${icon(template(x.template).icon)} ${esc(x.title)}</a></li>`).join('')}</ul>`) : '';
   view().innerHTML = `
-    <div class="page wide">
-      <section class="ns-hero">
-        <div class="kicker">${esc(state.themes[ns.theme] || '')}${ns.archived ? ' · Archived' : ''}</div>
-        <h1 class="hero-title">${esc(ns.name)}</h1>
-        ${mainHtml}
-      </section>
-      <section>
-        <div class="tiles">
-          ${tpls.map((t) => `<a class="tile" href="/w/${ns.slug}/~t/${t.key}" data-link>
-            ${icon(t.icon)}<b>${esc(t.plural)}</b><span class="count">${info.counts[t.key] || 0}</span></a>`).join('')}
-        </div>
-      </section>
-      <div class="two-col">
-        <section class="panel">
-          <h2 class="section-title">${icon('star')} Newest articles</h2>
-          ${info.newest.length ? `<div class="cards">${info.newest.map((a) => articleCard(a, ns.slug)).join('')}</div>`
-            : `<p class="muted">Nothing here yet.${info.canCreate ? ' Be the first to write something.' : ''}</p>`}
-        </section>
-        <section class="panel">
-          <h2 class="section-title">${icon('clock-counter-clockwise')} Recent changes</h2>
-          ${changeList(info.recent, { showNs: false })}
-          <p><a href="/recent?ns=${ns.slug}" data-link>All recent changes →</a></p>
-        </section>
+    <div class="page front">
+      ${frontHero({
+        title: `Welcome to ${ns.name}`,
+        searchLabel: ns.name,
+        directories: templatesFor(ns).filter((t) => t.key !== 'page').map((t) => ({ href: `/w/${ns.slug}/~t/${t.key}`, label: t.plural, icon: t.icon, sub: `${info.counts[t.key] || 0}` })),
+      })}
+      ${ns.archived ? `<div class="banner">${icon('lock')} ${esc(ns.name)} is archived: it’s kept for reading, and only moderators can change it.</div>` : ''}
+      ${intro ? card(intro.title, `<div class="prose">${intro.html}</div>`, 'fcard-intro')
+        : card(ns.tagline ? esc(ns.tagline) : '', info.canCreate
+          ? `<p class="muted">Write an article called <b>Main page</b> and it appears here. Its first part becomes this introduction, and each <code>## Heading</code> becomes a card below: rules, links, the latest update…</p>
+             <p><a class="btn primary" href="/w/${ns.slug}/~new?template=page&title=Main%20page" data-link>${icon('pencil-simple')} Write the main page</a></p>`
+          : '', 'fcard-intro')}
+      <div class="front-grid">
+        ${featured}
+        ${startEditing}
+        ${cards.map((c) => card(c.title, `<div class="prose">${c.html}</div>`)).join('')}
+        ${recent}
+        ${newest}
       </div>
+      ${main?.canEdit ? `<p class="front-edit"><a href="/w/${ns.slug}/main-page/edit" data-link>[edit this page]</a> <a href="/w/${ns.slug}/main-page/history" data-link>[history]</a></p>` : ''}
     </div>`;
 }
 

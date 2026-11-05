@@ -22,10 +22,17 @@ It's built for GTA and RDR roleplay servers. Characters, gangs, businesses, poli
 - Link across namespaces with `[[gta3:Tony Ramirez]]`
 - **Archive** an old version (readable, but only moderators can edit it) or **hide** a new one while you set it up
 
+**Look and feel**
+- A modern wiki layout in the style of the Citizen MediaWiki skin. There's a slim menu rail on the left (along the bottom on phones) with a drawer for navigation. Article titles stay at the top as you scroll, and an "On this page" column follows your reading.
+- Search pops up over the page (press `/`) and shows matching articles as you type
+- Infobox cards with a picture, foldable sections and foldable article sections
+- Each wiki's front page has your logo, search, buttons for each kind of article, and a grid of cards: the featured article, stats, rules, links and the latest update. You edit those cards as ordinary Markdown.
+- A site footer with your text and social links (Discord, YouTube, TikTok, Twitch…)
+
 **Themes**
 - **Los Santos (GTA):** night-time city, neon pink and sunset orange, condensed capitals
-- **Frontier (RDR):** parchment, ink and oxblood, with wanted-poster infoboxes
-- **Classic:** plain and quiet, and follows the device's light or dark setting
+- **Frontier (RDR):** warm paper, ink and oxblood, with a slab-serif for titles
+- **Classic:** cool blue-grey, and follows the device's light or dark setting
 - Every namespace has a theme, so the old GTA city and the RDR server each look like themselves. Readers can override the theme for themselves.
 - All themes share one layout, so adding a theme only means picking colours and fonts
 
@@ -51,8 +58,9 @@ It's built for GTA and RDR roleplay servers. Characters, gangs, businesses, poli
 
 | | |
 |---|---|
-| ![Frontier theme](docs/screenshots/rdr-article.jpg) | ![The front page with three namespaces](docs/screenshots/portal.jpg) |
-| ![The editor, with the infobox fields beside the text](docs/screenshots/editor.jpg) | ![Comparing two versions of an article](docs/screenshots/diff.jpg) |
+| ![Frontier theme](docs/screenshots/rdr-article.jpg) | ![A namespace's front page](docs/screenshots/portal.jpg) |
+| ![The search popup](docs/screenshots/search.jpg) | ![The editor, with the infobox fields beside the text](docs/screenshots/editor.jpg) |
+| ![Comparing two versions of an article](docs/screenshots/diff.jpg) | |
 
 ## Running it
 
@@ -166,7 +174,26 @@ DATA_DIR=./data npm run backup -- /path/to/backups
 | `![](picture-url)` | a picture. Paste or drop one into the editor to upload it. |
 | `\| a \| b \|` | a table, as in GitHub Markdown |
 
-An article called **Main page** becomes its namespace's front page.
+### Front pages
+
+An article called **Main page** fills its namespace's front page. Its first part (or first `## Heading`) is the introduction across the top. Every other `## Heading` becomes a card in the grid below. A list that's only links turns into a column of buttons, which suits "Official links". For example:
+
+```markdown
+## What is Los Santos 4.0?
+The current city, open since January 2026…
+
+## Wiki rules
+- Everything here is out-of-character information.
+- Don't edit-war: talk to a moderator on Discord.
+
+## Official links
+- [Discord](https://discord.gg/…)
+- [Server rules](https://…)
+```
+
+Protect the Main page (More → Protection) so only moderators can change it. Moderators can also pick a **featured article** from any article's More menu.
+
+The site's own front page works the same way, with its text under Admin → Site. The logo, footer text and footer links are set there too.
 
 ## Extending it
 
@@ -196,6 +223,6 @@ npm test       # API tests against a fake Discord: sign-in, permissions, moderat
 
 ## License
 
-MIT, see [LICENSE](LICENSE). Bundled fonts are under the SIL Open Font License: Oswald, Barlow, Rye and Alegreya (see `public/fonts`). Icons come from [Phosphor](https://phosphoricons.com) (MIT). The bundled libraries are [marked](https://marked.js.org) (MIT) and [DOMPurify](https://github.com/cure53/DOMPurify) (Apache 2.0 / MPL 2.0).
+MIT, see [LICENSE](LICENSE). Bundled fonts are under the SIL Open Font License: Roboto Flex, Oswald, Rye and Alegreya (see `public/fonts`). The layout is inspired by the [Citizen](https://github.com/StarCitizenTools/mediawiki-skins-Citizen) MediaWiki skin; no code from it is included. Icons come from [Phosphor](https://phosphoricons.com) (MIT). The bundled libraries are [marked](https://marked.js.org) (MIT) and [DOMPurify](https://github.com/cure53/DOMPurify) (Apache 2.0 / MPL 2.0).
 
 The themes are inspired by the general mood of crime-city and Wild West games. SimpleWiki isn't affiliated with or endorsed by Rockstar Games, and uses none of their artwork, fonts or logos.

@@ -11,6 +11,7 @@ import { viewLogin, viewUser, viewAccount } from './views/people.js';
 import { viewMod } from './views/mod.js';
 import { viewAdmin } from './views/admin.js';
 import { newArticleDialog } from './views/picker.js';
+import { openSearch, setNavigate } from './search.js';
 
 const view = $('#view');
 
@@ -62,11 +63,13 @@ export async function route() {
     lastPath = pathname;
     await hit[1](hit[0], q);
     if (ticket !== rendering) return;
+    setupStickyHeader();
     if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView();
     else if (!samePage) scrollTo(0, 0);
   } catch (e) {
     if (ticket !== rendering) return;
     showError(e);
+    setupStickyHeader();
   }
 }
 
@@ -96,6 +99,7 @@ export function navigate(url, replace = false) {
 }
 
 addEventListener('popstate', () => route());
+setNavigate((url) => navigate(url));
 
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[data-link]');
@@ -113,45 +117,32 @@ document.addEventListener('click', (e) => {
 
 // ------------------------------------------------------------ chrome
 
-function closeSidebar() { document.body.classList.remove('nav-open'); }
+const railIcons = { searchBtn: 'magnifying-glass', drawerBtn: 'list', newBtn: 'plus', prefsBtn: 'sliders-horizontal' };
 
 export function renderChrome() {
   const s = state.settings;
-  $('#siteName').textContent = s.siteName || 'Wiki';
-  $('#menuBtn').innerHTML = icon('list');
-  const ns = state.ns;
-
-  // Namespace switcher
-  $('#nsSwitch').innerHTML = state.namespaces.length ? `
-    <button class="ns-current" id="nsBtn" aria-haspopup="true">
-      <span>${esc(ns ? ns.name : 'All namespaces')}</span>${icon('caret-down')}
-    </button>
-    <div class="menu" id="nsMenu" hidden>
-      ${state.namespaces.map((n) => `<a href="/w/${n.slug}" data-link class="${n.slug === ns?.slug ? 'active' : ''}">
-        <span class="swatch theme-${n.theme}"></span><span><b>${esc(n.name)}</b>${n.archived ? ' <i class="tag">archived</i>' : ''}${n.hidden ? ' <i class="tag">hidden</i>' : ''}
-        <small>${esc(n.tagline)}</small></span></a>`).join('')}
-    </div>` : '';
-  $('#searchInput').placeholder = ns ? `Search ${ns.name}…  ( / )` : 'Search…  ( / )';
-
-  // Account & actions
   const u = state.user;
-  $('#topActions').innerHTML = `
-    ${ns && canWrite() && !(ns.archived && !isMod()) ? `<button class="btn primary small" id="newBtn" title="New article (N)">${icon('plus')}<span>New</span></button>` : ''}
-    ${u ? `
-      <button class="user-btn" id="userBtn" aria-haspopup="true">${u.avatar ? `<img class="avatar" src="${esc(u.avatar)}" alt="">` : icon('user-circle')}<span>${esc(u.username)}</span>${u.role !== 'user' ? `<i class="role role-${u.role}">${u.role}</i>` : ''}</button>
-      <div class="menu right" id="userMenu" hidden>
-        <a href="/u/${encodeURIComponent(u.username)}" data-link>${icon('user')} Your profile</a>
-        <a href="/account" data-link>${icon('gear')} Account</a>
-        ${isMod() ? `<a href="/mod" data-link>${icon('gavel')} Moderation</a>` : ''}
-        ${isAdmin() ? `<a href="/admin" data-link>${icon('crown')} Admin</a>` : ''}
-        <hr>${themeMenu()}<hr>
-        <button id="logoutBtn">${icon('sign-out')} Sign out</button>
-      </div>`
-    : `<button class="icon-btn" id="themeBtn" title="Theme" aria-haspopup="true">${icon('paint-brush')}</button>
-       <div class="menu right" id="themeMenu" hidden>${themeMenu()}</div>
-       <a class="btn small" href="/login?next=${encodeURIComponent(location.pathname + location.search)}" data-link>${icon('sign-in')}<span>Sign in</span></a>`}`;
+  for (const [id, name] of Object.entries(railIcons)) $(`#${id}`).innerHTML = icon(name);
+  $('.rail-logo').innerHTML = s.logo ? `<img class="logo-img" src="${esc(s.logo)}" alt="">` : '<span class="brand-mark"></span>';
+  $('.rail-logo').title = s.siteName;
+  $('#newBtn').hidden = !(canWrite() && state.namespaces.some((n) => !n.archived || isMod()));
+  $('#newBtn').title = 'New article (N)';
+  $('#searchBtn').title = 'Search ( / )';
 
-  renderSidebar();
+  $('#railUser').innerHTML = u
+    ? `<button id="userBtn" aria-haspopup="true" title="${esc(u.username)}">${u.avatar ? `<img class="avatar" src="${esc(u.avatar)}" alt="">` : icon('user-circle')}</button>`
+    : `<a href="/login?next=${encodeURIComponent(location.pathname + location.search)}" data-link title="Sign in with Discord">${icon('sign-in')}</a>`;
+  $('#userMenu').innerHTML = u ? `
+    <div class="menu-user">${u.avatar ? `<img src="${esc(u.avatar)}" alt="">` : icon('user-circle', 'big')}
+      <span><b>${esc(u.username)}</b><small>${esc(u.role)}${u.status !== 'active' ? ` · ${esc(u.status)}` : ''}</small></span></div><hr>
+    <a href="/u/${encodeURIComponent(u.username)}" data-link>${icon('user')} Your profile</a>
+    <a href="/account" data-link>${icon('gear')} Account</a>
+    ${isMod() ? `<a href="/mod" data-link>${icon('gavel')} Moderation</a>` : ''}
+    ${isAdmin() ? `<a href="/admin" data-link>${icon('crown')} Admin</a>` : ''}
+    <hr><button id="logoutBtn">${icon('sign-out')} Sign out</button>` : '';
+  $('#prefsMenu').innerHTML = themeMenu();
+  renderDrawer();
+  renderFooter();
 }
 
 function themeMenu() {
@@ -159,92 +150,140 @@ function themeMenu() {
   return `<div class="menu-label">Theme</div>
     <button data-theme-pick="auto" class="${pref === 'auto' ? 'active' : ''}">${icon(pref === 'auto' ? 'check' : 'paint-brush')} Match the namespace</button>
     ${Object.entries(state.themes).map(([k, label]) => `<button data-theme-pick="${k}" class="${pref === k ? 'active' : ''}">
-      ${icon(pref === k ? 'check' : 'paint-brush')} ${esc(label)}</button>`).join('')}`;
+      ${pref === k ? icon('check') : `<span class="swatch theme-${k}"></span>`} ${esc(label)}</button>`).join('')}`;
 }
 
-function renderSidebar() {
+function renderDrawer() {
   const ns = state.ns;
-  const side = $('#sidebar');
-  if (!state.canRead) { side.innerHTML = ''; return; }
-  const nsLinks = ns ? `
-    <div class="side-head"><span class="swatch theme-${ns.theme}"></span><b>${esc(ns.name)}</b></div>
-    ${ns.archived ? `<div class="side-note">${icon('lock')} Archived: kept for reading.</div>` : ''}
-    <nav class="side-nav">
-      <a href="/w/${ns.slug}" data-link>${icon('house')} Main page</a>
-      <a href="/w/${ns.slug}/~all" data-link>${icon('book-open')} All articles</a>
-      <a href="/recent?ns=${ns.slug}" data-link>${icon('clock-counter-clockwise')} Recent changes</a>
-      <a href="/w/${ns.slug}/~random" data-link>${icon('cards')} Random article</a>
-      <a href="/w/${ns.slug}/~wanted" data-link>${icon('ghost')} Wanted articles</a>
-    </nav>
-    <div class="side-label">Browse</div>
-    <nav class="side-nav">
-      ${templatesFor(ns).map((t) => `<a href="/w/${ns.slug}/~t/${t.key}" data-link>${icon(t.icon)} ${esc(t.plural)}</a>`).join('')}
-    </nav>` : `
-    <nav class="side-nav">
-      <a href="/" data-link>${icon('house')} Home</a>
-      <a href="/recent" data-link>${icon('clock-counter-clockwise')} Recent changes</a>
-    </nav>
-    <div class="side-label">Namespaces</div>
-    <nav class="side-nav">
-      ${state.namespaces.map((n) => `<a href="/w/${n.slug}" data-link><span class="swatch theme-${n.theme}"></span> ${esc(n.name)}</a>`).join('')}
-    </nav>`;
-  side.innerHTML = `${nsLinks}
-    ${isMod() ? `<div class="side-label">Tools</div><nav class="side-nav">
+  const d = $('#drawer');
+  if (!state.canRead) { d.innerHTML = ''; return; }
+  d.innerHTML = `
+    <div class="drawer-head">${state.settings.logo ? `<img class="logo-img small" src="${esc(state.settings.logo)}" alt="">` : '<span class="brand-mark"></span>'}<b>${esc(state.settings.siteName)}</b></div>
+    ${state.namespaces.length > 1 ? `<div class="drawer-section">Wikis</div>
+    <div class="ns-pick">${state.namespaces.map((n) => `<a href="/w/${n.slug}" data-link class="${n.slug === ns?.slug ? 'active' : ''}">
+      <span class="swatch theme-${n.theme}"></span><span><b>${esc(n.name)}</b>${n.archived ? ' <i class="tag">archived</i>' : ''}${n.hidden ? ' <i class="tag">hidden</i>' : ''}
+      ${n.tagline ? `<small>${esc(n.tagline)}</small>` : ''}</span></a>`).join('')}</div>` : ''}
+    ${ns ? `
+      <div class="drawer-section">${esc(ns.name)}</div>
+      <nav class="drawer-nav">
+        <a href="/w/${ns.slug}" data-link>${icon('house')} Main page</a>
+        <a href="/w/${ns.slug}/~all" data-link>${icon('book-open')} All articles</a>
+        <a href="/recent?ns=${ns.slug}" data-link>${icon('clock-counter-clockwise')} Recent changes</a>
+        <a href="/w/${ns.slug}/~random" data-link>${icon('cards')} Random article</a>
+        <a href="/w/${ns.slug}/~wanted" data-link>${icon('ghost')} Wanted articles</a>
+      </nav>
+      <div class="drawer-section">Browse</div>
+      <nav class="drawer-nav">
+        ${templatesFor(ns).map((t) => `<a href="/w/${ns.slug}/~t/${t.key}" data-link>${icon(t.icon)} ${esc(t.plural)}</a>`).join('')}
+      </nav>` : `
+      <div class="drawer-section">Site</div>
+      <nav class="drawer-nav">
+        <a href="/" data-link>${icon('house')} Home</a>
+        <a href="/recent" data-link>${icon('clock-counter-clockwise')} Recent changes</a>
+      </nav>`}
+    ${isMod() ? `<div class="drawer-section">Tools</div><nav class="drawer-nav">
       <a href="/mod" data-link>${icon('gavel')} Moderation</a>
       ${isAdmin() ? `<a href="/admin" data-link>${icon('crown')} Admin</a>` : ''}</nav>` : ''}
-    <div class="side-foot">${state.user ? '' : `<a href="/login?next=${encodeURIComponent(location.pathname)}" data-link>Sign in with Discord</a> to write.`}</div>`;
-  for (const a of $$('.side-nav a', side)) {
+    <div class="drawer-foot">${state.user ? '' : `<a href="/login?next=${encodeURIComponent(location.pathname)}" data-link>Sign in with Discord</a> to write.`}</div>`;
+  for (const a of $$('.drawer-nav a', d)) {
     const href = a.getAttribute('href');
     if (href === location.pathname + location.search || (href === location.pathname && !location.search)) a.classList.add('active');
   }
 }
 
-function toggleMenu(menu, btn) {
-  const open = menu.hidden;
-  $$('.menu').forEach((m) => { m.hidden = true; });
-  menu.hidden = !open;
-  if (open) {
-    const close = (e) => {
-      if (menu.contains(e.target) && !e.target.closest('a,button')) return;
-      if (btn.contains(e.target)) return;
-      menu.hidden = true;
-      document.removeEventListener('click', close, true);
-    };
-    setTimeout(() => document.addEventListener('click', close, true), 0);
-  }
+// Social links in the footer get an icon by their address.
+const SOCIAL = [[/discord\.(gg|com)/, 'discord-logo'], [/(twitter|x)\.com/, 'x-logo'], [/youtu\.?be/, 'youtube-logo'], [/tiktok\.com/, 'tiktok-logo'],
+  [/twitch\.tv/, 'twitch-logo'], [/instagram\.com/, 'instagram-logo'], [/reddit\.com/, 'reddit-logo'], [/facebook\.com/, 'facebook-logo']];
+
+function renderFooter() {
+  const s = state.settings;
+  const links = String(s.socialLinks || '').split('\n').map((l) => l.split('|').map((x) => x.trim())).filter(([, url]) => /^https:\/\//.test(url || ''));
+  $('#siteFooter').innerHTML = `
+    <div class="footer-inner">
+      <div class="footer-about">
+        <div class="footer-name">${esc(s.siteName)}</div>
+        ${s.footer ? `<p>${esc(s.footer)}</p>` : ''}
+        ${links.length ? `<div class="footer-label">Follow us</div><div class="footer-social">${links.map(([label, url]) =>
+          `<a href="${esc(url)}" target="_blank" rel="noopener" title="${esc(label)}" aria-label="${esc(label)}">${icon(SOCIAL.find(([re]) => re.test(url))?.[1] || 'globe')}</a>`).join('')}</div>` : ''}
+      </div>
+      <nav class="footer-links">
+        <a href="/" data-link>Home</a>
+        <a href="/recent" data-link>Recent changes</a>
+        ${state.namespaces.map((n) => `<a href="/w/${n.slug}" data-link>${esc(n.name)}</a>`).join('')}
+      </nav>
+      <div class="footer-powered">Powered by SimpleWiki</div>
+    </div>`;
 }
+
+// ---- open/close: drawer and the rail's menus
+
+function closeAll() {
+  $('#drawer').hidden = true;
+  $('#prefsMenu').hidden = true;
+  $('#userMenu').hidden = true;
+  $('#drawerBtn').setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('drawer-open', 'menu-open');
+}
+function toggle(el, cls, btn) {
+  const open = el.hidden;
+  closeAll();
+  if (!open) return;
+  el.hidden = false;
+  document.body.classList.add(cls);
+  btn?.setAttribute('aria-expanded', 'true');
+}
+function closeSidebar() { closeAll(); }
 
 document.addEventListener('click', async (e) => {
   const t = e.target;
-  if (t.closest('#menuBtn')) document.body.classList.toggle('nav-open');
-  else if (t.closest('#scrim')) closeSidebar();
-  else if (t.closest('#nsBtn')) toggleMenu($('#nsMenu'), $('#nsBtn'));
-  else if (t.closest('#userBtn')) toggleMenu($('#userMenu'), $('#userBtn'));
-  else if (t.closest('#themeBtn')) toggleMenu($('#themeMenu'), $('#themeBtn'));
-  else if (t.closest('#newBtn')) newArticleDialog(state.ns);
+  if (t.closest('#drawerBtn')) toggle($('#drawer'), 'drawer-open', $('#drawerBtn'));
+  else if (t.closest('#prefsBtn')) toggle($('#prefsMenu'), 'menu-open');
+  else if (t.closest('#userBtn')) toggle($('#userMenu'), 'menu-open');
+  else if (t.closest('#scrim')) closeAll();
+  else if (t.closest('#searchBtn, [data-open-search]')) { closeAll(); openSearch(); }
+  else if (t.closest('#newBtn')) { closeAll(); newArticleDialog(state.ns); }
   else if (t.closest('[data-theme-pick]')) { setThemePref(t.closest('[data-theme-pick]').dataset.themePick); renderChrome(); }
   else if (t.closest('#logoutBtn')) {
+    closeAll();
     await api.post('/api/logout');
     await loadSession();
     toast('Signed out.');
     route();
-  }
-});
-
-$('#searchForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const q = $('#searchInput').value.trim();
-  if (!q) return;
-  navigate(`/search?q=${encodeURIComponent(q)}${state.ns ? `&ns=${state.ns.slug}` : ''}`);
-  $('#searchInput').blur();
+  } else if (t.closest('#drawer a, .rail-menu a')) closeAll();
+  else if (t.closest('[data-top]')) scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAll();
   if (e.target.closest('input, textarea, select, [contenteditable]') || e.metaKey || e.ctrlKey || e.altKey) return;
-  if (e.key === '/') { e.preventDefault(); $('#searchInput').focus(); }
-  if (e.key === 'n' && $('#newBtn')) { e.preventDefault(); newArticleDialog(state.ns); }
+  if (e.key === '/') { e.preventDefault(); openSearch(); }
+  if (e.key === 'n' && !$('#newBtn').hidden) { e.preventDefault(); newArticleDialog(state.ns); }
   if (e.key === 'e' && $('[data-edit-link]')) { e.preventDefault(); $('[data-edit-link]').click(); }
 });
+
+// ---- the sticky header: the page's title once it has scrolled away
+
+let titleObserver = null;
+function setupStickyHeader() {
+  const bar = $('#stickyHeader');
+  titleObserver?.disconnect();
+  bar.classList.remove('show');
+  const title = $('#view .page-title, #view .page-head h1, #view .hero-title');
+  if (!title || $('#view .page-head.sticky')) { bar.innerHTML = ''; return; }
+  const edit = $('#view [data-edit-link]');
+  const hist = $('#view [data-history-link]');
+  bar.innerHTML = `<span class="sticky-title">${esc(title.textContent.trim())}</span>
+    ${hist ? `<a class="icon-btn" href="${esc(hist.getAttribute('href'))}" data-link title="History">${icon('clock-counter-clockwise')}</a>` : ''}
+    ${edit ? `<a class="icon-btn" href="${esc(edit.getAttribute('href'))}" data-link title="Edit">${icon('pencil-simple')}</a>` : ''}
+    <button class="icon-btn" data-top title="Back to top">${icon('arrow-up')}</button>`;
+  titleObserver = new IntersectionObserver(([en]) => {
+    const show = !en.isIntersecting && en.boundingClientRect.top < 0;
+    bar.classList.toggle('show', show);
+    bar.setAttribute('aria-hidden', String(!show));
+    $('#view .back-top')?.classList.toggle('show', show);
+  });
+  titleObserver.observe(title);
+}
 
 // ------------------------------------------------------------ boot
 

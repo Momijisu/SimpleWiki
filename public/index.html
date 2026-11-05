@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Wiki</title>
   <link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/roboto-flex-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/themes.css">
   <script src="/js/theme-boot.js"></script>
@@ -13,18 +14,24 @@
   <script type="module" src="/js/app.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <button class="icon-btn" id="menuBtn" aria-label="Menu"></button>
-    <a class="brand" href="/" data-link><span class="brand-mark"></span><span id="siteName">Wiki</span></a>
-    <div class="ns-switch" id="nsSwitch"></div>
-    <form id="searchForm" role="search"><input id="searchInput" type="search" placeholder="Search…  ( / )" aria-label="Search" autocomplete="off"></form>
-    <div class="top-actions" id="topActions"></div>
+  <!-- The rail: down the left on wide screens, along the bottom on phones. -->
+  <header class="rail" id="rail">
+    <a class="rail-logo" href="/" data-link aria-label="Home"><span class="brand-mark"></span></a>
+    <button class="rail-btn" id="searchBtn" aria-label="Search" aria-keyshortcuts="/"></button>
+    <button class="rail-btn" id="drawerBtn" aria-label="Menu" aria-expanded="false"></button>
+    <span class="rail-spacer"></span>
+    <button class="rail-btn" id="newBtn" aria-label="New article" aria-keyshortcuts="N" hidden></button>
+    <button class="rail-btn" id="prefsBtn" aria-label="Theme" aria-haspopup="true"></button>
+    <div class="rail-user" id="railUser"></div>
   </header>
-  <div class="layout">
-    <aside id="sidebar"></aside>
-    <div id="scrim"></div>
-    <main id="view"><div class="loading">Loading…</div></main>
-  </div>
+  <nav class="drawer" id="drawer" aria-label="Site" hidden></nav>
+  <div class="menu rail-menu" id="prefsMenu" hidden></div>
+  <div class="menu rail-menu" id="userMenu" hidden></div>
+  <div id="scrim"></div>
+  <div class="sticky-header" id="stickyHeader" aria-hidden="true"></div>
+  <main id="view"><div class="loading">Loading…</div></main>
+  <footer class="site-footer" id="siteFooter"></footer>
+  <div id="search-root"></div>
   <div id="modal-root"></div>
   <div id="toast" role="status" aria-live="polite"></div>
 </body>

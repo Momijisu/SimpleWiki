@@ -4,10 +4,10 @@ import { icon } from '../icons.js';
 import { nsBySlug, template, canWrite } from '../state.js';
 import { view, setTitle, changeList, articleHref } from './common.js';
 import { slugify } from '../shared.js';
+import { navigate } from '../app.js';
 
 export async function viewSearch(q, nsSlug) {
   setTitle(`Search: ${q}`);
-  $('#searchInput').value = q;
   const ns = nsBySlug(nsSlug);
   const { results } = await api.get(`/api/search?q=${encodeURIComponent(q)}${ns ? `&ns=${ns.slug}` : ''}`);
   const exact = ns && results.some((r) => r.ns === ns.slug && r.slug === slugify(q));
@@ -19,6 +19,7 @@ export async function viewSearch(q, nsSlug) {
         <h1>${icon('magnifying-glass')} Search</h1>
         <p class="muted">${results.length} result${results.length === 1 ? '' : 's'} for “${esc(q)}”${ns ? ` in ${esc(ns.name)} · <a href="/search?q=${encodeURIComponent(q)}" data-link>search everywhere</a>` : ''}</p>
       </div></header>
+      <form class="search-again" id="searchAgain"><input type="search" name="q" value="${esc(q)}" aria-label="Search again"><button class="btn primary">${icon('magnifying-glass')} Search</button></form>
       ${ns && !exact && canWrite() && !ns.archived ? `<p class="banner">${icon('plus')} No article is called “${esc(q)}”. <a href="/w/${ns.slug}/~new?title=${encodeURIComponent(q)}" data-link>Write it</a></p>` : ''}
       <ul class="results">${results.map((r) => `
         <li><a href="${articleHref(r.ns, r.slug)}" data-link class="result">
@@ -26,6 +27,11 @@ export async function viewSearch(q, nsSlug) {
           <span><b>${esc(r.title)}</b> <span class="ns-chip">${esc(r.nsName)}</span> <small class="muted">${esc(template(r.template).label)}</small>
           <span class="snippet">${snip(r.snippet)}</span></span></a></li>`).join('')}</ul>
     </div>`;
+  $('#searchAgain').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nq = e.target.q.value.trim();
+    if (nq) navigate(`/search?q=${encodeURIComponent(nq)}${ns ? `&ns=${ns.slug}` : ''}`);
+  });
 }
 
 export async function viewRecent(nsSlug) {

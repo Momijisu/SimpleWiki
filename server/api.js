@@ -256,8 +256,15 @@ route('GET', '/api/ns/:ns', (ctx) => {
     body: main.body, canEdit: canEdit(ctx.user, ns, main),
     existing: existing(db, q(db, 'SELECT to_ns AS ns, to_slug AS slug FROM links WHERE from_id = ?').all(main.id)),
   } : null;
+  const f = ns.featured ? findArticle(db, ns, ns.featured) : null;
   return {
     namespace: nsOut(ns), counts, main: mainOut,
+    featured: f && !f.deleted ? { slug: f.slug, title: f.title, template: f.template, image: f.image, teaser: f.body.slice(0, 400) } : null,
+    stats: {
+      articles: Object.values(counts).reduce((a, b) => a + b, 0),
+      edits: q(db, 'SELECT COUNT(*) AS n FROM revisions r JOIN articles a ON a.id = r.article_id WHERE a.ns_id = ?').get(ns.id).n,
+      editors: q(db, 'SELECT COUNT(DISTINCT r.user_id) AS n FROM revisions r JOIN articles a ON a.id = r.article_id WHERE a.ns_id = ?').get(ns.id).n,
+    },
     canCreate: canEdit(ctx.user, ns, null),
     recent: recent(ctx, { nsId: ns.id, limit: 12 }),
     newest: q(db, `SELECT slug, title, template, image, created_at AS createdAt FROM articles
@@ -373,6 +380,7 @@ route('GET', '/api/ns/:ns/article/:slug', (ctx) => {
     article: articleOut(db, a, ns),
     namespace: nsOut(ns),
     canEdit: canEdit(user, ns, a),
+    featured: ns.featured === a.slug,
     existing: existing(db, links),
     backlinks,
     openReports: isMod(user) ? q(db, "SELECT COUNT(*) AS n FROM reports WHERE article_id = ? AND status = 'open'").get(a.id).n : 0,
@@ -434,6 +442,7 @@ function updateArticle(db, user, ns, a, d, comment) {
     if (clash) fail(409, 'Another article already has that title.', { slug: clash.slug });
     q(db, 'DELETE FROM redirects WHERE ns_id = ? AND slug = ?').run(ns.id, d.slug);
     q(db, 'INSERT OR REPLACE INTO redirects (ns_id, slug, article_id) VALUES (?, ?, ?)').run(ns.id, a.slug, a.id);
+    q(db, 'UPDATE namespaces SET featured = ? WHERE id = ? AND featured = ?').run(d.slug, ns.id, a.slug);
   }
   const next = { ...a, ...d, updated_by: user.id, updated_at: Date.now() };
   next.rev_id = writeRevision(db, user, next, comment);
@@ -559,6 +568,24 @@ route('POST', '/api/ns/:ns/article/:slug/restore', (ctx) => {
   return { ok: true };
 });
 
+route('POST', '/api/ns/:ns/article/:slug/feature', (ctx) => {
+  const { user, ns, a } = modArticle(ctx);
+  const on = !!ctx.body.on;
+  q(ctx.db, 'UPDATE namespaces SET featured = ? WHERE id = ?').run(on ? a.slug : '', ns.id);
+  audit(ctx.db, user, on ? 'feature' : 'unfeature', `${ns.slug}/${a.slug}`);
+  return { ok: true };
+});
+
+route('GET', '/api/stats', (ctx) => {
+  requireRead(ctx);
+  const { db } = ctx;
+  return {
+    articles: q(db, 'SELECT COUNT(*) AS n FROM articles a JOIN namespaces n ON n.id = a.ns_id WHERE a.deleted = 0 AND n.hidden = 0').get().n,
+    edits: q(db, 'SELECT COUNT(*) AS n FROM revisions').get().n,
+    editors: q(db, 'SELECT COUNT(DISTINCT user_id) AS n FROM revisions').get().n,
+  };
+});
+
 route('POST', '/api/ns/:ns/article/:slug/protect', (ctx) => {
   const { user, ns, a } = modArticle(ctx);
   const level = String(ctx.body.level);
@@ -664,6 +691,13 @@ route('PUT', '/api/admin/settings', (ctx) => {
   if (b.readAccess !== undefined) {
     if (!['public', 'members'].includes(b.readAccess)) fail(400, 'Unknown read access.');
     next.readAccess = b.readAccess;
+  }
+  if (b.logo !== undefined) next.logo = cleanImage(b.logo);
+  if (b.footer !== undefined) next.footer = str(b.footer, 2000, 'The footer text');
+  if (b.socialLinks !== undefined) {
+    const lines = str(b.socialLinks, 3000, 'The links').split('\n').map((l) => l.trim()).filter(Boolean);
+    for (const l of lines) if (!/\|\s*https:\/\/\S+$/.test(l)) fail(400, `Each link goes on its own line as “Label | https://…”. This one isn’t: ${l}`);
+    next.socialLinks = lines.join('\n');
   }
   if (b.defaultTheme !== undefined) {
     if (!THEMES[b.defaultTheme]) fail(400, 'Unknown theme.');

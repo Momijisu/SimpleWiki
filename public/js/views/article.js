@@ -1,12 +1,13 @@
-import { $, esc, dialog, toast, confirmDialog, fullDate } from '../util.js';
+import { $, $$, esc, dialog, toast, confirmDialog, fullDate, timeAgo } from '../util.js';
 import * as api from '../api.js';
 import { icon } from '../icons.js';
 import { state, md, mdInline, template, isMod, isAdmin, canWrite } from '../state.js';
-import { view, setTitle, userLink, when, articleHref, templateBadge } from './common.js';
+import { view, setTitle, userLink, when, articleHref } from './common.js';
 import { navigate, route, enterNamespace } from '../app.js';
 import { diffHtml, revisionText } from '../diff.js';
 
-// The infobox: picture, then each template section's filled-in fields, then any extra fields.
+// The infobox card: picture, kind and title, then each template section's
+// filled-in fields (foldable), then any extra fields.
 export function infoboxHtml(a, ns, existing) {
   const t = template(a.template);
   const fields = { ...a.fields };
@@ -22,23 +23,69 @@ export function infoboxHtml(a, ns, existing) {
   const extra = Object.entries(fields);
   if (extra.length) sections.push([sections.length ? 'More' : '', extra]);
   if (!sections.length && !a.image) return '';
+  const dl = (rows) => `<dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${mdInline(v, ns, existing)}</dd>`).join('')}</dl>`;
+  // The first section shows straight under the title, like a summary.
+  const [first, ...rest] = sections;
   return `<aside class="infobox">
-    <div class="infobox-title">${esc(a.title)}</div>
     ${a.image ? `<div class="infobox-img"><img src="${esc(a.image)}" alt=""></div>` : ''}
-    <div class="infobox-kind">${icon(t.icon)} ${esc(t.label)}</div>
-    ${sections.map(([name, rows]) => `
-      ${name ? `<div class="infobox-section">${esc(name)}</div>` : ''}
-      <dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${mdInline(v, ns, existing)}</dd>`).join('')}</dl>`).join('')}
+    <div class="infobox-head">
+      <div class="infobox-kind">${icon(t.icon)} ${esc(t.label)}</div>
+      <div class="infobox-title">${esc(a.title)}</div>
+    </div>
+    ${first ? dl(first[1]) : ''}
+    ${rest.map(([name, rows]) => `<details class="infobox-section" open>
+      <summary>${esc(name || 'Details')}${icon('caret-up')}</summary>${dl(rows)}</details>`).join('')}
   </aside>`;
 }
 
-function tocHtml(body) {
-  const tpl = document.createElement('div');
-  tpl.innerHTML = body;
-  const hs = [...tpl.querySelectorAll('h2, h3')];
-  if (hs.filter((h) => h.tagName === 'H2').length < 3) return '';
-  return `<nav class="toc"><div class="toc-title">Contents</div><ol>${hs.map((h) =>
-    `<li class="toc-${h.tagName.toLowerCase()}"><a href="#${h.id}" data-link>${esc(h.textContent)}</a></li>`).join('')}</ol></nav>`;
+// Wrap each "## Section" and what follows it, so sections can fold.
+function sectionize(html) {
+  const box = document.createElement('div');
+  box.innerHTML = html;
+  const out = document.createElement('div');
+  let body = out;
+  for (const node of [...box.childNodes]) {
+    if (node.nodeName === 'H2') {
+      const sec = document.createElement('section');
+      sec.className = 'section';
+      const head = document.createElement('h2');
+      head.className = 'section-heading';
+      head.id = node.id;
+      head.innerHTML = `<span>${node.innerHTML}</span><button class="icon-btn sec-toggle" type="button" aria-label="Fold this section" aria-expanded="true">${icon('caret-up')}</button>`;
+      body = document.createElement('div');
+      body.className = 'section-body';
+      sec.append(head, body);
+      out.append(sec);
+    } else body.append(node);
+  }
+  return out.innerHTML;
+}
+
+function tocList(html) {
+  const box = document.createElement('div');
+  box.innerHTML = html;
+  const hs = [...box.querySelectorAll('h2, h3')];
+  if (!hs.length) return '';
+  return `<div class="aside-block"><p class="aside-label">On this page</p><ul class="toc">${hs.map((h) =>
+    `<li class="toc-${h.tagName.toLowerCase()}"><a href="#${h.id}" data-link data-toc="${h.id}">${esc(h.textContent)}</a></li>`).join('')}</ul></div>`;
+}
+
+// Highlight the section being read in "On this page".
+let spy = null;
+function scrollSpy() {
+  spy?.disconnect();
+  const links = $$('[data-toc]');
+  if (!links.length) return;
+  const heads = links.map((l) => document.getElementById(l.dataset.toc)).filter(Boolean);
+  const visible = new Set();
+  spy = new IntersectionObserver((entries) => {
+    for (const e of entries) e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id);
+    // The active one: the last heading above the middle of the screen.
+    let current = heads[0]?.id;
+    for (const h of heads) if (h.getBoundingClientRect().top < innerHeight * 0.4) current = h.id;
+    links.forEach((l) => l.classList.toggle('active', l.dataset.toc === current));
+  }, { rootMargin: '0px 0px -55% 0px' });
+  heads.forEach((h) => spy.observe(h));
 }
 
 export async function viewArticle(nsSlug, slug) {
@@ -52,8 +99,10 @@ export async function viewArticle(nsSlug, slug) {
   if (data.redirect) return navigate(articleHref(nsSlug, data.redirect) + location.hash, true);
   const { article: a, namespace: ns, canEdit, existing, backlinks } = data;
   setTitle(a.title, ns.name);
-  const body = md(a.body, ns.slug, existing);
+  const raw = md(a.body, ns.slug, existing);
+  const body = sectionize(raw);
   const base = articleHref(ns.slug, a.slug);
+  const t = template(a.template);
   const notes = [];
   if (a.deleted) notes.push(`<div class="banner danger">${icon('trash')} This article is deleted. Only moderators can see it.
     <button class="btn small" id="restoreBtn">${icon('arrow-counter-clockwise')} Restore</button></div>`);
@@ -63,38 +112,52 @@ export async function viewArticle(nsSlug, slug) {
 
   view().innerHTML = `
     <div class="page article">
-      ${notes.join('')}
-      <header class="article-head">
-        <div class="kicker"><a href="/w/${ns.slug}" data-link>${esc(ns.name)}</a> · ${templateBadge(a.template)}</div>
-        <h1>${esc(a.title)}</h1>
-        <div class="article-actions">
-          ${canEdit ? `<a class="btn primary small" href="${base}/edit" data-link data-edit-link>${icon('pencil-simple')} Edit</a>` : ''}
-          <a class="btn small" href="${base}/history" data-link>${icon('clock-counter-clockwise')} History</a>
-          <button class="btn small ghost" id="moreBtn" aria-haspopup="true">More ${icon('caret-down')}</button>
-          <div class="menu" id="moreMenu" hidden>
-            <button data-act="copy">${icon('link')} Copy link</button>
-            ${canWrite() ? `<button data-act="report">${icon('flag')} Report a problem</button>` : ''}
+      <header class="page-header">
+        <div class="page-heading">
+          <h1 class="page-title">${esc(a.title)}</h1>
+          <p class="page-sub">${esc(t.label)} in <a href="/w/${ns.slug}" data-link>${esc(ns.name)}</a></p>
+        </div>
+        <div class="page-actions">
+          <button class="icon-btn" data-act="copy" title="Copy link">${icon('share-fat')}</button>
+          <a class="btn" href="${base}/history" data-link data-history-link>${icon('clock-counter-clockwise')}<span>History</span></a>
+          ${canEdit ? `<a class="btn primary" href="${base}/edit" data-link data-edit-link>${icon('pencil-simple')}<span>Edit this page</span></a>` : ''}
+          <button class="icon-btn" id="moreBtn" aria-haspopup="true" title="More">${icon('dots-three')}</button>
+          <div class="menu right" id="moreMenu" hidden style="top: 44px">
+            ${canWrite() ? `<button data-act="report">${icon('flag')} Report a problem</button>` : '<div class="menu-label">Sign in to report a problem</div>'}
             ${isMod() ? `<hr><div class="menu-label">Moderation</div>
+              <button data-act="feature">${icon('star')} ${data.featured ? 'Stop featuring' : 'Feature on the main page'}</button>
               <button data-act="protect">${icon('lock')} Protection…</button>
               ${a.deleted ? `<button data-act="restore">${icon('arrow-counter-clockwise')} Restore</button>`
                 : `<button data-act="delete" class="danger">${icon('trash')} Delete…</button>`}` : ''}
           </div>
         </div>
       </header>
-      <div class="article-body">
-        ${infoboxHtml(a, ns.slug, existing)}
-        ${tocHtml(body)}
-        <div class="prose">${body || '<p class="muted">This article is empty.</p>'}</div>
+      <div class="page-body">
+        <div class="page-content">
+          ${notes.join('')}
+          <div class="article-body">
+            ${infoboxHtml(a, ns.slug, existing)}
+            <div class="prose">${body || '<p class="muted">This article is empty.</p>'}</div>
+          </div>
+          ${backlinks.length ? `<section class="backlinks">
+            <h2 class="section-title">${icon('link')} What links here</h2>
+            <ul>${backlinks.map((b) => `<li><a href="${articleHref(b.ns, b.slug)}" data-link>${esc(b.title)}</a>${b.ns !== ns.slug ? ` <span class="ns-chip">${esc(state.namespaces.find((n) => n.slug === b.ns)?.name || b.ns)}</span>` : ''}</li>`).join('')}</ul>
+          </section>` : ''}
+          <footer class="article-foot">
+            Last edited by ${userLink(a.updatedBy)} ${when(a.updatedAt)} · Created by ${userLink(a.createdBy)} on ${esc(new Date(a.createdAt).toLocaleDateString())}
+          </footer>
+        </div>
+        <aside class="page-aside"><div class="aside-inner">
+          <button class="back-top link-btn" data-top>${icon('arrow-up')} Back to top</button>
+          <div class="aside-block"><p class="aside-label">Last modified</p>
+            <a class="aside-meta" href="${base}/history" data-link title="${esc(fullDate(a.updatedAt))}">${icon('clock-clockwise')} ${esc(timeAgo(a.updatedAt))}</a></div>
+          ${tocList(raw)}
+        </div></aside>
       </div>
-      ${backlinks.length ? `<section class="backlinks">
-        <h2 class="section-title">${icon('link')} What links here</h2>
-        <ul>${backlinks.map((b) => `<li><a href="${articleHref(b.ns, b.slug)}" data-link>${esc(b.title)}</a>${b.ns !== ns.slug ? ` <span class="ns-chip">${esc(state.namespaces.find((n) => n.slug === b.ns)?.name || b.ns)}</span>` : ''}</li>`).join('')}</ul>
-      </section>` : ''}
-      <footer class="article-foot">
-        Last edited by ${userLink(a.updatedBy)} ${when(a.updatedAt)} · Created by ${userLink(a.createdBy)} on ${esc(new Date(a.createdAt).toLocaleDateString())}
-      </footer>
     </div>`;
 
+  scrollSpy();
+  const page = $('.page.article');
   const menu = $('#moreMenu');
   $('#moreBtn').addEventListener('click', (e) => {
     e.stopPropagation();
@@ -102,7 +165,14 @@ export async function viewArticle(nsSlug, slug) {
     if (!menu.hidden) setTimeout(() => document.addEventListener('click', () => { menu.hidden = true; }, { once: true }), 0);
   });
   $('#restoreBtn')?.addEventListener('click', () => restore(ns.slug, a.slug));
-  menu.addEventListener('click', async (e) => {
+  page.addEventListener('click', async (e) => {
+    const fold = e.target.closest('.sec-toggle');
+    if (fold) {
+      const sec = fold.closest('.section');
+      sec.classList.toggle('collapsed');
+      fold.setAttribute('aria-expanded', String(!sec.classList.contains('collapsed')));
+      return;
+    }
     const act = e.target.closest('[data-act]')?.dataset.act;
     if (act === 'copy') {
       await navigator.clipboard?.writeText(location.origin + base).catch(() => {});
@@ -112,7 +182,14 @@ export async function viewArticle(nsSlug, slug) {
     if (act === 'protect') protectDialog(ns.slug, a);
     if (act === 'delete') deleteDialog(ns.slug, a);
     if (act === 'restore') restore(ns.slug, a.slug);
+    if (act === 'feature') {
+      await api.post(`${api.articleUrl(ns.slug, a.slug)}/feature`, { on: !data.featured });
+      toast(data.featured ? 'No longer featured.' : 'Featured on the main page.');
+      route();
+    }
   });
+  // A link to a folded section opens it.
+  if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.closest('.section')?.classList.remove('collapsed');
 }
 
 function missingArticle(nsSlug, slug, canCreate) {
