@@ -31,3 +31,29 @@ ParserFunctions, Scribunto, TemplateStyles, TemplateData, TabberNeue, ShortDescr
 
 To change fields, edit `TYPES` in `pages/Module/Infobox.lua` **and** `TEMPLATES` in `build.py`
 (which writes the docs), then rebuild. Or edit `Module:Infobox` directly on the wiki.
+
+# Front page
+
+A settings-driven Main Page: logo, search (opens Citizen's search), directory buttons with page
+counts, an optional intro card, a featured article (picture and first paragraph taken from the
+article itself; several rotate daily) and recent changes.
+
+> **Tested** on the same local MediaWiki 1.46.2 + Citizen setup, desktop and phone, light and dark.
+
+| Page | What it does |
+|---|---|
+| `Module:Main page/config.json` | **The settings**: edit this to change the front page. Protect it. |
+| `Module:Main page` | Draws the page from the settings (its doc page lists every setting) |
+| `Template:Main page/styles.css` | The look |
+
+## Install
+
+1. Import `dist/mainpage.xml` at **Special:Import** (prefix `tpl`). It does **not** touch your
+   current Main Page.
+2. Upload your logo with the file name used in the settings (`Lets RP Wiki logo.png`), or change
+   `logo` in `Module:Main page/config.json` to the name of a logo you already have.
+3. Preview: edit any page (e.g. *Sandbox*), paste `{{#invoke:Main page|render}}` and click
+   **Show preview**.
+4. When you're happy, edit **Main Page**, replace everything with `{{#invoke:Main page|render}}`
+   and save. The old content stays in the page history.
+5. Protect `Module:Main page/config.json` and `Main Page` (admins only) so they can't be vandalised.

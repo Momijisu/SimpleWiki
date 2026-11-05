@@ -3,7 +3,7 @@
     <title>Module:Infobox</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>Scribunto</model>
@@ -454,7 +454,7 @@ return p
     <title>Template:Infobox/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>sanitized-css</model>
@@ -641,7 +641,7 @@ return p
     <title>Template:Infobox character</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -655,7 +655,7 @@ return p
     <title>Template:Infobox character/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1023,7 +1023,7 @@ placeholder=Page title
     <title>Template:Infobox character/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1074,7 +1074,7 @@ Where they came from and how they ended up here.
     <title>Template:Infobox organization</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1088,7 +1088,7 @@ Where they came from and how they ended up here.
     <title>Template:Infobox organization/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1497,7 +1497,7 @@ placeholder=Page title
     <title>Template:Infobox organization/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1555,7 +1555,7 @@ placeholder=Page title
     <title>Template:Infobox event</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1569,7 +1569,7 @@ placeholder=Page title
     <title>Template:Infobox event/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1843,7 +1843,7 @@ placeholder=Page title
     <title>Template:Infobox event/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1883,7 +1883,7 @@ What happened, in a paragraph.
     <title>Category:Pages with infobox problems</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-05T23:22:32Z</timestamp>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
       <contributor><username>Infobox import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>

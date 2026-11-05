@@ -1,0 +1,746 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" version="0.11" xml:lang="en">
+  <page>
+    <title>Module:Main page</title>
+    <ns>828</ns>
+    <revision>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>Scribunto</model>
+      <format>text/plain</format>
+      <text xml:space="preserve">-- Module:Main page
+-- Draws the front page from the settings in Module:Main page/config.json.
+-- The Main Page itself only contains:  {{#invoke:Main page|render}}
+-- To change what's on the front page, edit the settings, not this module.
+
+local p = {}
+
+local CONFIG_PAGE = 'Module:Main page/config.json'
+local STYLES = 'Template:Main page/styles.css'
+local PLACEHOLDER_IMAGE = 'Image unavailable.png' -- same as the infoboxes
+
+-- ===================================================================
+-- Helpers
+-- ===================================================================
+
+local lang = mw.language.getContentLanguage()
+
+-- Settings come from mw.loadJsonData, whose lists don't support # (length):
+-- count them with ipairs instead.
+local function count(list)
+	local n = 0
+	if list then for _ in ipairs(list) do n = n + 1 end end
+	return n
+end
+
+local function fileExists(name)
+	if not name or name == '' then return false end
+	local t = mw.title.new(name, 'File')
+	return t ~= nil and t.file ~= nil and t.file.exists
+end
+
+local function cleanFile(name)
+	return name and mw.text.trim((name:gsub('^[Ff]ile:', ''):gsub('^[Ii]mage:', ''))) or nil
+end
+
+-- Remove {{templates}}, even nested ones.
+local function stripTemplates(s)
+	local out, depth, i = {}, 0, 1
+	while i &lt;= #s do
+		local two = s:sub(i, i + 1)
+		if two == '{{' then depth = depth + 1; i = i + 2
+		elseif two == '}}' and depth &gt; 0 then depth = depth - 1; i = i + 2
+		else
+			if depth == 0 then table.insert(out, s:sub(i, i)) end
+			i = i + 1
+		end
+	end
+	return table.concat(out)
+end
+
+-- The first paragraph of an article as plain text, cut to about `max` characters.
+local function excerpt(content, max)
+	local s = stripTemplates(content)
+	s = s:gsub('&lt;!%-%-.-%-%-&gt;', '')
+	s = s:gsub('&lt;ref[^&gt;]-/&gt;', ''):gsub('&lt;ref.-&lt;/ref&gt;', '')
+	s = s:gsub('%[%[[Ff]ile:[^%]]-%]%]', ''):gsub('%[%[[Ii]mage:[^%]]-%]%]', ''):gsub('%[%[[Cc]ategory:[^%]]-%]%]', '')
+	s = s:gsub('&lt;[^&gt;]-&gt;', '')
+	for para in (s .. '\n\n'):gmatch('(.-)\n%s*\n') do
+		local text = mw.text.trim(para)
+		if text ~= '' and not text:match('^=') and not text:match('^[{|!]') and not text:match('^__') then
+			text = text:gsub('%[%[[^%]|]-|([^%]]-)%]%]', '%1'):gsub('%[%[([^%]]-)%]%]', '%1')
+			text = text:gsub('%[https?://%S+%s+([^%]]-)%]', '%1'):gsub("'''?", ''):gsub('%s+', ' ')
+			text = mw.text.trim(text)
+			if mw.ustring.len(text) &gt; max then
+				text = mw.ustring.sub(text, 1, max):gsub('%s+%S*$', '') .. '…'
+			end
+			return text
+		end
+	end
+	return nil
+end
+
+-- The picture from an article's infobox ("| image = …").
+local function infoboxImage(content)
+	local name = content:match('|%s*image%s*=%s*([^|\n}]+)')
+	name = name and mw.text.trim(name)
+	if name == '' then return nil end
+	return name
+end
+
+local function problem(text)
+	return mw.html.create('div'):addClass('mp-problem'):wikitext('Main page settings: ' .. text)
+end
+
+-- ===================================================================
+-- Parts of the page
+-- ===================================================================
+
+local function hero(cfg)
+	local box = mw.html.create('div'):addClass('mp-hero')
+
+	if cfg.background and fileExists(cfg.background) then
+		box:tag('div'):addClass('mp-hero-bg')
+			:wikitext(string.format('[[File:%s|1600px|link=|alt=]]', cleanFile(cfg.background)))
+	end
+
+	local inner = box:tag('div'):addClass('mp-hero-inner')
+
+	if cfg.stats ~= false then
+		local stats = inner:tag('div'):addClass('mp-stats')
+		for _, s in ipairs({
+			{ mw.site.stats.articles, 'articles' },
+			{ mw.site.stats.files, 'files' },
+			{ mw.site.stats.users, 'members' },
+			{ mw.site.stats.edits, 'edits' },
+		}) do
+			local item = stats:tag('span'):addClass('mp-stat')
+			item:tag('b'):wikitext(lang:formatNum(s[1]))
+			item:wikitext(' ' .. s[2])
+		end
+	end
+
+	local logo = cleanFile(cfg.logo)
+	if logo and fileExists(logo) then
+		inner:tag('div'):addClass('mp-logo'):wikitext(string.format('[[File:%s|180px|link=|alt=%s]]', logo, cfg.title or ''))
+	end
+
+	if cfg.title then inner:tag('div'):addClass('mp-title'):wikitext(cfg.title) end
+	if cfg.subtitle then inner:tag('div'):addClass('mp-subtitle'):wikitext(cfg.subtitle) end
+
+	-- Clicking this opens Citizen's own search popup.
+	local search = cfg.search or {}
+	if search.show ~= false then
+		local bar = inner:tag('div')
+			:addClass('mp-search'):addClass('citizen-search-trigger')
+			:attr('role', 'button'):attr('tabindex', '0')
+		bar:tag('span'):addClass('mp-search-icon')
+		bar:tag('span'):addClass('mp-search-text'):wikitext(search.text or 'Search the wiki')
+		if search.shortcutHint ~= false then
+			bar:tag('span'):addClass('mp-search-hint'):wikitext('Press &lt;kbd&gt;/&lt;/kbd&gt;')
+		end
+		-- Quick searches under the bar, e.g. "Characters" → search prefilled with that word.
+		if count(search.suggestions) &gt; 0 then
+			local chips = inner:tag('div'):addClass('mp-chips')
+			for _, s in ipairs(search.suggestions) do
+				chips:tag('span'):addClass('mp-chip'):addClass('citizen-search-trigger')
+					:attr('role', 'button'):attr('tabindex', '0')
+					:attr('data-citizen-search-prefill', s.prefill or s.label)
+					:wikitext(s.label)
+			end
+		end
+	end
+	return box
+end
+
+local function directories(cfg)
+	if count(cfg.directories) == 0 then return nil end
+	local row = mw.html.create('div'):addClass('mp-directories')
+	for _, d in ipairs(cfg.directories) do
+		local link = d.link or (d.category and (':Category:' .. d.category)) or d.label
+		if link:match('^[Cc]ategory:') then link = ':' .. link end
+		local item = row:tag('div'):addClass('mp-dir')
+		if d.image and fileExists(d.image) then
+			item:addClass('mp-dir--image')
+			item:tag('div'):addClass('mp-dir-bg'):wikitext(string.format('[[File:%s|400px|link=|alt=]]', cleanFile(d.image)))
+		end
+		local text = item:tag('div'):addClass('mp-dir-text')
+		text:tag('div'):addClass('mp-dir-label'):wikitext(string.format('[[%s|%s]]', link, d.label))
+		if d.category and d.showCount ~= false then
+			local n = mw.site.stats.pagesInCategory(d.category, 'pages')
+			text:tag('div'):addClass('mp-dir-count'):wikitext(lang:formatNum(n) .. (n == 1 and ' page' or ' pages'))
+		elseif d.description then
+			text:tag('div'):addClass('mp-dir-count'):wikitext(d.description)
+		end
+		if d.icon and fileExists(d.icon) then
+			item:tag('div'):addClass('mp-dir-icon'):wikitext(string.format('[[File:%s|40px|link=|alt=]]', cleanFile(d.icon)))
+		end
+	end
+	return row
+end
+
+local function card(title, cls)
+	local c = mw.html.create('div'):addClass('mp-card')
+	if cls then c:addClass(cls) end
+	if title then c:tag('div'):addClass('mp-card-title'):wikitext(title) end
+	return c
+end
+
+-- Today's featured article: one page, or a list that changes every day.
+local function featured(cfg)
+	local f = cfg.featured
+	local n = f and count(f.pages) or 0
+	if n == 0 then return nil end
+	local day = math.floor(os.time() / 86400)
+	local pick = f.pages[(day % n) + 1]
+	if type(pick) == 'string' then pick = { page = pick } end
+
+	local title = mw.title.new(pick.page or '')
+	if not title or not title.exists then
+		return problem(string.format('the featured page “%s” doesn’t exist.', tostring(pick.page)))
+	end
+	local content = title:getContent() or ''
+	local image = cleanFile(pick.image) or cleanFile(infoboxImage(content))
+	if not fileExists(image) then image = fileExists(PLACEHOLDER_IMAGE) and PLACEHOLDER_IMAGE or nil end
+	local text = pick.text or excerpt(content, f.excerptLength or 220)
+
+	local c = card(nil, 'mp-featured')
+	if image then
+		c:tag('div'):addClass('mp-featured-image')
+			:wikitext(string.format('[[File:%s|700px|link=%s|alt=%s]]', image, title.fullText, title.text))
+	end
+	local body = c:tag('div'):addClass('mp-featured-body')
+	body:tag('div'):addClass('mp-kicker'):wikitext(f.label or 'Featured')
+	body:tag('div'):addClass('mp-featured-title'):wikitext(string.format('[[%s|%s]]', title.fullText, pick.label or title.text))
+	if text then body:tag('div'):addClass('mp-featured-text'):wikitext(text) end
+	body:tag('div'):addClass('mp-more'):wikitext(string.format('[[%s|%s]]', title.fullText, f.moreText or 'Read more'))
+	return c
+end
+
+local function recentChanges(frame, cfg)
+	local rc = cfg.recentChanges
+	if rc == false or (rc and rc.show == false) then return nil end
+	rc = rc or {}
+	local opts = { 'limit=' .. (rc.limit or 8), 'days=' .. (rc.days or 30) }
+	if rc.hideBots ~= false then table.insert(opts, 'hidebots') end
+	if rc.hideMinor then table.insert(opts, 'hideminor') end
+	if rc.hideLogs ~= false then table.insert(opts, 'hidelog') end
+	if rc.namespace ~= nil then table.insert(opts, 'namespace=' .. rc.namespace) end
+	local c = card(rc.title or 'Recent changes', 'mp-rc')
+	c:tag('div'):addClass('mp-rc-list'):wikitext(frame:preprocess('{{Special:RecentChanges/' .. table.concat(opts, ',') .. '}}'))
+	c:tag('div'):addClass('mp-more'):wikitext('[[Special:RecentChanges|' .. (rc.moreText or 'All recent changes') .. ']]')
+	return c
+end
+
+local function intro(cfg)
+	local i = cfg.intro
+	if not i or not i.text or i.text == '' then return nil end
+	local c = card(i.title, 'mp-intro')
+	c:tag('div'):addClass('mp-intro-text'):wikitext('\n' .. i.text .. '\n')
+	return c
+end
+
+-- ===================================================================
+
+function p.render(frame)
+	local ok, cfg = pcall(mw.loadJsonData, CONFIG_PAGE)
+	local out = { frame:extensionTag('templatestyles', '', { src = STYLES }) }
+	if not ok then
+		table.insert(out, tostring(problem('couldn’t read [[' .. CONFIG_PAGE .. ']]. Check it exists and is valid JSON.')))
+		return table.concat(out)
+	end
+
+	local page = mw.html.create('div'):addClass('mp')
+	page:node(hero(cfg))
+	local dirs = directories(cfg)
+	if dirs then page:node(dirs) end
+	local i = intro(cfg)
+	if i then page:node(i) end
+
+	local grid = page:tag('div'):addClass('mp-grid')
+	local f = featured(cfg)
+	if f then grid:node(f) end
+	local rc = recentChanges(frame, cfg)
+	if rc then grid:node(rc) end
+
+	table.insert(out, tostring(page))
+	return table.concat(out)
+end
+
+return p
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Module:Main page/config.json</title>
+    <ns>828</ns>
+    <revision>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>json</model>
+      <format>application/json</format>
+      <text xml:space="preserve">{
+	"title": "Welcome to the Let's RP Wiki!",
+	"subtitle": "The story of the city, written by the people who live it.",
+	"logo": "Lets RP Wiki logo.png",
+	"background": "",
+	"stats": true,
+
+	"search": {
+		"text": "Search the Let's RP Wiki",
+		"shortcutHint": true,
+		"suggestions": []
+	},
+
+	"directories": [
+		{ "label": "Character Directory", "category": "Characters", "icon": "", "image": "" },
+		{ "label": "Gang Directory", "category": "Gangs", "icon": "", "image": "" },
+		{ "label": "Business Directory", "category": "Businesses", "icon": "", "image": "" },
+		{ "label": "Emergency Services", "category": "Emergency Services", "icon": "", "image": "" },
+		{ "label": "Server Events", "category": "Events", "icon": "", "image": "" }
+	],
+
+	"intro": {
+		"title": "What is Let's RP?",
+		"text": "Let's RP is a story-driven GTA roleplay server. This wiki is where players record their characters, crews, businesses and the events that shaped the city. Anyone with an account can write and edit."
+	},
+
+	"featured": {
+		"label": "Featured",
+		"pages": [],
+		"excerptLength": 220,
+		"moreText": "Read more"
+	},
+
+	"recentChanges": {
+		"title": "Recent changes",
+		"limit": 8,
+		"days": 30,
+		"hideBots": true,
+		"hideMinor": false,
+		"hideLogs": true,
+		"namespace": 0,
+		"moreText": "All recent changes"
+	}
+}
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Module:Main page/doc</title>
+    <ns>828</ns>
+    <revision>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">The front page. The '''Main Page''' only contains &lt;code&gt;&lt;nowiki&gt;{{#invoke:Main page|render}}&lt;/nowiki&gt;&lt;/code&gt;; everything on it is set in '''[[Module:Main page/config.json]]'''. Edit the settings there, not this module.
+
+== Settings ==
+{| class="wikitable"
+! Setting !! What it does
+|-
+| &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;subtitle&lt;/code&gt; || The welcome line and the line under it.
+|-
+| &lt;code&gt;logo&lt;/code&gt; || File name of the logo (shown round). Upload it first; until it exists, no logo shows.
+|-
+| &lt;code&gt;background&lt;/code&gt; || Optional picture behind the top of the page.
+|-
+| &lt;code&gt;stats&lt;/code&gt; || &lt;code&gt;true&lt;/code&gt; shows the article, file, member and edit counts at the top.
+|-
+| &lt;code&gt;search.text&lt;/code&gt; || The words in the search bar. Clicking it opens the site search.
+|-
+| &lt;code&gt;search.suggestions&lt;/code&gt; || Small buttons under the search bar. Each opens search with its &lt;code&gt;label&lt;/code&gt; (or &lt;code&gt;prefill&lt;/code&gt;) typed in.
+|-
+| &lt;code&gt;directories&lt;/code&gt; || The row of directory buttons. Each has a &lt;code&gt;label&lt;/code&gt; and either a &lt;code&gt;category&lt;/code&gt; (it links there and shows how many pages it has) or a &lt;code&gt;link&lt;/code&gt; to any page. Optional: &lt;code&gt;icon&lt;/code&gt; (a small picture on the right), &lt;code&gt;image&lt;/code&gt; (a faint picture behind it), &lt;code&gt;description&lt;/code&gt; (instead of the count), &lt;code&gt;showCount: false&lt;/code&gt;.
+|-
+| &lt;code&gt;intro&lt;/code&gt; || An optional welcome card: &lt;code&gt;title&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt; (wikitext, links work).
+|-
+| &lt;code&gt;featured.pages&lt;/code&gt; || Featured articles. With several, a different one shows each day. Each entry is a page name, or &lt;code&gt;{ "page": "…", "image": "…", "text": "…", "label": "…" }&lt;/code&gt; to override the picture, the text or the shown title. By default the picture comes from the article's infobox and the text is its first paragraph.
+|-
+| &lt;code&gt;featured.label&lt;/code&gt;, &lt;code&gt;excerptLength&lt;/code&gt;, &lt;code&gt;moreText&lt;/code&gt; || The small label, how many characters of text to show, and the link text.
+|-
+| &lt;code&gt;recentChanges&lt;/code&gt; || &lt;code&gt;limit&lt;/code&gt; (how many), &lt;code&gt;days&lt;/code&gt;, &lt;code&gt;hideBots&lt;/code&gt;, &lt;code&gt;hideMinor&lt;/code&gt;, &lt;code&gt;hideLogs&lt;/code&gt; (uploads, moves, deletions), &lt;code&gt;namespace&lt;/code&gt; (0 = articles only; leave it out for every kind of page), &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;moreText&lt;/code&gt;. Set &lt;code&gt;"show": false&lt;/code&gt; to remove it.
+|}
+
+Leave a setting out (or empty) to hide that part. Problems, like a featured page that doesn't exist, show as a red note on the front page.
+
+To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki&gt;{{#invoke:Main page|render}}&lt;/nowiki&gt;&lt;/code&gt; after saving the settings.
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Main page/styles.css</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T23:49:28Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>sanitized-css</model>
+      <format>text/css</format>
+      <text xml:space="preserve">/* Template:Main page/styles.css: the look of the front page (TemplateStyles).
+   See-through greys and inherited colours, so it follows Citizen's
+   light and dark modes. */
+
+.mp {
+	max-width: 1080px;
+	margin: 0 auto;
+}
+
+/* ---------- Hero: stats, logo, title, search ---------- */
+.mp-hero {
+	position: relative;
+	overflow: hidden;
+	margin-bottom: 20px;
+	border-radius: 16px;
+	text-align: center;
+}
+.mp-hero-bg {
+	position: absolute;
+	inset: 0;
+	opacity: 0.35;
+}
+.mp-hero-bg img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.mp-hero-inner {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 28px 16px 8px;
+}
+.mp-stats {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 6px 20px;
+	font-size: 0.8125rem;
+	opacity: 0.75;
+}
+.mp-stat b {
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+.mp-logo {
+	margin-top: 18px;
+}
+.mp-logo img {
+	width: 160px;
+	height: 160px;
+	border-radius: 50%;
+	object-fit: cover;
+	box-shadow: 0 0 0 1px rgba( 127, 127, 127, 0.28 ), 0 12px 40px rgba( 0, 0, 0, 0.35 );
+}
+.mp-title {
+	margin-top: 18px;
+	font-size: 2rem;
+	font-weight: 600;
+	line-height: 1.15;
+}
+.mp-subtitle {
+	margin-top: 6px;
+	font-size: 1.0625rem;
+	opacity: 0.7;
+}
+
+/* The search bar opens Citizen's search popup */
+.mp-search {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 620px;
+	height: 52px;
+	margin-top: 22px;
+	padding: 0 14px 0 18px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.08 );
+	font-size: 1rem;
+	text-align: left;
+	cursor: text;
+	transition: border-color 0.15s, background-color 0.15s;
+}
+.mp-search:hover,
+.mp-search:focus {
+	border-color: rgba( 127, 127, 127, 0.5 );
+	background: rgba( 127, 127, 127, 0.13 );
+	outline: none;
+}
+.mp-search-icon {
+	position: relative;
+	flex: none;
+	width: 14px;
+	height: 14px;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	opacity: 0.6;
+}
+.mp-search-icon::after {
+	content: '';
+	position: absolute;
+	right: -6px;
+	bottom: -5px;
+	width: 7px;
+	height: 2px;
+	background: currentColor;
+	transform: rotate( 45deg );
+}
+.mp-search-text {
+	flex: 1;
+	opacity: 0.65;
+}
+.mp-search-hint {
+	font-size: 0.8125rem;
+	opacity: 0.6;
+}
+.mp-search-hint kbd {
+	display: inline-block;
+	min-width: 1.4em;
+	padding: 0 6px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 6px;
+	font-family: inherit;
+	text-align: center;
+}
+.mp-chips {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 12px;
+}
+.mp-chip {
+	padding: 4px 12px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 999px;
+	font-size: 0.8125rem;
+	cursor: pointer;
+}
+.mp-chip:hover,
+.mp-chip:focus {
+	background: rgba( 127, 127, 127, 0.14 );
+	outline: none;
+}
+
+/* ---------- Directories ---------- */
+.mp-directories {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 180px, 1fr ) );
+	gap: 10px;
+	margin-bottom: 20px;
+}
+.mp-dir {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 64px;
+	padding: 12px 16px;
+	overflow: hidden;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.07 );
+	transition: border-color 0.15s, transform 0.15s;
+}
+.mp-dir:hover {
+	border-color: rgba( 127, 127, 127, 0.55 );
+	transform: translateY( -2px );
+}
+.mp-dir-bg {
+	position: absolute;
+	inset: 0;
+	opacity: 0.22;
+}
+.mp-dir-bg img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.mp-dir-text {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+}
+.mp-dir-label {
+	font-weight: 600;
+}
+/* The whole tile is clickable: the label's link stretches over it */
+.mp-dir-label a::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+.mp-dir-label a {
+	color: inherit;
+}
+.mp-dir-count {
+	margin-top: 2px;
+	font-size: 0.8125rem;
+	opacity: 0.65;
+}
+.mp-dir-icon {
+	position: relative;
+	flex: none;
+	opacity: 0.85;
+}
+
+/* ---------- Cards ---------- */
+.mp-card {
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 16px 18px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.06 );
+}
+.mp-card-title {
+	margin-bottom: 10px;
+	font-size: 1rem;
+	font-weight: 600;
+}
+.mp-intro {
+	margin-bottom: 20px;
+}
+.mp-intro-text p:last-child {
+	margin-bottom: 0;
+}
+.mp-more {
+	margin-top: 10px;
+	font-size: 0.875rem;
+}
+.mp-kicker {
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	opacity: 0.7;
+}
+.mp-grid {
+	display: grid;
+	grid-template-columns: minmax( 0, 3fr ) minmax( 0, 2fr );
+	gap: 16px;
+	align-items: start;
+}
+
+/* Featured article */
+.mp-featured {
+	padding: 0;
+	overflow: hidden;
+}
+.mp-featured-image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 340px;
+	object-fit: cover;
+}
+.mp-featured-body {
+	padding: 16px 18px;
+}
+.mp-featured-title {
+	margin-top: 4px;
+	font-size: 1.375rem;
+	font-weight: 600;
+	line-height: 1.25;
+}
+.mp-featured-text {
+	margin-top: 8px;
+	opacity: 0.85;
+}
+
+/* Recent changes: a short, quiet list (time and page only) */
+.mp-rc .mw-plusminus-pos,
+.mp-rc .mw-plusminus-neg,
+.mp-rc .mw-plusminus-null,
+.mp-rc .mw-diff-bytes,
+.mp-rc .mw-userlink,
+.mp-rc .mw-tag-markers,
+.mp-rc .changedby,
+.mp-rc .mw-changeslist-legend,
+.mp-rc .mw-changeslist-links,
+.mp-rc .mw-usertoollinks,
+.mp-rc .mw-changeslist-separator,
+.mp-rc .comment,
+.mp-rc .mw-rcfilters-ui-highlights,
+.mp-rc .mw-enhancedchanges-arrow-space,
+.mp-rc .mw-enhanced-rc-time + .mw-changeslist-line-inner-characterDiff {
+	display: none;
+}
+.mp-rc h4 {
+	margin: 10px 0 4px;
+	padding: 0 0 0 14px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	opacity: 0.6;
+	border: 0;
+}
+.mp-rc h4:first-of-type {
+	margin-top: 0;
+}
+.mp-rc table.mw-changeslist-line,
+.mp-rc ul.special {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border-collapse: collapse;
+	list-style: none;
+	font-size: 0.875rem;
+}
+.mp-rc table.mw-changeslist-line td {
+	padding: 4px 0;
+	border-bottom: 1px solid rgba( 127, 127, 127, 0.28 );
+	vertical-align: top;
+}
+.mp-rc .mw-enhanced-rc,
+.mp-rc .mw-enhanced-rc-time {
+	white-space: nowrap;
+	opacity: 0.6;
+	font-size: 0.8125rem;
+}
+.mp-rc .mw-title {
+	font-weight: 500;
+}
+
+/* Settings problems */
+.mp-problem {
+	margin: 10px 0;
+	padding: 8px 12px;
+	border: 1px solid rgba( 239, 68, 68, 0.5 );
+	border-radius: 8px;
+	background: rgba( 239, 68, 68, 0.1 );
+	font-size: 0.875rem;
+}
+
+/* ---------- Phones ---------- */
+@media ( max-width: 720px ) {
+	.mp-grid {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+	.mp-title {
+		font-size: 1.5rem;
+	}
+	.mp-logo img {
+		width: 120px;
+		height: 120px;
+	}
+	.mp-search-hint {
+		display: none;
+	}
+	.mp-directories {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+}
+</text>
+    </revision>
+  </page>
+</mediawiki>

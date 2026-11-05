@@ -291,11 +291,56 @@ def xml(pages):
     return '\n'.join(parts)
 
 
+MAINPAGE_DOC = """The front page. The '''Main Page''' only contains <code><nowiki>{{#invoke:Main page|render}}</nowiki></code>; everything on it is set in '''[[Module:Main page/config.json]]'''. Edit the settings there, not this module.
+
+== Settings ==
+{| class="wikitable"
+! Setting !! What it does
+|-
+| <code>title</code>, <code>subtitle</code> || The welcome line and the line under it.
+|-
+| <code>logo</code> || File name of the logo (shown round). Upload it first; until it exists, no logo shows.
+|-
+| <code>background</code> || Optional picture behind the top of the page.
+|-
+| <code>stats</code> || <code>true</code> shows the article, file, member and edit counts at the top.
+|-
+| <code>search.text</code> || The words in the search bar. Clicking it opens the site search.
+|-
+| <code>search.suggestions</code> || Small buttons under the search bar. Each opens search with its <code>label</code> (or <code>prefill</code>) typed in.
+|-
+| <code>directories</code> || The row of directory buttons. Each has a <code>label</code> and either a <code>category</code> (it links there and shows how many pages it has) or a <code>link</code> to any page. Optional: <code>icon</code> (a small picture on the right), <code>image</code> (a faint picture behind it), <code>description</code> (instead of the count), <code>showCount: false</code>.
+|-
+| <code>intro</code> || An optional welcome card: <code>title</code> and <code>text</code> (wikitext, links work).
+|-
+| <code>featured.pages</code> || Featured articles. With several, a different one shows each day. Each entry is a page name, or <code>{ "page": "…", "image": "…", "text": "…", "label": "…" }</code> to override the picture, the text or the shown title. By default the picture comes from the article's infobox and the text is its first paragraph.
+|-
+| <code>featured.label</code>, <code>excerptLength</code>, <code>moreText</code> || The small label, how many characters of text to show, and the link text.
+|-
+| <code>recentChanges</code> || <code>limit</code> (how many), <code>days</code>, <code>hideBots</code>, <code>hideMinor</code>, <code>hideLogs</code> (uploads, moves, deletions), <code>namespace</code> (0 = articles only; leave it out for every kind of page), <code>title</code>, <code>moreText</code>. Set <code>"show": false</code> to remove it.
+|}
+
+Leave a setting out (or empty) to hide that part. Problems, like a featured page that doesn't exist, show as a red note on the front page.
+
+To try changes before they go live, preview any page with <code><nowiki>{{#invoke:Main page|render}}</nowiki></code> after saving the settings.
+"""
+
+
+def mainpage_pages():
+    base = HERE / 'pages'
+    return [
+        ('Module:Main page', 828, 'Scribunto', 'text/plain', (base / 'Module/Main page.lua').read_text()),
+        ('Module:Main page/config.json', 828, 'json', 'application/json', (base / 'Module/Main page/config.json').read_text()),
+        ('Module:Main page/doc', 828, 'wikitext', 'text/x-wiki', MAINPAGE_DOC),
+        ('Template:Main page/styles.css', 10, 'sanitized-css', 'text/css', (base / 'Template/Main page/styles.css').read_text()),
+    ]
+
+
 if __name__ == '__main__':
-    built = pages()
     dist = HERE / 'dist'
     dist.mkdir(exist_ok=True)
-    (dist / 'infoboxes.xml').write_text(xml(built))
-    print(f'Wrote {dist / "infoboxes.xml"} with {len(built)} pages:')
-    for p in built:
-        print('  ', p[0])
+    for name, built in (('infoboxes.xml', pages()), ('mainpage.xml', mainpage_pages())):
+        (dist / name).write_text(xml(built))
+        print(f'Wrote {dist / name} with {len(built)} pages:')
+        for p in built:
+            print('  ', p[0])

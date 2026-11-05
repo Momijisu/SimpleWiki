@@ -1,0 +1,360 @@
+/* Template:Main page/styles.css: the look of the front page (TemplateStyles).
+   See-through greys and inherited colours, so it follows Citizen's
+   light and dark modes. */
+
+.mp {
+	max-width: 1080px;
+	margin: 0 auto;
+}
+
+/* ---------- Hero: stats, logo, title, search ---------- */
+.mp-hero {
+	position: relative;
+	overflow: hidden;
+	margin-bottom: 20px;
+	border-radius: 16px;
+	text-align: center;
+}
+.mp-hero-bg {
+	position: absolute;
+	inset: 0;
+	opacity: 0.35;
+}
+.mp-hero-bg img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.mp-hero-inner {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 28px 16px 8px;
+}
+.mp-stats {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 6px 20px;
+	font-size: 0.8125rem;
+	opacity: 0.75;
+}
+.mp-stat b {
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+.mp-logo {
+	margin-top: 18px;
+}
+.mp-logo img {
+	width: 160px;
+	height: 160px;
+	border-radius: 50%;
+	object-fit: cover;
+	box-shadow: 0 0 0 1px rgba( 127, 127, 127, 0.28 ), 0 12px 40px rgba( 0, 0, 0, 0.35 );
+}
+.mp-title {
+	margin-top: 18px;
+	font-size: 2rem;
+	font-weight: 600;
+	line-height: 1.15;
+}
+.mp-subtitle {
+	margin-top: 6px;
+	font-size: 1.0625rem;
+	opacity: 0.7;
+}
+
+/* The search bar opens Citizen's search popup */
+.mp-search {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 620px;
+	height: 52px;
+	margin-top: 22px;
+	padding: 0 14px 0 18px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.08 );
+	font-size: 1rem;
+	text-align: left;
+	cursor: text;
+	transition: border-color 0.15s, background-color 0.15s;
+}
+.mp-search:hover,
+.mp-search:focus {
+	border-color: rgba( 127, 127, 127, 0.5 );
+	background: rgba( 127, 127, 127, 0.13 );
+	outline: none;
+}
+.mp-search-icon {
+	position: relative;
+	flex: none;
+	width: 14px;
+	height: 14px;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	opacity: 0.6;
+}
+.mp-search-icon::after {
+	content: '';
+	position: absolute;
+	right: -6px;
+	bottom: -5px;
+	width: 7px;
+	height: 2px;
+	background: currentColor;
+	transform: rotate( 45deg );
+}
+.mp-search-text {
+	flex: 1;
+	opacity: 0.65;
+}
+.mp-search-hint {
+	font-size: 0.8125rem;
+	opacity: 0.6;
+}
+.mp-search-hint kbd {
+	display: inline-block;
+	min-width: 1.4em;
+	padding: 0 6px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 6px;
+	font-family: inherit;
+	text-align: center;
+}
+.mp-chips {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 12px;
+}
+.mp-chip {
+	padding: 4px 12px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 999px;
+	font-size: 0.8125rem;
+	cursor: pointer;
+}
+.mp-chip:hover,
+.mp-chip:focus {
+	background: rgba( 127, 127, 127, 0.14 );
+	outline: none;
+}
+
+/* ---------- Directories ---------- */
+.mp-directories {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 180px, 1fr ) );
+	gap: 10px;
+	margin-bottom: 20px;
+}
+.mp-dir {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 64px;
+	padding: 12px 16px;
+	overflow: hidden;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.07 );
+	transition: border-color 0.15s, transform 0.15s;
+}
+.mp-dir:hover {
+	border-color: rgba( 127, 127, 127, 0.55 );
+	transform: translateY( -2px );
+}
+.mp-dir-bg {
+	position: absolute;
+	inset: 0;
+	opacity: 0.22;
+}
+.mp-dir-bg img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.mp-dir-text {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+}
+.mp-dir-label {
+	font-weight: 600;
+}
+/* The whole tile is clickable: the label's link stretches over it */
+.mp-dir-label a::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+.mp-dir-label a {
+	color: inherit;
+}
+.mp-dir-count {
+	margin-top: 2px;
+	font-size: 0.8125rem;
+	opacity: 0.65;
+}
+.mp-dir-icon {
+	position: relative;
+	flex: none;
+	opacity: 0.85;
+}
+
+/* ---------- Cards ---------- */
+.mp-card {
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 16px 18px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.06 );
+}
+.mp-card-title {
+	margin-bottom: 10px;
+	font-size: 1rem;
+	font-weight: 600;
+}
+.mp-intro {
+	margin-bottom: 20px;
+}
+.mp-intro-text p:last-child {
+	margin-bottom: 0;
+}
+.mp-more {
+	margin-top: 10px;
+	font-size: 0.875rem;
+}
+.mp-kicker {
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	opacity: 0.7;
+}
+.mp-grid {
+	display: grid;
+	grid-template-columns: minmax( 0, 3fr ) minmax( 0, 2fr );
+	gap: 16px;
+	align-items: start;
+}
+
+/* Featured article */
+.mp-featured {
+	padding: 0;
+	overflow: hidden;
+}
+.mp-featured-image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 340px;
+	object-fit: cover;
+}
+.mp-featured-body {
+	padding: 16px 18px;
+}
+.mp-featured-title {
+	margin-top: 4px;
+	font-size: 1.375rem;
+	font-weight: 600;
+	line-height: 1.25;
+}
+.mp-featured-text {
+	margin-top: 8px;
+	opacity: 0.85;
+}
+
+/* Recent changes: a short, quiet list (time and page only) */
+.mp-rc .mw-plusminus-pos,
+.mp-rc .mw-plusminus-neg,
+.mp-rc .mw-plusminus-null,
+.mp-rc .mw-diff-bytes,
+.mp-rc .mw-userlink,
+.mp-rc .mw-tag-markers,
+.mp-rc .changedby,
+.mp-rc .mw-changeslist-legend,
+.mp-rc .mw-changeslist-links,
+.mp-rc .mw-usertoollinks,
+.mp-rc .mw-changeslist-separator,
+.mp-rc .comment,
+.mp-rc .mw-rcfilters-ui-highlights,
+.mp-rc .mw-enhancedchanges-arrow-space,
+.mp-rc .mw-enhanced-rc-time + .mw-changeslist-line-inner-characterDiff {
+	display: none;
+}
+.mp-rc h4 {
+	margin: 10px 0 4px;
+	padding: 0 0 0 14px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	opacity: 0.6;
+	border: 0;
+}
+.mp-rc h4:first-of-type {
+	margin-top: 0;
+}
+.mp-rc table.mw-changeslist-line,
+.mp-rc ul.special {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border-collapse: collapse;
+	list-style: none;
+	font-size: 0.875rem;
+}
+.mp-rc table.mw-changeslist-line td {
+	padding: 4px 0;
+	border-bottom: 1px solid rgba( 127, 127, 127, 0.28 );
+	vertical-align: top;
+}
+.mp-rc .mw-enhanced-rc,
+.mp-rc .mw-enhanced-rc-time {
+	white-space: nowrap;
+	opacity: 0.6;
+	font-size: 0.8125rem;
+}
+.mp-rc .mw-title {
+	font-weight: 500;
+}
+
+/* Settings problems */
+.mp-problem {
+	margin: 10px 0;
+	padding: 8px 12px;
+	border: 1px solid rgba( 239, 68, 68, 0.5 );
+	border-radius: 8px;
+	background: rgba( 239, 68, 68, 0.1 );
+	font-size: 0.875rem;
+}
+
+/* ---------- Phones ---------- */
+@media ( max-width: 720px ) {
+	.mp-grid {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+	.mp-title {
+		font-size: 1.5rem;
+	}
+	.mp-logo img {
+		width: 120px;
+		height: 120px;
+	}
+	.mp-search-hint {
+		display: none;
+	}
+	.mp-directories {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+}
