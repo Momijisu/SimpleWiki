@@ -14,8 +14,13 @@ CREATE TABLE IF NOT EXISTS users (
   ban_reason  TEXT,
   bio         TEXT NOT NULL DEFAULT '',
   created_at  INTEGER NOT NULL,
-  last_seen   INTEGER
+  last_seen   INTEGER,
+  discord_id     TEXT,                          -- set when the account is linked to Discord
+  discord_name   TEXT,
+  discord_avatar TEXT,
+  role_source    TEXT NOT NULL DEFAULT 'manual' -- manual | discord: who set the role last
 );
+CREATE UNIQUE INDEX IF NOT EXISTS users_discord ON users(discord_id) WHERE discord_id IS NOT NULL;
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash  TEXT PRIMARY KEY,
   user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -129,6 +134,7 @@ export const DEFAULT_SETTINGS = {
   registration: 'open',      // open | approval | closed
   readAccess: 'public',      // public | members
   defaultTheme: 'gta',
+  passwordSignup: true,      // false: new accounts only through Discord (when it's set up)
   welcome: 'Welcome! Pick a version of the server below to start reading. Anyone with an account can write and edit articles.',
 };
 
@@ -136,8 +142,11 @@ export function openDb(dataDir) {
   fs.mkdirSync(path.join(dataDir, 'uploads'), { recursive: true });
   const db = new DatabaseSync(path.join(dataDir, 'wiki.db'));
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
+  const existed = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'users'").get();
+  // Older databases get new columns from MIGRATIONS before the schema's indexes refer to them.
+  if (existed) migrate(db);
   db.exec(SCHEMA);
-  migrate(db);
+  if (!existed) db.exec(`PRAGMA user_version = ${MIGRATIONS.length}`);
   seed(db);
   return db;
 }
@@ -146,15 +155,19 @@ export function openDb(dataDir) {
 // at the end; never edit or remove old ones. (A fresh database gets the
 // current SCHEMA above and is then marked as fully migrated.)
 const MIGRATIONS = [
-  // 1: example — (db) => db.exec('ALTER TABLE users ADD COLUMN discord TEXT'),
+  // 1: Discord sign-in
+  (db) => db.exec(`ALTER TABLE users ADD COLUMN discord_id TEXT;
+    ALTER TABLE users ADD COLUMN discord_name TEXT;
+    ALTER TABLE users ADD COLUMN discord_avatar TEXT;
+    ALTER TABLE users ADD COLUMN role_source TEXT NOT NULL DEFAULT 'manual';`),
 ];
 
 function migrate(db) {
-  const fresh = !db.prepare('SELECT COUNT(*) AS n FROM users').get().n && !db.prepare('SELECT COUNT(*) AS n FROM articles').get().n;
   let version = db.prepare('PRAGMA user_version').get().user_version;
-  if (fresh) version = MIGRATIONS.length;
-  for (; version < MIGRATIONS.length; version++) tx(db, () => MIGRATIONS[version](db));
-  db.exec(`PRAGMA user_version = ${version}`);
+  for (; version < MIGRATIONS.length; version++) {
+    tx(db, () => MIGRATIONS[version](db));
+    db.exec(`PRAGMA user_version = ${version + 1}`);
+  }
 }
 
 function seed(db) {

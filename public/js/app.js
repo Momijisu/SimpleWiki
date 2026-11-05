@@ -138,7 +138,7 @@ export function renderChrome() {
   $('#topActions').innerHTML = `
     ${ns && canWrite() && !(ns.archived && !isMod()) ? `<button class="btn primary small" id="newBtn" title="New article (N)">${icon('plus')}<span>New</span></button>` : ''}
     ${u ? `
-      <button class="user-btn" id="userBtn" aria-haspopup="true">${icon('user-circle')}<span>${esc(u.username)}</span>${u.role !== 'user' ? `<i class="role role-${u.role}">${u.role}</i>` : ''}</button>
+      <button class="user-btn" id="userBtn" aria-haspopup="true">${u.avatar ? `<img class="avatar" src="${esc(u.avatar)}" alt="">` : icon('user-circle')}<span>${esc(u.username)}</span>${u.role !== 'user' ? `<i class="role role-${u.role}">${u.role}</i>` : ''}</button>
       <div class="menu right" id="userMenu" hidden>
         <a href="/u/${encodeURIComponent(u.username)}" data-link>${icon('user')} Your profile</a>
         <a href="/account" data-link>${icon('gear')} Account</a>
@@ -149,7 +149,7 @@ export function renderChrome() {
       </div>`
     : `<button class="icon-btn" id="themeBtn" title="Theme" aria-haspopup="true">${icon('paint-brush')}</button>
        <div class="menu right" id="themeMenu" hidden>${themeMenu()}</div>
-       <a class="btn small" href="/login" data-link>${icon('sign-in')}<span>Sign in</span></a>`}`;
+       <a class="btn small" href="/login?next=${encodeURIComponent(location.pathname + location.search)}" data-link>${icon('sign-in')}<span>Sign in</span></a>`}`;
 
   renderSidebar();
 }

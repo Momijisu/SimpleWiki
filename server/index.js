@@ -6,7 +6,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { openDb } from './db.js';
 import * as auth from './auth.js';
-import { routes, HttpError, pageMeta, UPLOAD_MAX } from './api.js';
+import { routes, HttpError, pageMeta, UPLOAD_MAX, audit } from './api.js';
+import { discordConfig, createDiscordHandlers } from './discord.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC = path.join(ROOT, 'public');
@@ -55,8 +56,9 @@ function readBody(req, limit) {
 }
 
 export function createServer({ dataDir = process.env.DATA_DIR || path.join(ROOT, 'data'), trustProxy = process.env.TRUST_PROXY === '1',
-  secureCookies = process.env.COOKIE_SECURE, publicUrl = process.env.PUBLIC_URL || '' } = {}) {
+  secureCookies = process.env.COOKIE_SECURE, publicUrl = (process.env.PUBLIC_URL || '').replace(/\/+$/, ''), discord: discordOpts } = {}) {
   const db = openDb(dataDir);
+  const discord = discordConfig(discordOpts);
   const uploadsDir = path.join(dataDir, 'uploads');
   const indexHtml = fs.readFileSync(path.join(PUBLIC, 'index.html'), 'utf8');
 
@@ -111,7 +113,7 @@ export function createServer({ dataDir = process.env.DATA_DIR || path.join(ROOT,
     const token = parseCookies(req.headers.cookie)[auth.COOKIE];
     const headers = {};
     const ctx = {
-      db, dataDir, ip: ipOf(req), token,
+      db, dataDir, ip: ipOf(req), token, discord,
       user: auth.userFromToken(db, token),
       params: Object.fromEntries(route.keys.map((k, i) => [k, url.pathname.match(route.re)[i + 1]])),
       query: Object.fromEntries(url.searchParams),
@@ -138,12 +140,21 @@ export function createServer({ dataDir = process.env.DATA_DIR || path.join(ROOT,
     }
   }
 
+  const discordAuth = createDiscordHandlers({ db, config: discord, publicUrl, isHttps, ipOf, parseCookies, audit });
+
   const server = http.createServer((req, res) => {
     let url;
     try { url = new URL(req.url, 'http://x'); } catch { return send(res, 400, 'Bad request'); }
     let p;
     try { p = decodeURIComponent(url.pathname).replace(/\\/g, '/'); } catch { return send(res, 400, 'Bad request'); }
     if (p.startsWith('/api/')) return handleApi(req, res, url);
+    if (p === '/auth/discord' || p === '/auth/discord/callback') {
+      if (req.method !== 'GET') return send(res, 405, 'Method not allowed');
+      return (p === '/auth/discord' ? discordAuth.start(req, res, url) : discordAuth.callback(req, res, url))?.catch?.((e) => {
+        console.error(e);
+        if (!res.headersSent) send(res, 500, 'Something went wrong.');
+      });
+    }
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
     if (p.startsWith('/uploads/')) {
       const name = p.slice('/uploads/'.length);

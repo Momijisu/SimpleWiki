@@ -5,25 +5,46 @@ import { state, loadSession, md, isMod } from '../state.js';
 import { view, setTitle, changeList, when } from './common.js';
 import { navigate } from '../app.js';
 
+// Where to come back to after signing in: the page they were on, if any.
+function nextPath() {
+  const n = new URLSearchParams(location.search).get('next');
+  return n && /^\/(?!\/)/.test(n) ? n : '/';
+}
+
+function discordButton(label) {
+  return `<a class="btn discord block" href="/auth/discord?next=${encodeURIComponent(nextPath())}">${icon('discord-logo')} ${esc(label)}</a>`;
+}
+
 function authPage(kind) {
   const reg = kind === 'register';
   const s = state.settings;
   setTitle(reg ? 'Create an account' : 'Sign in');
   if (state.user) return navigate('/', true);
+  const error = new URLSearchParams(location.search).get('error');
   const closed = reg && s.registration === 'closed';
+  const discordOnly = state.discord && !s.passwordSignup;
+  const showPasswordForm = !closed && !(reg && discordOnly);
   view().innerHTML = `
     <div class="page narrow auth">
       <h1>${reg ? 'Create an account' : 'Sign in'}</h1>
+      ${error ? `<p class="banner danger">${icon('warning')} ${esc(error)}</p>` : ''}
       ${!state.canRead && !reg ? '<p class="muted">This wiki is for members only.</p>' : ''}
-      ${closed ? '<p class="banner">Sign-ups are closed. Ask an admin to make you an account.</p>' : `
-      ${reg && s.registration === 'approval' ? '<p class="banner">New accounts are checked by a moderator before they can edit.</p>' : ''}
+      ${closed ? '<p class="banner">Sign-ups are closed. Ask an admin to make you an account.</p>' : ''}
+      ${!closed && reg && s.registration === 'approval' ? '<p class="banner">New accounts are checked by a moderator before they can edit.</p>' : ''}
+      ${state.discord && !closed ? `<div class="panel">
+        ${discordButton(reg ? 'Sign up with Discord' : 'Sign in with Discord')}
+        <p class="muted small center">${reg ? 'Your wiki account is made from your Discord name. Nobody but moderators sees which Discord account it is.' : 'No password needed.'}</p>
+      </div>` : ''}
+      ${showPasswordForm ? `
+      ${state.discord ? `<div class="or"><span>${reg ? 'or make a username and password' : 'or with a password'}</span></div>` : ''}
       <form id="authForm" class="panel">
         <label class="field"><span>Username</span><input name="username" required autocomplete="username" ${reg ? 'pattern="[A-Za-z0-9_.\\-]{3,32}" title="3–32 letters, numbers, dots, dashes or underscores"' : ''}></label>
         <label class="field"><span>Password</span><input name="password" type="password" required autocomplete="${reg ? 'new-password' : 'current-password'}" ${reg ? 'minlength="8"' : ''}></label>
         ${reg ? '<p class="muted small">Tip: use your out-of-character name or Discord name so people know who you are. Your characters get their own articles.</p>' : ''}
         <button class="btn primary block" type="submit">${reg ? 'Create account' : 'Sign in'}</button>
-      </form>`}
-      <p class="muted">${reg ? 'Already have an account? <a href="/login" data-link>Sign in</a>' : s.registration === 'closed' ? '' : 'New here? <a href="/register" data-link>Create an account</a>'}</p>
+      </form>` : ''}
+      <p class="muted center">${reg ? 'Already have an account? <a href="/login" data-link>Sign in</a>'
+        : s.registration === 'closed' || discordOnly ? '' : 'New here? <a href="/register" data-link>Create an account</a>'}</p>
     </div>`;
   $('#authForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -32,7 +53,7 @@ function authPage(kind) {
       await api.post(reg ? '/api/register' : '/api/login', { username: f.get('username'), password: f.get('password') });
       await loadSession();
       toast(reg ? (state.user.status === 'pending' ? 'Account created. A moderator will approve it soon.' : `Welcome, ${state.user.username}!`) : 'Signed in.');
-      navigate(state.user.role === 'admin' && reg ? '/admin' : '/');
+      navigate(state.user.role === 'admin' && reg ? '/admin' : nextPath());
     } catch (err) { toast(err.message, 'error'); }
   });
 }
@@ -52,6 +73,8 @@ export async function viewUser(name) {
           ${u.status !== 'active' ? `<i class="tag">${esc(u.status)}</i>` : ''}</h1>
         <p class="muted">Joined ${esc(new Date(u.createdAt).toLocaleDateString())} · ${u.edits} edit${u.edits === 1 ? '' : 's'} · ${u.created} article${u.created === 1 ? '' : 's'} started
           ${u.lastSeen ? ` · last seen ${when(u.lastSeen)}` : ''}</p>
+        ${u.discordName ? `<p class="muted discord-who">${u.avatar ? `<img src="${esc(u.avatar)}" alt="">` : icon('discord-logo')} Discord: <b>${esc(u.discordName)}</b>
+          ${u.discordId ? `<code>${esc(u.discordId)}</code>` : ''} <span class="small">(only moderators and they can see this)</span></p>` : ''}
         ${u.banReason ? `<p class="banner danger">Banned: ${esc(u.banReason)}</p>` : ''}
       </div>
       <div class="head-actions">
@@ -76,19 +99,32 @@ export function viewAccount() {
   if (!state.user) return navigate('/login', true);
   setTitle('Account');
   const u = state.user;
+  const params = new URLSearchParams(location.search);
   view().innerHTML = `
     <div class="page narrow">
       <h1>${icon('gear')} Account</h1>
+      ${params.get('linked') ? `<p class="banner">${icon('check')} Discord is linked. You can sign in with it from now on.</p>` : ''}
       <div class="panel">
         <p>Signed in as <b>${esc(u.username)}</b> · ${esc(u.role)} · ${esc(u.status)}</p>
         ${u.status === 'pending' ? '<p class="banner">A moderator still has to approve your account before you can edit.</p>' : ''}
         ${u.status === 'banned' ? `<p class="banner danger">Your account is banned${u.banReason ? `: ${esc(u.banReason)}` : '.'}</p>` : ''}
       </div>
+      ${state.discord || u.discordName ? `<div class="panel">
+        <h2 class="section-title">${icon('discord-logo')} Discord</h2>
+        ${u.discordName ? `
+          <p class="discord-who">${u.avatar ? `<img src="${esc(u.avatar)}" alt="">` : ''}Linked to <b>${esc(u.discordName)}</b></p>
+          ${u.hasPassword ? '<button class="btn small ghost" id="unlinkBtn">Unlink Discord</button>'
+            : '<p class="muted small">Set a password below before unlinking, so you can still sign in.</p>'}`
+        : `<p class="muted">Link your Discord account to sign in with it instead of your password.</p>
+          <a class="btn discord" href="/auth/discord?link=1&next=/account">${icon('discord-logo')} Link Discord</a>`}
+        <p class="muted small">Only moderators can see which Discord account yours is linked to.</p>
+      </div>` : ''}
       <form id="pwForm" class="panel">
-        <h2 class="section-title">Change password</h2>
-        <label class="field"><span>Current password</span><input name="current" type="password" required autocomplete="current-password"></label>
+        <h2 class="section-title">${u.hasPassword ? 'Change password' : 'Set a password'}</h2>
+        ${u.hasPassword ? '<label class="field"><span>Current password</span><input name="current" type="password" required autocomplete="current-password"></label>'
+          : '<p class="muted small">You sign in with Discord. A password is optional: it lets you sign in without it too.</p>'}
         <label class="field"><span>New password</span><input name="next" type="password" required minlength="8" autocomplete="new-password"></label>
-        <button class="btn primary">Change password</button>
+        <button class="btn primary">${u.hasPassword ? 'Change password' : 'Set password'}</button>
         <p class="muted small">This signs you out everywhere else.</p>
       </form>
     </div>`;
@@ -98,7 +134,17 @@ export function viewAccount() {
     try {
       await api.post('/api/me/password', { current: f.get('current'), next: f.get('next') });
       e.target.reset();
-      toast('Password changed.');
+      toast('Password saved.');
+      await loadSession();
+      viewAccount();
+    } catch (err) { toast(err.message, 'error'); }
+  });
+  $('#unlinkBtn')?.addEventListener('click', async () => {
+    try {
+      await api.post('/api/me/unlink-discord');
+      await loadSession();
+      toast('Discord unlinked.');
+      viewAccount();
     } catch (err) { toast(err.message, 'error'); }
   });
 }

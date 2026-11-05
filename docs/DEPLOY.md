@@ -32,6 +32,8 @@ After=network.target
 User=simplewiki
 WorkingDirectory=/opt/simplewiki/app
 Environment=PORT=8080 HOST=127.0.0.1 DATA_DIR=/opt/simplewiki/data TRUST_PROXY=1 PUBLIC_URL=https://wiki.example.com
+# For "Sign in with Discord" (see the README), keep the secret out of this file:
+EnvironmentFile=-/opt/simplewiki/discord.env
 ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning server/index.js
 Restart=always
 
@@ -43,6 +45,17 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable --now simplewiki
 ```
+
+To use Discord sign-in, put the settings in `/opt/simplewiki/discord.env`, readable only by root and the service (`chmod 600`):
+
+```
+DISCORD_CLIENT_ID=123456789012345678
+DISCORD_CLIENT_SECRET=your-secret
+DISCORD_GUILD_ID=987654321098765432
+DISCORD_MOD_ROLE_IDS=111111111111111111
+```
+
+Then add `https://wiki.example.com/auth/discord/callback` as a redirect in the Discord Developer Portal.
 
 ## 4. Add HTTPS with a reverse proxy
 
@@ -77,7 +90,7 @@ Keep `TRUST_PROXY=1` only when a proxy really sits in front. Without a proxy, vi
 
 ## 5. Claim the admin account
 
-Open https://wiki.example.com and **sign up straight away**: the first account becomes the admin. Then go to **Admin**:
+Open https://wiki.example.com and **sign up straight away**, with a password or with Discord: the first account becomes the admin. Then go to **Admin**:
 
 - **Site:** the wiki's name, the welcome text, who can sign up, and who can read
 - **Namespaces:** one for each version of your server

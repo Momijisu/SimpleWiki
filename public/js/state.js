@@ -12,6 +12,7 @@ export const state = {
   themes: {},
   protection: {},
   canRead: true,
+  discord: false,   // is "Sign in with Discord" set up?
   ns: null,        // the namespace being viewed, if any
 };
 

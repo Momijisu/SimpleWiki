@@ -86,7 +86,7 @@ export async function viewMod() {
 
 async function usersTab(body, initial) {
   body.innerHTML = `
-    <div class="row"><input type="search" id="userSearch" placeholder="Find a user…" value="${esc(initial)}">
+    <div class="row"><input type="search" id="userSearch" placeholder="Find a user or Discord name…" value="${esc(initial)}">
       ${isAdmin() ? `<button class="btn" id="addUser">${icon('user-plus')} Add an account</button>` : ''}</div>
     <div id="userList"></div>`;
   const load = async () => {
@@ -96,8 +96,9 @@ async function usersTab(body, initial) {
         const self = u.id === state.user.id;
         const canTouch = !self && (isAdmin() || rank(u.role) < rank(state.user.role));
         return `<tr class="${u.status}">
-          <td>${userLink(u.username)}</td>
-          <td>${isAdmin() && !self ? `<select data-role="${u.id}">${['user', 'mod', 'admin'].map((r) => `<option ${r === u.role ? 'selected' : ''}>${r}</option>`).join('')}</select>` : esc(u.role)}</td>
+          <td>${userLink(u.username)}${u.discordName ? `<br><small class="muted" title="Discord id ${esc(u.discordId)}">${icon('discord-logo')} ${esc(u.discordName)}</small>` : ''}</td>
+          <td>${isAdmin() && !self ? `<select data-role="${u.id}">${['user', 'mod', 'admin'].map((r) => `<option ${r === u.role ? 'selected' : ''}>${r}</option>`).join('')}</select>` : esc(u.role)}
+            ${u.roleSource === 'discord' ? '<br><small class="muted">from Discord roles</small>' : ''}</td>
           <td><span class="status-${u.status}">${esc(u.status)}</span>${u.banReason ? `<br><small class="muted">${esc(u.banReason)}</small>` : ''}</td>
           <td>${u.edits}</td>
           <td>${esc(new Date(u.createdAt).toLocaleDateString())}</td>

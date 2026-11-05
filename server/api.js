@@ -65,7 +65,7 @@ function requireRead(ctx) {
   if (!canRead(ctx.db, ctx.user)) fail(401, 'This wiki is for members only. Please sign in.');
 }
 
-function audit(db, user, action, target = '', detail = '') {
+export function audit(db, user, action, target = '', detail = '') {
   q(db, 'INSERT INTO audit (user_id, action, target, detail, created_at) VALUES (?, ?, ?, ?, ?)')
     .run(user?.id ?? null, action, target, typeof detail === 'string' ? detail : JSON.stringify(detail), Date.now());
 }
@@ -88,8 +88,12 @@ function templates(db) {
 
 const userName = (db, id) => (id ? q(db, 'SELECT username FROM users WHERE id = ?').get(id)?.username ?? null : null);
 
+// The signed-in person's own account, as the app sees it.
 function publicUser(u) {
-  return u && { id: u.id, username: u.username, role: u.role, status: u.status, banReason: u.status === 'banned' ? u.ban_reason : null };
+  return u && {
+    id: u.id, username: u.username, role: u.role, status: u.status, banReason: u.status === 'banned' ? u.ban_reason : null,
+    discordName: u.discord_name || null, avatar: u.discord_avatar || null, hasPassword: !String(u.pass_hash).startsWith('!'),
+  };
 }
 
 function canEdit(user, ns, article) {
@@ -202,6 +206,7 @@ route('GET', '/api/session', (ctx) => {
     groups: TEMPLATE_GROUPS,
     themes: THEMES,
     protection: PROTECTION,
+    discord: !!ctx.discord?.enabled,
   };
 });
 
@@ -210,6 +215,7 @@ route('POST', '/api/register', (ctx) => {
   const s = getSettings(db);
   const first = !q(db, 'SELECT COUNT(*) AS n FROM users').get().n;
   if (s.registration === 'closed' && !first) fail(403, 'Sign-ups are closed. Ask an admin for an account.');
+  if (!s.passwordSignup && ctx.discord?.enabled && !first) fail(403, 'New accounts are made by signing in with Discord.');
   if (!registerLimit(ctx.ip)) fail(429, 'Too many new accounts from your connection. Try again later.');
   const { username, password } = body;
   if (!auth.validUsername(username)) fail(400, 'Usernames are 3–32 letters, numbers, dots, dashes or underscores.');
@@ -252,11 +258,21 @@ route('PUT', '/api/me', (ctx) => {
 route('POST', '/api/me/password', (ctx) => {
   if (!ctx.user) fail(401, 'Please sign in first.');
   const { current, next } = ctx.body;
-  if (!auth.verifyPassword(String(current || ''), ctx.user.pass_hash)) fail(400, 'Your current password is wrong.');
+  // Accounts made through Discord have no password yet, so there's nothing to confirm.
+  const hasPassword = !String(ctx.user.pass_hash).startsWith('!');
+  if (hasPassword && !auth.verifyPassword(String(current || ''), ctx.user.pass_hash)) fail(400, 'Your current password is wrong.');
   if (!auth.validPassword(next)) fail(400, 'Passwords need at least 8 characters.');
   q(ctx.db, 'UPDATE users SET pass_hash = ? WHERE id = ?').run(auth.hashPassword(next), ctx.user.id);
   auth.destroyUserSessions(ctx.db, ctx.user.id);
   ctx.setSession(auth.createSession(ctx.db, ctx.user.id));
+  return { ok: true };
+});
+
+route('POST', '/api/me/unlink-discord', (ctx) => {
+  if (!ctx.user) fail(401, 'Please sign in first.');
+  if (String(ctx.user.pass_hash).startsWith('!')) fail(400, 'Set a password first, or you’d have no way to sign in.');
+  q(ctx.db, 'UPDATE users SET discord_id = NULL, discord_name = NULL, discord_avatar = NULL WHERE id = ?').run(ctx.user.id);
+  audit(ctx.db, ctx.user, 'unlink-discord', ctx.user.discord_name || '');
   return { ok: true };
 });
 
@@ -272,6 +288,10 @@ route('GET', '/api/users/:name', (ctx) => {
     banReason: isMod(ctx.user) || ctx.user?.id === u.id ? u.ban_reason : null,
     lastSeen: isMod(ctx.user) ? u.last_seen : null,
     id: isMod(ctx.user) ? u.id : null,
+    // Who someone is on Discord is for moderators (and themselves) only.
+    discordName: isMod(ctx.user) || ctx.user?.id === u.id ? u.discord_name : null,
+    discordId: isMod(ctx.user) ? u.discord_id : null,
+    avatar: isMod(ctx.user) || ctx.user?.id === u.id ? u.discord_avatar : null,
     edits, created,
     contributions: recent(ctx, { userId: u.id, limit: 50 }),
   };
@@ -653,8 +673,9 @@ route('GET', '/api/mod/users', (ctx) => {
   const term = String(ctx.query.q || '').trim();
   const like = `%${term.replace(/[%_\\]/g, (c) => '\\' + c)}%`;
   const rows = q(ctx.db, `SELECT u.id, u.username, u.role, u.status, u.ban_reason AS banReason, u.created_at AS createdAt, u.last_seen AS lastSeen,
+                                 u.discord_name AS discordName, u.discord_id AS discordId, u.role_source AS roleSource,
                                  (SELECT COUNT(*) FROM revisions r WHERE r.user_id = u.id) AS edits
-                          FROM users u WHERE u.username LIKE ? ESCAPE '\\' ORDER BY (u.status = 'pending') DESC, u.username COLLATE NOCASE LIMIT 500`).all(like);
+                          FROM users u WHERE (u.username LIKE ? ESCAPE '\\' OR u.discord_name LIKE ? ESCAPE '\\' OR u.discord_id = ?) ORDER BY (u.status = 'pending') DESC, u.username COLLATE NOCASE LIMIT 500`).all(like, like, term);
   return { users: rows };
 });
 
@@ -668,7 +689,7 @@ route('POST', '/api/mod/users/:id', (ctx) => {
   if (body.role !== undefined && body.role !== target.role) {
     if (!isAdmin(me)) fail(403, 'Only admins can change roles.');
     if (!['user', 'mod', 'admin'].includes(body.role)) fail(400, 'Unknown role.');
-    q(db, 'UPDATE users SET role = ? WHERE id = ?').run(body.role, target.id);
+    q(db, "UPDATE users SET role = ?, role_source = 'manual' WHERE id = ?").run(body.role, target.id);
     audit(db, me, 'role', target.username, body.role);
   }
   if (body.status !== undefined && body.status !== target.status) {
@@ -727,6 +748,7 @@ route('PUT', '/api/admin/settings', (ctx) => {
     if (!THEMES[b.defaultTheme]) fail(400, 'Unknown theme.');
     next.defaultTheme = b.defaultTheme;
   }
+  if (b.passwordSignup !== undefined) next.passwordSignup = !!b.passwordSignup;
   const ins = q(ctx.db, 'INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
   for (const [k, v] of Object.entries(next)) ins.run(k, JSON.stringify(v));
   audit(ctx.db, me, 'settings', '', Object.keys(next).join(', '));

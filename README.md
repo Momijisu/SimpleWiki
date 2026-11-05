@@ -29,6 +29,11 @@ It's built for GTA and RDR roleplay servers. Characters, gangs, businesses, poli
 - Every namespace has a theme, so the old GTA city and the RDR server each look like themselves. Readers can override the theme for themselves.
 - All themes share one layout, so adding a theme only means picking colours and fonts
 
+**Sign in**
+- **Sign in with Discord**, optionally limited to members of your Discord server
+- Discord roles can make people wiki moderators or admins (e.g. your staff role)
+- Username and password sign-in too, or switch it off for new accounts and use Discord only
+
 **Moderate**
 - Roles: **user**, **moderator** and **admin**. The first account to sign up becomes the admin.
 - Sign-ups can be open to anyone, need a moderator's approval, or be closed (admins create accounts). The wiki can be public or for members only.
@@ -90,8 +95,35 @@ Put it behind a reverse proxy that adds HTTPS (Caddy, nginx or Cloudflare) and s
 | `TRUST_PROXY` | off | Set to `1` behind a reverse proxy, so rate limits see real visitor addresses and cookies are marked secure |
 | `PUBLIC_URL` | (from the request) | Your wiki's address, for link previews |
 | `COOKIE_SECURE` | auto | `1` forces secure cookies; `0` turns them off |
+| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | | Turn on "Sign in with Discord" (see below) |
+| `DISCORD_GUILD_ID` | | Only members of this Discord server can sign in |
+| `DISCORD_MOD_ROLE_IDS`, `DISCORD_ADMIN_ROLE_IDS` | | Discord role ids, separated by commas, that make someone a wiki moderator or admin |
 
 Everything else, such as the wiki's name, sign-ups, read access, namespaces and templates, is set in the browser under **Admin**.
+
+### Signing in with Discord
+
+1. Go to the [Discord Developer Portal](https://discord.com/developers/applications) and choose **New Application**. Name it after your wiki; players see this name when they sign in.
+2. Open **OAuth2**. Copy the **Client ID**, then **Reset Secret** and copy the **Client Secret**.
+3. Under **Redirects**, add your wiki's address followed by `/auth/discord/callback`, e.g. `https://wiki.example.com/auth/discord/callback`. It has to match exactly, so set `PUBLIC_URL` to the same address. For local testing use `http://localhost:8080/auth/discord/callback`.
+4. Start the wiki with the two values:
+   ```sh
+   DISCORD_CLIENT_ID=… DISCORD_CLIENT_SECRET=… PUBLIC_URL=https://wiki.example.com npm start
+   ```
+   "Sign in with Discord" now appears on the sign-in page.
+
+Optional extras:
+
+- **Only your community:** turn on *Developer Mode* in Discord (Settings → Advanced), right-click your server and choose **Copy Server ID**, then set `DISCORD_GUILD_ID` to it. People who aren't in the server are turned away, and so are new members who haven't passed membership screening yet.
+- **Staff become moderators:** with `DISCORD_GUILD_ID` set, right-click a role (Server Settings → Roles) and choose **Copy Role ID**. List the ids in `DISCORD_MOD_ROLE_IDS` or `DISCORD_ADMIN_ROLE_IDS`, separated by commas. Roles are checked each time someone signs in. If they lose the Discord role, they lose the wiki role too. A role an admin gives someone by hand in the wiki is never taken away by Discord.
+- **Discord only:** go to Admin → Site → *How new accounts are made* and choose *Discord only*. Existing accounts can still sign in with their password.
+
+How it behaves:
+
+- A new account takes its username from the person's Discord username, adjusted if it's already taken. Your sign-up setting still applies: open, approval or closed.
+- Anyone with a password account can link Discord under **Account**. Discord accounts can add a password there too, to have both ways in.
+- Only moderators, and the person themselves, can see which Discord account a wiki account belongs to. Moderators can search for people by Discord name or id.
+- The wiki only asks Discord for the person's name and avatar, plus their roles in your server when `DISCORD_GUILD_ID` is set. It never posts anything and doesn't keep Discord's access token.
 
 ### Backups
 

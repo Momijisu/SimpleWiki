@@ -11,6 +11,12 @@ services:
       TRUST_PROXY: "1"
       # Your wiki's public address, used in link previews on Discord etc.
       PUBLIC_URL: "https://wiki.example.com"
+      # Sign in with Discord (see the README). Leave empty to turn it off.
+      DISCORD_CLIENT_ID: ""
+      DISCORD_CLIENT_SECRET: ""
+      DISCORD_GUILD_ID: ""
+      DISCORD_MOD_ROLE_IDS: ""
+      DISCORD_ADMIN_ROLE_IDS: ""
     volumes:
       - wiki-data:/data
 

@@ -383,6 +383,14 @@ table.users select { width: auto; padding: 4px 8px; }
 .tpl-item summary { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; list-style: none; flex-wrap: wrap; }
 .tpl-item > .form-grid { padding: 0 16px 16px; }
 .auth h1 { text-align: center; }
+.center { text-align: center; }
+.btn.discord { background: #5865f2; color: #fff; border-color: transparent; text-transform: none; letter-spacing: 0; height: 44px; font-size: 15px; }
+.btn.discord .icon { width: 22px; height: 22px; }
+.or { display: flex; align-items: center; gap: 12px; margin: 4px 0 18px; color: var(--muted); font: 13px var(--font-ui); }
+.or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--rule-strong); }
+.discord-who { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.discord-who img, .user-btn .avatar { width: 24px; height: 24px; border-radius: 50%; }
+.user-btn .avatar { width: 22px; height: 22px; }
 
 /* ---------- small screens ---------- */
 @media (max-width: 1100px) {
