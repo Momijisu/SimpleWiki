@@ -48,12 +48,16 @@ article itself; several rotate daily) and recent changes.
 
 ## Install
 
-1. Import `dist/mainpage.xml` at **Special:Import** (prefix `tpl`). It does **not** touch your
-   current Main Page.
+1. Import `dist/mainpage.xml` at **Special:Import** (prefix `tpl`). This **replaces the Main Page**
+   with the one line `{{#invoke:Main page|render}}` (anything there before stays in its history).
 2. Upload your logo with the file name used in the settings (`Lets RP Wiki logo.png`), or change
    `logo` in `Module:Main page/config.json` to the name of a logo you already have.
-3. Preview: edit any page (e.g. *Sandbox*), paste `{{#invoke:Main page|render}}` and click
-   **Show preview**.
-4. When you're happy, edit **Main Page**, replace everything with `{{#invoke:Main page|render}}`
-   and save. The old content stays in the page history.
-5. Protect `Module:Main page/config.json` and `Main Page` (admins only) so they can't be vandalised.
+3. Add featured articles to `"featured": { "pages": [ … ] }` in the settings.
+4. Protect `Module:Main page/config.json` and `Main Page` (admins only) so they can't be vandalised.
+
+# If an import doesn't seem to change a page
+
+MediaWiki only makes an imported version the current one when it's **newer than the page's last
+edit**. The files are stamped with the time they were built, so if someone edited one of these pages
+on the wiki after that, the import is added to the page's history but doesn't replace it.
+Rebuild the files (`python3 mediawiki/build.py`) and import again, or paste the page by hand.

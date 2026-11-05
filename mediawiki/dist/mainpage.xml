@@ -1,11 +1,23 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" version="0.11" xml:lang="en">
   <page>
+    <title>Main Page</title>
+    <ns>0</ns>
+    <revision>
+      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Front page</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{#invoke:Main page|render}}</text>
+    </revision>
+  </page>
+  <page>
     <title>Module:Main page</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-05T23:49:28Z</timestamp>
-      <contributor><username>Infobox import</username></contributor>
-      <comment>Infobox templates</comment>
+      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Front page</comment>
       <model>Scribunto</model>
       <format>text/plain</format>
       <text xml:space="preserve">-- Module:Main page
@@ -275,9 +287,9 @@ return p
     <title>Module:Main page/config.json</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-05T23:49:28Z</timestamp>
-      <contributor><username>Infobox import</username></contributor>
-      <comment>Infobox templates</comment>
+      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Front page</comment>
       <model>json</model>
       <format>application/json</format>
       <text xml:space="preserve">{
@@ -331,9 +343,9 @@ return p
     <title>Module:Main page/doc</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-05T23:49:28Z</timestamp>
-      <contributor><username>Infobox import</username></contributor>
-      <comment>Infobox templates</comment>
+      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Front page</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
       <text xml:space="preserve">The front page. The '''Main Page''' only contains &lt;code&gt;&lt;nowiki&gt;{{#invoke:Main page|render}}&lt;/nowiki&gt;&lt;/code&gt;; everything on it is set in '''[[Module:Main page/config.json]]'''. Edit the settings there, not this module.
@@ -375,9 +387,9 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
     <title>Template:Main page/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:49:28Z</timestamp>
-      <contributor><username>Infobox import</username></contributor>
-      <comment>Infobox templates</comment>
+      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Front page</comment>
       <model>sanitized-css</model>
       <format>text/css</format>
       <text xml:space="preserve">/* Template:Main page/styles.css: the look of the front page (TemplateStyles).

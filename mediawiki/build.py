@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-"""Builds dist/infoboxes.xml: every page for the three infoboxes, ready for
-Special:Import on the wiki. Run:  python3 mediawiki/build.py
+"""Builds the files for Special:Import on the wiki. Run:  python3 mediawiki/build.py
+
+  dist/infoboxes.xml  the three infoboxes, their docs and preload pages
+  dist/mainpage.xml   the front page: the Main Page itself (one line), the module,
+                      its settings and styles
 
 Hand-written pages live in pages/ (the Lua module and the CSS). The
 templates, their documentation and their "preload" starter pages are
@@ -272,7 +275,7 @@ def pages():
     return out
 
 
-def xml(pages):
+def xml(pages, summary):
     parts = ['<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" version="0.11" xml:lang="en">']
     for title, ns, model, fmt, text in pages:
         parts.append(f"""  <page>
@@ -280,8 +283,8 @@ def xml(pages):
     <ns>{ns}</ns>
     <revision>
       <timestamp>{NOW}</timestamp>
-      <contributor><username>Infobox import</username></contributor>
-      <comment>Infobox templates</comment>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>{escape(summary)}</comment>
       <model>{model}</model>
       <format>{fmt}</format>
       <text xml:space="preserve">{escape(text)}</text>
@@ -329,6 +332,7 @@ To try changes before they go live, preview any page with <code><nowiki>{{#invok
 def mainpage_pages():
     base = HERE / 'pages'
     return [
+        ('Main Page', 0, 'wikitext', 'text/x-wiki', '{{#invoke:Main page|render}}'),
         ('Module:Main page', 828, 'Scribunto', 'text/plain', (base / 'Module/Main page.lua').read_text()),
         ('Module:Main page/config.json', 828, 'json', 'application/json', (base / 'Module/Main page/config.json').read_text()),
         ('Module:Main page/doc', 828, 'wikitext', 'text/x-wiki', MAINPAGE_DOC),
@@ -339,8 +343,8 @@ def mainpage_pages():
 if __name__ == '__main__':
     dist = HERE / 'dist'
     dist.mkdir(exist_ok=True)
-    for name, built in (('infoboxes.xml', pages()), ('mainpage.xml', mainpage_pages())):
-        (dist / name).write_text(xml(built))
+    for name, built, summary in (('infoboxes.xml', pages(), 'Infobox templates'), ('mainpage.xml', mainpage_pages(), 'Front page')):
+        (dist / name).write_text(xml(built, summary))
         print(f'Wrote {dist / name} with {len(built)} pages:')
         for p in built:
             print('  ', p[0])
