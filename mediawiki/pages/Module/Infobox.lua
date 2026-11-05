@@ -211,7 +211,7 @@ TYPES.event = {
 	end,
 	shortdesc = function (v, args)
 		local what = v.typeLabel or 'Event'
-		if args.date then return what .. ', ' .. plain(args.date) end
+		if args.date then return what .. ' on ' .. plain(args.date) end
 		return what
 	end,
 }

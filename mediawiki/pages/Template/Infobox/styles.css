@@ -169,4 +169,7 @@
 		width: auto;
 		margin: 0 0 1.5em;
 	}
+	.rp-infobox .rp-ib-image img {
+		max-height: 320px;
+	}
 }

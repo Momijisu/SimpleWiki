@@ -3,7 +3,7 @@
 Three infobox templates for MediaWiki 1.46 with the Citizen skin:
 `{{Infobox character}}`, `{{Infobox organization}}` and `{{Infobox event}}`.
 
-> **Status: not yet tested on a running MediaWiki.** Try the import on a test page first.
+> **Tested** on MediaWiki 1.46.2 with Citizen 3.25.1, ParserFunctions, Scribunto (Lua 5.1), TemplateStyles, TemplateData, TabberNeue, ShortDescription and InputBox: imported with Special:Import's engine, in light and dark mode, on desktop and phone.
 
 ## Needs
 
