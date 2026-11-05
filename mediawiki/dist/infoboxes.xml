@@ -1,0 +1,1877 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" version="0.11" xml:lang="en">
+  <page>
+    <title>Module:Infobox</title>
+    <ns>828</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>Scribunto</model>
+      <format>text/plain</format>
+      <text xml:space="preserve">-- Module:Infobox
+-- The engine behind {{Infobox character}}, {{Infobox organization}} and
+-- {{Infobox event}}. Each template calls one function here; the fields,
+-- sections, badges, categories and short descriptions are all defined in
+-- TYPES below, so a layout change happens in one place.
+
+local p = {}
+local plain -- defined under Helpers; used by the short descriptions
+
+-- ===================================================================
+-- Settings you may want to change
+-- ===================================================================
+
+-- The `version` field: category name and how it is shown. %s is the version.
+local VERSION_CATEGORY = "Let's RP %s"
+local VERSION_LABEL = "Let's RP %s"
+
+-- Pages with a missing or unknown value in a checked field go here, so they
+-- can be found and fixed. Only articles are categorised, never templates.
+local ERROR_CATEGORY = 'Pages with infobox problems'
+
+-- How many portraits an infobox takes: image, image2 … image5.
+local MAX_IMAGES = 5
+
+-- Width the pictures are sent at (the infobox scales them to fit).
+local IMAGE_WIDTH = '400px'
+
+-- ===================================================================
+-- The three infoboxes
+-- ===================================================================
+-- badges:   checked fields shown as coloured pills under the title.
+--           values maps what people type (lower case) to how it shows.
+-- kicker:   the small line above the title.
+-- sections: groups of rows. The first has no title and is always open;
+--           the rest fold. `when` hides a whole section unless it's true.
+
+local TYPES = {}
+
+TYPES.character = {
+	kind = 'Character',
+	badges = {
+		{ field = 'status', required = true,
+			values = { active = 'Active', inactive = 'Inactive', deceased = 'Deceased' } },
+		{ field = 'focus', required = true,
+			values = { civilian = 'Civilian', criminal = 'Criminal', ['public sector'] = 'Public Sector' } },
+	},
+	sections = {
+		{ fields = {
+			{ 'full_name', 'Full name' },
+			{ 'nicknames', 'Nicknames' },
+			{ 'date_of_birth', 'Date of birth' },
+			{ 'gender', 'Gender' },
+			{ 'nationality', 'Nationality' },
+		} },
+		{ title = 'Life', fields = {
+			{ 'occupation', 'Occupation' },
+			{ 'employer', 'Employer' },
+			{ 'affiliation', 'Affiliation' },
+			{ 'rank', 'Rank' },
+			{ 'residence', 'Residence' },
+			{ 'phone', 'Phone number' },
+		} },
+		{ title = 'Relationships', fields = {
+			{ 'family', 'Family' },
+			{ 'partner', 'Partner' },
+		} },
+		{ title = 'Death', when = function (v) return v.status == 'deceased' end, fields = {
+			{ 'died', 'Died' },
+			{ 'cause_of_death', 'Cause of death' },
+			{ 'killed_by', 'Killed by' },
+		} },
+		{ title = 'Meta', fields = {
+			{ 'played_by', 'Played by' },
+			{ 'first_seen', 'First seen' },
+			{ 'last_seen', 'Last seen' },
+			{ 'version', 'Server version', version = true },
+		} },
+	},
+	categories = function (v)
+		local c = { 'Characters' }
+		if v.status then table.insert(c, v.statusLabel .. ' characters') end
+		if v.focus then table.insert(c, v.focusLabel .. ' characters') end
+		return c
+	end,
+	shortdesc = function (v)
+		-- e.g. "Criminal character", "Deceased civilian character"
+		local focus = v.focusLabel and (v.focusLabel .. ' character') or 'Character'
+		if v.status and v.status ~= 'active' then
+			return v.statusLabel .. ' ' .. mw.ustring.lower(focus)
+		end
+		return focus
+	end,
+	-- An inactive character shows when they were last seen, under the badges.
+	note = function (v, args)
+		if v.status == 'inactive' and args.last_seen then
+			return 'Last seen ' .. args.last_seen
+		end
+	end,
+}
+
+TYPES.organization = {
+	kind = function (v, args)
+		-- "Gang", or "Police · Emergency Services" when a subtype is given
+		if args.subtype and v.typeLabel then return args.subtype .. ' · ' .. v.typeLabel end
+		return args.subtype or v.typeLabel or 'Organization'
+	end,
+	badges = {
+		{ field = 'type', required = true, hidden = true,
+			values = { gang = 'Gang', business = 'Business', ['emergency services'] = 'Emergency Services',
+				emergency = 'Emergency Services', ['emergency service'] = 'Emergency Services' } },
+		{ field = 'status',
+			values = { active = 'Active', inactive = 'Inactive', defunct = 'Defunct' } },
+	},
+	sections = {
+		{ fields = {
+			{ 'leader', 'Leader' },
+			{ 'founded', 'Founded' },
+			{ 'founder', 'Founder' },
+			{ 'defunct', 'Defunct' },
+			{ 'headquarters', 'Headquarters' },
+			{ 'members', 'Members' },
+		} },
+		{ title = 'Gang', when = function (v) return v.type == 'gang' end, fields = {
+			{ 'territory', 'Territory' },
+			{ 'colours', 'Colours' },
+			{ 'activities', 'Activities' },
+		} },
+		{ title = 'Business', when = function (v) return v.type == 'business' end, fields = {
+			{ 'industry', 'Industry' },
+			{ 'services', 'Products &amp; services' },
+			{ 'owner', 'Owner' },
+			{ 'location', 'Location' },
+			{ 'hours', 'Opening hours' },
+			{ 'phone', 'Phone number' },
+		} },
+		{ title = 'Emergency Services', when = function (v) return v.type == 'emergency services' end, fields = {
+			{ 'jurisdiction', 'Jurisdiction' },
+			{ 'divisions', 'Divisions' },
+			{ 'ranks', 'Ranks' },
+		} },
+		{ title = 'Relations', fields = {
+			{ 'allies', 'Allies' },
+			{ 'rivals', 'Rivals' },
+			{ 'predecessor', 'Predecessor' },
+			{ 'successor', 'Successor' },
+		} },
+		{ title = 'Meta', fields = {
+			{ 'first_seen', 'First seen' },
+			{ 'last_seen', 'Last seen' },
+			{ 'version', 'Server version', version = true },
+		} },
+	},
+	categories = function (v)
+		local plural = { gang = 'Gangs', business = 'Businesses', ['emergency services'] = 'Emergency Services' }
+		local c = { 'Organizations' }
+		if v.type then table.insert(c, plural[v.type]) end
+		if v.status == 'inactive' then table.insert(c, 'Inactive organizations') end
+		if v.status == 'defunct' then table.insert(c, 'Defunct organizations') end
+		return c
+	end,
+	shortdesc = function (v, args)
+		local what = args.subtype or v.typeLabel or 'Organization'
+		if v.status == 'defunct' then return 'Former ' .. mw.ustring.lower(what) end
+		return what
+	end,
+}
+
+TYPES.event = {
+	kind = function (v) return v.typeLabel or 'Event' end,
+	badges = {
+		{ field = 'type', required = true,
+			values = { heist = 'Heist', ['gang war'] = 'Gang war', shooting = 'Shooting', trial = 'Trial',
+				election = 'Election', ['community event'] = 'Community event',
+				['official server event'] = 'Official server event', official = 'Official server event',
+				other = 'Other' } },
+	},
+	sections = {
+		{ fields = {
+			{ 'date', 'Date' },
+			{ 'end_date', 'Ended' },
+			{ 'location', 'Location' },
+			{ 'organised_by', 'Organised by' },
+		} },
+		{ title = 'Who', fields = {
+			{ 'participants', 'Participants' },
+			{ 'factions', 'Factions involved' },
+		} },
+		{ title = 'Outcome', fields = {
+			{ 'outcome', 'Outcome' },
+			{ 'casualties', 'Casualties' },
+			{ 'arrests', 'Arrests' },
+		} },
+		{ title = 'Timeline', fields = {
+			{ 'previous', 'Previous event' },
+			{ 'next', 'Next event' },
+		} },
+		{ title = 'Meta', fields = {
+			{ 'media', 'Clips &amp; media' },
+			{ 'version', 'Server version', version = true },
+		} },
+	},
+	categories = function (v)
+		local plural = {
+			heist = 'Heists', ['gang war'] = 'Gang wars', shooting = 'Shootings', trial = 'Trials',
+			election = 'Elections', ['community event'] = 'Community events',
+			['official server event'] = 'Official server events', other = 'Other events',
+		}
+		local c = { 'Events' }
+		if v.type then table.insert(c, plural[v.type]) end
+		return c
+	end,
+	shortdesc = function (v, args)
+		local what = v.typeLabel or 'Event'
+		if args.date then return what .. ', ' .. plain(args.date) end
+		return what
+	end,
+}
+
+-- ===================================================================
+-- Helpers
+-- ===================================================================
+
+local function clean(s)
+	if s == nil then return nil end
+	s = mw.text.trim(s)
+	if s == '' then return nil end
+	return s
+end
+
+-- Text without wiki markup, for the short description.
+plain = function (s)
+	s = s or ''
+	s = s:gsub('%[%[[^%]|]-|([^%]]-)%]%]', '%1')      -- [[Target|label]] -&gt; label
+	s = s:gsub('%[%[([^%]]-)%]%]', '%1')              -- [[Target]] -&gt; Target
+	s = s:gsub('%[https?://%S+%s+([^%]]-)%]', '%1')   -- [url label] -&gt; label
+	s = s:gsub("'''?", '')
+	s = s:gsub('&lt;[^&gt;]-&gt;', '')
+	return mw.text.trim(s)
+end
+
+-- Canonical value for a checked field: the key (lower case) and its label.
+-- Returns nil, nil, typed when it isn't one of the allowed values.
+local function pick(badge, typed)
+	if not typed then return nil, nil, nil end
+	local key = mw.ustring.lower(plain(typed))
+	local label = badge.values[key]
+	if not label then return nil, nil, typed end
+	-- Aliases ("emergency") share a label; the key is always the label in lower case.
+	return mw.ustring.lower(label), label, nil
+end
+
+local function cssKey(s)
+	return (mw.ustring.lower(s):gsub('[^%w]+', '-'))
+end
+
+-- A value that starts with a list needs a newline to render as a list.
+local function block(s)
+	if s:match('^[%*#:;]') then return '\n' .. s .. '\n' end
+	return s
+end
+
+local function fileLink(name, caption)
+	if name:match('^%[%[') then return name end
+	name = name:gsub('^[Ff]ile:', ''):gsub('^[Ii]mage:', '')
+	return string.format('[[File:%s|%s|alt=%s]]', name, IMAGE_WIDTH, caption or '')
+end
+
+-- ===================================================================
+-- Building the infobox
+-- ===================================================================
+
+local function render(frame, typeName)
+	local def = TYPES[typeName]
+	local args = {}
+	for k, v in pairs(frame:getParent().args) do args[k] = clean(v) end
+
+	local title = mw.title.getCurrentTitle()
+	local isArticle = title.namespace == 0
+	local name = args.name or title.text
+
+	-- Read the checked fields.
+	local v = {}
+	local problems = {}
+	for _, badge in ipairs(def.badges) do
+		local key, label, bad = pick(badge, args[badge.field])
+		v[badge.field] = key
+		v[badge.field .. 'Label'] = label
+		if bad then
+			table.insert(problems, string.format('“%s” isn’t a known %s', bad, badge.field))
+		elseif badge.required and not key then
+			table.insert(problems, string.format('%s is missing', badge.field))
+		end
+	end
+
+	local box = mw.html.create('div'):addClass('rp-infobox'):addClass('rp-infobox--' .. typeName)
+	for _, badge in ipairs(def.badges) do
+		if v[badge.field] then box:addClass('rp-' .. badge.field .. '--' .. cssKey(v[badge.field])) end
+	end
+
+	-- Pictures: one, or several as tabs.
+	local images = {}
+	for i = 1, MAX_IMAGES do
+		local suffix = i == 1 and '' or tostring(i)
+		local file = args['image' .. suffix]
+		if file then
+			table.insert(images, {
+				file = file,
+				label = args['image' .. suffix .. '_label'] or (i == 1 and 'Main' or ('Image ' .. i)),
+				caption = args['caption' .. suffix],
+			})
+		end
+	end
+	if #images == 1 then
+		local fig = box:tag('div'):addClass('rp-ib-image')
+		fig:wikitext(fileLink(images[1].file, images[1].caption))
+		if images[1].caption then fig:tag('div'):addClass('rp-ib-caption'):wikitext(images[1].caption) end
+	elseif #images &gt; 1 then
+		local tabs = {}
+		for _, img in ipairs(images) do
+			local content = fileLink(img.file, img.caption)
+			if img.caption then content = content .. '&lt;div class="rp-ib-caption"&gt;' .. img.caption .. '&lt;/div&gt;' end
+			table.insert(tabs, '|-|' .. img.label:gsub('=', '') .. '=' .. content)
+		end
+		box:tag('div'):addClass('rp-ib-image'):addClass('rp-ib-tabs')
+			:wikitext(frame:extensionTag('tabber', table.concat(tabs, '\n')))
+	end
+
+	-- Heading: kind, name, badges.
+	local head = box:tag('div'):addClass('rp-ib-head')
+	local kind = type(def.kind) == 'function' and def.kind(v, args) or def.kind
+	head:tag('div'):addClass('rp-ib-kind'):wikitext(kind)
+	head:tag('div'):addClass('rp-ib-title'):wikitext(name)
+	local pills = {}
+	for _, badge in ipairs(def.badges) do
+		if v[badge.field] and not badge.hidden then
+			table.insert(pills, { badge.field, v[badge.field], v[badge.field .. 'Label'] })
+		end
+	end
+	if #pills &gt; 0 then
+		local row = head:tag('div'):addClass('rp-ib-badges')
+		for _, b in ipairs(pills) do
+			row:tag('span'):addClass('rp-badge'):addClass('rp-badge--' .. cssKey(b[2])):wikitext(b[3])
+		end
+	end
+	local note = def.note and def.note(v, args)
+	if note then head:tag('div'):addClass('rp-ib-note'):wikitext(note) end
+
+	-- Sections of rows.
+	for i, section in ipairs(def.sections) do
+		if not section.when or section.when(v) then
+			local rows = {}
+			for _, f in ipairs(section.fields) do
+				local value = args[f[1]]
+				if value then
+					if f.version then value = string.format(VERSION_LABEL, value) end
+					table.insert(rows, { f[2], value })
+				end
+			end
+			if #rows &gt; 0 then
+				local sec = box:tag('div'):addClass('rp-ib-section')
+				local body = sec
+				if section.title then
+					sec:addClass('mw-collapsible')
+					sec:tag('div'):addClass('rp-ib-section-title'):addClass('mw-collapsible-toggle'):wikitext(section.title)
+					body = sec:tag('div'):addClass('mw-collapsible-content')
+				end
+				for _, r in ipairs(rows) do
+					local row = body:tag('div'):addClass('rp-ib-row')
+					row:tag('div'):addClass('rp-ib-label'):wikitext(r[1])
+					row:tag('div'):addClass('rp-ib-value'):wikitext(block(r[2]))
+				end
+			end
+		end
+	end
+
+	-- Problems show in the box itself, so whoever sees them can fix them.
+	if #problems &gt; 0 then
+		local warn = box:tag('div'):addClass('rp-ib-problems')
+		warn:wikitext('Infobox: ' .. table.concat(problems, '; ') .. '. See the template’s page for the allowed values.')
+	end
+
+	local out = { frame:extensionTag('templatestyles', '', { src = 'Template:Infobox/styles.css' }), tostring(box) }
+
+	-- Short description: the grey line under the page title.
+	local desc = args.shortdesc or def.shortdesc(v, args)
+	if args.version and not args.shortdesc then desc = desc .. ' in ' .. string.format(VERSION_LABEL, args.version) end
+	if isArticle and desc and desc ~= '' then
+		table.insert(out, frame:preprocess('{{SHORTDESC:' .. plain(desc) .. '}}'))
+	end
+
+	-- Categories, on articles only.
+	if isArticle then
+		local cats = def.categories(v, args)
+		if args.version then table.insert(cats, string.format(VERSION_CATEGORY, args.version)) end
+		if #problems &gt; 0 then table.insert(cats, ERROR_CATEGORY) end
+		for _, c in ipairs(cats) do table.insert(out, '[[Category:' .. c .. ']]') end
+	end
+
+	return table.concat(out)
+end
+
+function p.character(frame) return render(frame, 'character') end
+function p.organization(frame) return render(frame, 'organization') end
+function p.event(frame) return render(frame, 'event') end
+
+-- For the documentation pages: the allowed values of a checked field,
+-- e.g. {{#invoke:Infobox|values|character|status}}.
+function p.values(frame)
+	local def = TYPES[frame.args[1]]
+	if not def then return '' end
+	for _, badge in ipairs(def.badges) do
+		if badge.field == frame.args[2] then
+			local seen, list = {}, {}
+			for _, label in pairs(badge.values) do
+				if not seen[label] then seen[label] = true; table.insert(list, label) end
+			end
+			table.sort(list)
+			return table.concat(list, ' · ')
+		end
+	end
+	return ''
+end
+
+return p
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox/styles.css</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>sanitized-css</model>
+      <format>text/css</format>
+      <text xml:space="preserve">/* Template:Infobox/styles.css: the look of every infobox (TemplateStyles).
+   Colours are see-through greys and inherited text, so the boxes follow
+   Citizen's light and dark modes without needing its CSS variables. */
+
+.rp-infobox {
+	float: right;
+	clear: right;
+	box-sizing: border-box;
+	width: 400px;
+	max-width: 100%;
+	margin: 0 0 1.5em 1.5em;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.07 );
+	overflow: hidden;
+	font-size: 0.875rem;
+	line-height: 1.45;
+}
+
+/* Pictures */
+.rp-infobox .rp-ib-image {
+	text-align: center;
+	background: rgba( 127, 127, 127, 0.1 );
+}
+.rp-infobox .rp-ib-image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 460px;
+	object-fit: cover;
+}
+.rp-infobox .rp-ib-image a {
+	display: block;
+}
+.rp-infobox .rp-ib-caption {
+	padding: 6px 16px;
+	font-size: 0.8125rem;
+	opacity: 0.75;
+}
+/* Portrait tabs */
+.rp-infobox .rp-ib-tabs .tabber {
+	margin: 0;
+}
+
+/* Heading */
+.rp-infobox .rp-ib-head {
+	padding: 14px 16px 10px;
+}
+.rp-infobox .rp-ib-kind {
+	font-size: 0.875rem;
+	opacity: 0.75;
+}
+.rp-infobox .rp-ib-title {
+	margin-top: 2px;
+	font-size: 1.5rem;
+	font-weight: 500;
+	line-height: 1.2;
+}
+.rp-infobox .rp-ib-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 10px;
+}
+.rp-infobox .rp-ib-note {
+	margin-top: 8px;
+	font-size: 0.8125rem;
+	opacity: 0.75;
+}
+
+/* Badges */
+.rp-badge {
+	display: inline-block;
+	padding: 2px 10px;
+	border-radius: 999px;
+	border: 1px solid rgba( 127, 127, 127, 0.35 );
+	background: rgba( 127, 127, 127, 0.12 );
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.6;
+	white-space: nowrap;
+}
+.rp-badge--active { background: rgba( 34, 197, 94, 0.16 ); border-color: rgba( 34, 197, 94, 0.5 ); color: #1f9d55; }
+.rp-badge--inactive { background: rgba( 148, 163, 184, 0.18 ); border-color: rgba( 148, 163, 184, 0.55 ); }
+.rp-badge--deceased { background: rgba( 239, 68, 68, 0.15 ); border-color: rgba( 239, 68, 68, 0.5 ); color: #dc4040; }
+.rp-badge--defunct { background: rgba( 239, 68, 68, 0.12 ); border-color: rgba( 239, 68, 68, 0.45 ); color: #dc4040; }
+.rp-badge--civilian { background: rgba( 59, 130, 246, 0.14 ); border-color: rgba( 59, 130, 246, 0.5 ); color: #3b82f6; }
+.rp-badge--criminal { background: rgba( 236, 72, 153, 0.14 ); border-color: rgba( 236, 72, 153, 0.5 ); color: #db2777; }
+.rp-badge--public-sector { background: rgba( 14, 165, 233, 0.14 ); border-color: rgba( 14, 165, 233, 0.5 ); color: #0284c7; }
+.rp-badge--official-server-event { background: rgba( 245, 158, 11, 0.16 ); border-color: rgba( 245, 158, 11, 0.55 ); color: #c27803; }
+
+/* A thin coloured line along the top for the most important badge */
+.rp-infobox.rp-status--deceased,
+.rp-infobox.rp-status--defunct { border-top: 3px solid rgba( 239, 68, 68, 0.7 ); }
+.rp-infobox.rp-type--official-server-event { border-top: 3px solid rgba( 245, 158, 11, 0.8 ); }
+
+/* Rows */
+.rp-infobox .rp-ib-section {
+	padding: 0 16px 8px;
+}
+.rp-infobox .rp-ib-section + .rp-ib-section,
+.rp-infobox .rp-ib-section.mw-collapsible {
+	border-top: 1px solid rgba( 127, 127, 127, 0.22 );
+}
+.rp-infobox .rp-ib-row {
+	display: flex;
+	gap: 16px;
+	padding: 6px 0;
+}
+.rp-infobox .rp-ib-label {
+	flex: 0 0 38%;
+	opacity: 0.75;
+}
+.rp-infobox .rp-ib-value {
+	flex: 1;
+	min-width: 0;
+	text-align: right;
+	overflow-wrap: anywhere;
+}
+.rp-infobox .rp-ib-value ul,
+.rp-infobox .rp-ib-value ol {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* Foldable sections: the title is the toggle */
+.rp-infobox .rp-ib-section-title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	float: none;
+	margin: 0 -16px;
+	padding: 12px 16px;
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	user-select: none;
+}
+.rp-infobox .rp-ib-section-title::after {
+	content: '';
+	width: 8px;
+	height: 8px;
+	margin-right: 4px;
+	border-right: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+	opacity: 0.6;
+	transform: rotate( -135deg );
+	transition: transform 0.2s;
+}
+.rp-infobox .mw-collapsed .rp-ib-section-title::after {
+	transform: rotate( 45deg );
+}
+
+/* Problems with the values typed in */
+.rp-infobox .rp-ib-problems {
+	margin: 8px 16px 12px;
+	padding: 8px 10px;
+	border-radius: 8px;
+	border: 1px solid rgba( 239, 68, 68, 0.5 );
+	background: rgba( 239, 68, 68, 0.1 );
+	font-size: 0.8125rem;
+}
+
+/* Phones and narrow windows: full width, above the text */
+@media ( max-width: 720px ) {
+	.rp-infobox {
+		float: none;
+		width: auto;
+		margin: 0 0 1.5em;
+	}
+}
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox character</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{#invoke:Infobox|character}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Template:Infobox character/doc}}
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox character/doc</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">For a character. Shows their status and focus as badges, sorts the page into categories, and writes the grey line under the title.
+
+The fields, sections and look are shared by all infoboxes and live in [[Module:Infobox]] and [[Template:Infobox/styles.css]].
+
+== Copy and paste ==
+&lt;pre&gt;
+{{Infobox character
+| name           =
+| image          =
+| caption        =
+| status         =
+| focus          =
+| full_name      =
+| nicknames      =
+| date_of_birth  =
+| gender         =
+| nationality    =
+| occupation     =
+| employer       =
+| affiliation    =
+| rank           =
+| residence      =
+| phone          =
+| family         =
+| partner        =
+| died           =
+| cause_of_death =
+| killed_by      =
+| played_by      =
+| first_seen     =
+| last_seen      =
+| version        =
+}}
+&lt;/pre&gt;
+Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt;code&gt;image5&lt;/code&gt;) turn into tabs.
+
+== Checked fields ==
+These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
+{| class="wikitable"
+! Field !! Allowed values !! Required
+|-
+| &lt;code&gt;status&lt;/code&gt; || {{#invoke:Infobox|values|character|status}} || yes
+|-
+| &lt;code&gt;focus&lt;/code&gt; || {{#invoke:Infobox|values|character|focus}} || yes
+|-
+|}
+
+== All fields ==
+{| class="wikitable"
+! Field !! Shows as !! Notes
+|-
+| &lt;code&gt;name&lt;/code&gt; || Name || Shown as the infobox title. Leave empty to use the page title.
+|-
+| &lt;code&gt;image&lt;/code&gt; || Image || File name of the main picture, e.g. Tony.png (no File: needed).
+|-
+| &lt;code&gt;caption&lt;/code&gt; || Caption || Text under the main picture.
+|-
+| &lt;code&gt;image_label&lt;/code&gt; || Image tab label || Tab name for the main picture when there are several, e.g. 2025.
+|-
+| &lt;code&gt;image2&lt;/code&gt; || Image 2 || Another picture: they become tabs. image3 … image5 work the same way.
+|-
+| &lt;code&gt;caption2&lt;/code&gt; || Caption 2 || Text under image 2.
+|-
+| &lt;code&gt;image2_label&lt;/code&gt; || Image 2 tab label || Tab name for image 2.
+|-
+| &lt;code&gt;status&lt;/code&gt; || Status || Active, Inactive (the player has stopped playing them, but they are alive) or Deceased.
+|-
+| &lt;code&gt;focus&lt;/code&gt; || Focus || What the character is currently focused on: Civilian, Criminal or Public Sector.
+|-
+| &lt;code&gt;full_name&lt;/code&gt; || Full name || 
+|-
+| &lt;code&gt;nicknames&lt;/code&gt; || Nicknames || 
+|-
+| &lt;code&gt;date_of_birth&lt;/code&gt; || Date of birth || 
+|-
+| &lt;code&gt;gender&lt;/code&gt; || Gender || 
+|-
+| &lt;code&gt;nationality&lt;/code&gt; || Nationality || 
+|-
+| &lt;code&gt;occupation&lt;/code&gt; || Occupation || 
+|-
+| &lt;code&gt;employer&lt;/code&gt; || Employer || Link to an organization.
+|-
+| &lt;code&gt;affiliation&lt;/code&gt; || Affiliation || Gangs or organizations, as links.
+|-
+| &lt;code&gt;rank&lt;/code&gt; || Rank || Their position in that organization.
+|-
+| &lt;code&gt;residence&lt;/code&gt; || Residence || 
+|-
+| &lt;code&gt;phone&lt;/code&gt; || Phone number || In-character number.
+|-
+| &lt;code&gt;family&lt;/code&gt; || Family || 
+|-
+| &lt;code&gt;partner&lt;/code&gt; || Partner || 
+|-
+| &lt;code&gt;died&lt;/code&gt; || Died || Only shown when status is Deceased.
+|-
+| &lt;code&gt;cause_of_death&lt;/code&gt; || Cause of death || Only shown when status is Deceased.
+|-
+| &lt;code&gt;killed_by&lt;/code&gt; || Killed by || Only shown when status is Deceased.
+|-
+| &lt;code&gt;played_by&lt;/code&gt; || Played by || The player.
+|-
+| &lt;code&gt;first_seen&lt;/code&gt; || First seen || 
+|-
+| &lt;code&gt;last_seen&lt;/code&gt; || Last seen || Also shown under the badges when the character is Inactive.
+|-
+| &lt;code&gt;version&lt;/code&gt; || Server version || Which version of the server, e.g. 2.0. Adds the category Let's RP 2.0.
+|-
+| &lt;code&gt;shortdesc&lt;/code&gt; || Short description || Replaces the automatic grey line under the page title.
+|-
+|}
+
+== Example ==
+&lt;pre&gt;
+{{Infobox character
+| status         = Active
+| focus          = Criminal
+| full_name      = Antonio "Tony" Ramirez
+| nicknames      = Two-Times
+| date_of_birth  = 3 March 1992
+| gender         = Male
+| nationality    = American
+| occupation     = Mechanic
+| employer       = [[Big Rig Customs]]
+| affiliation    = [[Southside Saints]]
+| rank           = Soldier
+| residence      = Grove Street
+| phone          = 555-0142
+| played_by      = TwoTimesTony
+| first_seen     = March 2026
+| version        = 2.0
+}}
+&lt;/pre&gt;
+
+== Start a new page with this infobox ==
+Put this box on a page (for example a directory page) to let people start a new article with the infobox and section headings already filled in:
+&lt;pre&gt;
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox character/preload
+buttonlabel=Create a page
+placeholder=Page title
+&lt;/inputbox&gt;
+&lt;/pre&gt;
+
+== TemplateData ==
+&lt;templatedata&gt;
+{
+	"description": "For a character. Shows their status and focus as badges, sorts the page into categories, and writes the grey line under the title.",
+	"format": "block",
+	"params": {
+		"name": {
+			"label": "Name",
+			"type": "string",
+			"description": "Shown as the infobox title. Leave empty to use the page title."
+		},
+		"image": {
+			"label": "Image",
+			"type": "wiki-file-name",
+			"description": "File name of the main picture, e.g. Tony.png (no File: needed).",
+			"suggested": true
+		},
+		"caption": {
+			"label": "Caption",
+			"type": "string",
+			"description": "Text under the main picture."
+		},
+		"image_label": {
+			"label": "Image tab label",
+			"type": "string",
+			"description": "Tab name for the main picture when there are several, e.g. 2025."
+		},
+		"image2": {
+			"label": "Image 2",
+			"type": "string",
+			"description": "Another picture: they become tabs. image3 … image5 work the same way."
+		},
+		"caption2": {
+			"label": "Caption 2",
+			"type": "string",
+			"description": "Text under image 2."
+		},
+		"image2_label": {
+			"label": "Image 2 tab label",
+			"type": "string",
+			"description": "Tab name for image 2."
+		},
+		"status": {
+			"label": "Status",
+			"type": "string",
+			"description": "Active, Inactive (the player has stopped playing them, but they are alive) or Deceased.",
+			"example": "Active",
+			"required": true,
+			"suggestedvalues": [
+				"Active",
+				"Inactive",
+				"Deceased"
+			]
+		},
+		"focus": {
+			"label": "Focus",
+			"type": "string",
+			"description": "What the character is currently focused on: Civilian, Criminal or Public Sector.",
+			"example": "Criminal",
+			"required": true,
+			"suggestedvalues": [
+				"Civilian",
+				"Criminal",
+				"Public Sector"
+			]
+		},
+		"full_name": {
+			"label": "Full name",
+			"type": "string",
+			"example": "Antonio \"Tony\" Ramirez"
+		},
+		"nicknames": {
+			"label": "Nicknames",
+			"type": "string",
+			"example": "Two-Times"
+		},
+		"date_of_birth": {
+			"label": "Date of birth",
+			"type": "string",
+			"example": "3 March 1992"
+		},
+		"gender": {
+			"label": "Gender",
+			"type": "string",
+			"example": "Male"
+		},
+		"nationality": {
+			"label": "Nationality",
+			"type": "string",
+			"example": "American"
+		},
+		"occupation": {
+			"label": "Occupation",
+			"type": "string",
+			"example": "Mechanic"
+		},
+		"employer": {
+			"label": "Employer",
+			"type": "content",
+			"description": "Link to an organization.",
+			"example": "[[Big Rig Customs]]"
+		},
+		"affiliation": {
+			"label": "Affiliation",
+			"type": "content",
+			"description": "Gangs or organizations, as links.",
+			"example": "[[Southside Saints]]"
+		},
+		"rank": {
+			"label": "Rank",
+			"type": "string",
+			"description": "Their position in that organization.",
+			"example": "Soldier"
+		},
+		"residence": {
+			"label": "Residence",
+			"type": "string",
+			"example": "Grove Street"
+		},
+		"phone": {
+			"label": "Phone number",
+			"type": "string",
+			"description": "In-character number.",
+			"example": "555-0142"
+		},
+		"family": {
+			"label": "Family",
+			"type": "string"
+		},
+		"partner": {
+			"label": "Partner",
+			"type": "string"
+		},
+		"died": {
+			"label": "Died",
+			"type": "string",
+			"description": "Only shown when status is Deceased."
+		},
+		"cause_of_death": {
+			"label": "Cause of death",
+			"type": "string",
+			"description": "Only shown when status is Deceased."
+		},
+		"killed_by": {
+			"label": "Killed by",
+			"type": "content",
+			"description": "Only shown when status is Deceased."
+		},
+		"played_by": {
+			"label": "Played by",
+			"type": "content",
+			"description": "The player.",
+			"example": "TwoTimesTony"
+		},
+		"first_seen": {
+			"label": "First seen",
+			"type": "string",
+			"example": "March 2026"
+		},
+		"last_seen": {
+			"label": "Last seen",
+			"type": "string",
+			"description": "Also shown under the badges when the character is Inactive."
+		},
+		"version": {
+			"label": "Server version",
+			"type": "string",
+			"description": "Which version of the server, e.g. 2.0. Adds the category Let's RP 2.0.",
+			"example": "2.0"
+		},
+		"shortdesc": {
+			"label": "Short description",
+			"type": "string",
+			"description": "Replaces the automatic grey line under the page title."
+		}
+	},
+	"paramOrder": [
+		"name",
+		"image",
+		"caption",
+		"image_label",
+		"image2",
+		"caption2",
+		"image2_label",
+		"status",
+		"focus",
+		"full_name",
+		"nicknames",
+		"date_of_birth",
+		"gender",
+		"nationality",
+		"occupation",
+		"employer",
+		"affiliation",
+		"rank",
+		"residence",
+		"phone",
+		"family",
+		"partner",
+		"died",
+		"cause_of_death",
+		"killed_by",
+		"played_by",
+		"first_seen",
+		"last_seen",
+		"version",
+		"shortdesc"
+	]
+}
+&lt;/templatedata&gt;
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox character/preload</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;noinclude&gt;The starting text for a new page; see [[Template:Infobox character]].&lt;/noinclude&gt;{{Infobox character
+| name           =
+| image          =
+| caption        =
+| status         =
+| focus          =
+| full_name      =
+| nicknames      =
+| date_of_birth  =
+| gender         =
+| nationality    =
+| occupation     =
+| employer       =
+| affiliation    =
+| rank           =
+| residence      =
+| phone          =
+| family         =
+| partner        =
+| died           =
+| cause_of_death =
+| killed_by      =
+| played_by      =
+| first_seen     =
+| last_seen      =
+| version        =
+}}
+
+== Overview ==
+Who they are, in two or three sentences.
+
+== Background ==
+Where they came from and how they ended up here.
+
+== Personality ==
+
+== Relationships ==
+
+== Notable events ==
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox organization</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{#invoke:Infobox|organization}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Template:Infobox organization/doc}}
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox organization/doc</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">For a gang, a business or an emergency service. The type decides which extra section shows.
+
+The fields, sections and look are shared by all infoboxes and live in [[Module:Infobox]] and [[Template:Infobox/styles.css]].
+
+== Copy and paste ==
+&lt;pre&gt;
+{{Infobox organization
+| name         =
+| image        =
+| caption      =
+| type         =
+| subtype      =
+| status       =
+| leader       =
+| founded      =
+| founder      =
+| defunct      =
+| headquarters =
+| members      =
+| territory    =
+| colours      =
+| activities   =
+| industry     =
+| services     =
+| owner        =
+| location     =
+| hours        =
+| phone        =
+| jurisdiction =
+| divisions    =
+| ranks        =
+| allies       =
+| rivals       =
+| predecessor  =
+| successor    =
+| first_seen   =
+| last_seen    =
+| version      =
+}}
+&lt;/pre&gt;
+Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt;code&gt;image5&lt;/code&gt;) turn into tabs.
+
+== Checked fields ==
+These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
+{| class="wikitable"
+! Field !! Allowed values !! Required
+|-
+| &lt;code&gt;type&lt;/code&gt; || {{#invoke:Infobox|values|organization|type}} || yes
+|-
+| &lt;code&gt;status&lt;/code&gt; || {{#invoke:Infobox|values|organization|status}} || no
+|-
+|}
+
+== All fields ==
+{| class="wikitable"
+! Field !! Shows as !! Notes
+|-
+| &lt;code&gt;name&lt;/code&gt; || Name || Shown as the infobox title. Leave empty to use the page title.
+|-
+| &lt;code&gt;image&lt;/code&gt; || Image || File name of the main picture, e.g. Tony.png (no File: needed).
+|-
+| &lt;code&gt;caption&lt;/code&gt; || Caption || Text under the main picture.
+|-
+| &lt;code&gt;image_label&lt;/code&gt; || Image tab label || Tab name for the main picture when there are several, e.g. 2025.
+|-
+| &lt;code&gt;image2&lt;/code&gt; || Image 2 || Another picture: they become tabs. image3 … image5 work the same way.
+|-
+| &lt;code&gt;caption2&lt;/code&gt; || Caption 2 || Text under image 2.
+|-
+| &lt;code&gt;image2_label&lt;/code&gt; || Image 2 tab label || Tab name for image 2.
+|-
+| &lt;code&gt;type&lt;/code&gt; || Type || Gang, Business or Emergency Services.
+|-
+| &lt;code&gt;subtype&lt;/code&gt; || Subtype || More detail on the type, e.g. Police, EMS, Car dealership, Motorcycle club.
+|-
+| &lt;code&gt;status&lt;/code&gt; || Status || Active, Inactive or Defunct.
+|-
+| &lt;code&gt;leader&lt;/code&gt; || Leader || The boss, owner or chief.
+|-
+| &lt;code&gt;founded&lt;/code&gt; || Founded || 
+|-
+| &lt;code&gt;founder&lt;/code&gt; || Founder || 
+|-
+| &lt;code&gt;defunct&lt;/code&gt; || Defunct || When it ended.
+|-
+| &lt;code&gt;headquarters&lt;/code&gt; || Headquarters || 
+|-
+| &lt;code&gt;members&lt;/code&gt; || Members || A number, or a list of links.
+|-
+| &lt;code&gt;territory&lt;/code&gt; || Territory || Gangs only.
+|-
+| &lt;code&gt;colours&lt;/code&gt; || Colours || Gangs only.
+|-
+| &lt;code&gt;activities&lt;/code&gt; || Activities || Gangs only.
+|-
+| &lt;code&gt;industry&lt;/code&gt; || Industry || Businesses only.
+|-
+| &lt;code&gt;services&lt;/code&gt; || Products &amp; services || Businesses only.
+|-
+| &lt;code&gt;owner&lt;/code&gt; || Owner || Businesses only.
+|-
+| &lt;code&gt;location&lt;/code&gt; || Location || Businesses only.
+|-
+| &lt;code&gt;hours&lt;/code&gt; || Opening hours || Businesses only.
+|-
+| &lt;code&gt;phone&lt;/code&gt; || Phone number || Businesses only.
+|-
+| &lt;code&gt;jurisdiction&lt;/code&gt; || Jurisdiction || Emergency Services only.
+|-
+| &lt;code&gt;divisions&lt;/code&gt; || Divisions || Emergency Services only.
+|-
+| &lt;code&gt;ranks&lt;/code&gt; || Ranks || Emergency Services only.
+|-
+| &lt;code&gt;allies&lt;/code&gt; || Allies || 
+|-
+| &lt;code&gt;rivals&lt;/code&gt; || Rivals || 
+|-
+| &lt;code&gt;predecessor&lt;/code&gt; || Predecessor || What it grew out of.
+|-
+| &lt;code&gt;successor&lt;/code&gt; || Successor || What it became.
+|-
+| &lt;code&gt;first_seen&lt;/code&gt; || First seen || 
+|-
+| &lt;code&gt;last_seen&lt;/code&gt; || Last seen || 
+|-
+| &lt;code&gt;version&lt;/code&gt; || Server version || Which version of the server, e.g. 2.0. Adds the category Let's RP 2.0.
+|-
+| &lt;code&gt;shortdesc&lt;/code&gt; || Short description || Replaces the automatic grey line under the page title.
+|-
+|}
+
+== Example ==
+&lt;pre&gt;
+{{Infobox organization
+| type         = Gang
+| status       = Active
+| leader       = [[Marisol Vega]]
+| founded      = January 2026
+| territory    = Grove Street
+| colours      = Purple and gold
+| rivals       = [[Eastside Vipers]]
+| version      = 2.0
+}}
+&lt;/pre&gt;
+
+== Start a new page with this infobox ==
+Put this box on a page (for example a directory page) to let people start a new article with the infobox and section headings already filled in:
+&lt;pre&gt;
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox organization/preload
+buttonlabel=Create a page
+placeholder=Page title
+&lt;/inputbox&gt;
+&lt;/pre&gt;
+
+== TemplateData ==
+&lt;templatedata&gt;
+{
+	"description": "For a gang, a business or an emergency service. The type decides which extra section shows.",
+	"format": "block",
+	"params": {
+		"name": {
+			"label": "Name",
+			"type": "string",
+			"description": "Shown as the infobox title. Leave empty to use the page title."
+		},
+		"image": {
+			"label": "Image",
+			"type": "wiki-file-name",
+			"description": "File name of the main picture, e.g. Tony.png (no File: needed).",
+			"suggested": true
+		},
+		"caption": {
+			"label": "Caption",
+			"type": "string",
+			"description": "Text under the main picture."
+		},
+		"image_label": {
+			"label": "Image tab label",
+			"type": "string",
+			"description": "Tab name for the main picture when there are several, e.g. 2025."
+		},
+		"image2": {
+			"label": "Image 2",
+			"type": "string",
+			"description": "Another picture: they become tabs. image3 … image5 work the same way."
+		},
+		"caption2": {
+			"label": "Caption 2",
+			"type": "string",
+			"description": "Text under image 2."
+		},
+		"image2_label": {
+			"label": "Image 2 tab label",
+			"type": "string",
+			"description": "Tab name for image 2."
+		},
+		"type": {
+			"label": "Type",
+			"type": "string",
+			"description": "Gang, Business or Emergency Services.",
+			"example": "Gang",
+			"required": true,
+			"suggestedvalues": [
+				"Gang",
+				"Business",
+				"Emergency Services"
+			]
+		},
+		"subtype": {
+			"label": "Subtype",
+			"type": "string",
+			"description": "More detail on the type, e.g. Police, EMS, Car dealership, Motorcycle club."
+		},
+		"status": {
+			"label": "Status",
+			"type": "string",
+			"description": "Active, Inactive or Defunct.",
+			"example": "Active",
+			"suggested": true,
+			"suggestedvalues": [
+				"Active",
+				"Inactive",
+				"Defunct"
+			]
+		},
+		"leader": {
+			"label": "Leader",
+			"type": "content",
+			"description": "The boss, owner or chief.",
+			"example": "[[Marisol Vega]]"
+		},
+		"founded": {
+			"label": "Founded",
+			"type": "string",
+			"example": "January 2026"
+		},
+		"founder": {
+			"label": "Founder",
+			"type": "string"
+		},
+		"defunct": {
+			"label": "Defunct",
+			"type": "string",
+			"description": "When it ended."
+		},
+		"headquarters": {
+			"label": "Headquarters",
+			"type": "string"
+		},
+		"members": {
+			"label": "Members",
+			"type": "string",
+			"description": "A number, or a list of links."
+		},
+		"territory": {
+			"label": "Territory",
+			"type": "string",
+			"description": "Gangs only.",
+			"example": "Grove Street"
+		},
+		"colours": {
+			"label": "Colours",
+			"type": "string",
+			"description": "Gangs only.",
+			"example": "Purple and gold"
+		},
+		"activities": {
+			"label": "Activities",
+			"type": "string",
+			"description": "Gangs only."
+		},
+		"industry": {
+			"label": "Industry",
+			"type": "string",
+			"description": "Businesses only."
+		},
+		"services": {
+			"label": "Products &amp; services",
+			"type": "string",
+			"description": "Businesses only."
+		},
+		"owner": {
+			"label": "Owner",
+			"type": "string",
+			"description": "Businesses only."
+		},
+		"location": {
+			"label": "Location",
+			"type": "string",
+			"description": "Businesses only."
+		},
+		"hours": {
+			"label": "Opening hours",
+			"type": "string",
+			"description": "Businesses only."
+		},
+		"phone": {
+			"label": "Phone number",
+			"type": "string",
+			"description": "Businesses only."
+		},
+		"jurisdiction": {
+			"label": "Jurisdiction",
+			"type": "string",
+			"description": "Emergency Services only."
+		},
+		"divisions": {
+			"label": "Divisions",
+			"type": "string",
+			"description": "Emergency Services only."
+		},
+		"ranks": {
+			"label": "Ranks",
+			"type": "string",
+			"description": "Emergency Services only."
+		},
+		"allies": {
+			"label": "Allies",
+			"type": "content"
+		},
+		"rivals": {
+			"label": "Rivals",
+			"type": "content",
+			"example": "[[Eastside Vipers]]"
+		},
+		"predecessor": {
+			"label": "Predecessor",
+			"type": "string",
+			"description": "What it grew out of."
+		},
+		"successor": {
+			"label": "Successor",
+			"type": "string",
+			"description": "What it became."
+		},
+		"first_seen": {
+			"label": "First seen",
+			"type": "string"
+		},
+		"last_seen": {
+			"label": "Last seen",
+			"type": "string"
+		},
+		"version": {
+			"label": "Server version",
+			"type": "string",
+			"description": "Which version of the server, e.g. 2.0. Adds the category Let's RP 2.0.",
+			"example": "2.0"
+		},
+		"shortdesc": {
+			"label": "Short description",
+			"type": "string",
+			"description": "Replaces the automatic grey line under the page title."
+		}
+	},
+	"paramOrder": [
+		"name",
+		"image",
+		"caption",
+		"image_label",
+		"image2",
+		"caption2",
+		"image2_label",
+		"type",
+		"subtype",
+		"status",
+		"leader",
+		"founded",
+		"founder",
+		"defunct",
+		"headquarters",
+		"members",
+		"territory",
+		"colours",
+		"activities",
+		"industry",
+		"services",
+		"owner",
+		"location",
+		"hours",
+		"phone",
+		"jurisdiction",
+		"divisions",
+		"ranks",
+		"allies",
+		"rivals",
+		"predecessor",
+		"successor",
+		"first_seen",
+		"last_seen",
+		"version",
+		"shortdesc"
+	]
+}
+&lt;/templatedata&gt;
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox organization/preload</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;noinclude&gt;The starting text for a new page; see [[Template:Infobox organization]].&lt;/noinclude&gt;{{Infobox organization
+| name         =
+| image        =
+| caption      =
+| type         =
+| subtype      =
+| status       =
+| leader       =
+| founded      =
+| founder      =
+| defunct      =
+| headquarters =
+| members      =
+| territory    =
+| colours      =
+| activities   =
+| industry     =
+| services     =
+| owner        =
+| location     =
+| hours        =
+| phone        =
+| jurisdiction =
+| divisions    =
+| ranks        =
+| allies       =
+| rivals       =
+| predecessor  =
+| successor    =
+| first_seen   =
+| last_seen    =
+| version      =
+}}
+
+== Overview ==
+
+== History ==
+
+== Members ==
+{| class="wikitable"
+! Rank !! Members
+|-
+| Leader || [[Someone]]
+|}
+
+== Relations ==
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox event</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{#invoke:Infobox|event}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Template:Infobox event/doc}}
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox event/doc</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">For a server event: a heist, a war, a trial, an election, a community or official event.
+
+The fields, sections and look are shared by all infoboxes and live in [[Module:Infobox]] and [[Template:Infobox/styles.css]].
+
+== Copy and paste ==
+&lt;pre&gt;
+{{Infobox event
+| name         =
+| image        =
+| caption      =
+| type         =
+| date         =
+| end_date     =
+| location     =
+| organised_by =
+| participants =
+| factions     =
+| outcome      =
+| casualties   =
+| arrests      =
+| previous     =
+| next         =
+| media        =
+| version      =
+}}
+&lt;/pre&gt;
+Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt;code&gt;image5&lt;/code&gt;) turn into tabs.
+
+== Checked fields ==
+These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
+{| class="wikitable"
+! Field !! Allowed values !! Required
+|-
+| &lt;code&gt;type&lt;/code&gt; || {{#invoke:Infobox|values|event|type}} || yes
+|-
+|}
+
+== All fields ==
+{| class="wikitable"
+! Field !! Shows as !! Notes
+|-
+| &lt;code&gt;name&lt;/code&gt; || Name || Shown as the infobox title. Leave empty to use the page title.
+|-
+| &lt;code&gt;image&lt;/code&gt; || Image || File name of the main picture, e.g. Tony.png (no File: needed).
+|-
+| &lt;code&gt;caption&lt;/code&gt; || Caption || Text under the main picture.
+|-
+| &lt;code&gt;image_label&lt;/code&gt; || Image tab label || Tab name for the main picture when there are several, e.g. 2025.
+|-
+| &lt;code&gt;image2&lt;/code&gt; || Image 2 || Another picture: they become tabs. image3 … image5 work the same way.
+|-
+| &lt;code&gt;caption2&lt;/code&gt; || Caption 2 || Text under image 2.
+|-
+| &lt;code&gt;image2_label&lt;/code&gt; || Image 2 tab label || Tab name for image 2.
+|-
+| &lt;code&gt;type&lt;/code&gt; || Type || Heist, Gang war, Shooting, Trial, Election, Community event, Official server event or Other.
+|-
+| &lt;code&gt;date&lt;/code&gt; || Date || 
+|-
+| &lt;code&gt;end_date&lt;/code&gt; || Ended || For events over several days.
+|-
+| &lt;code&gt;location&lt;/code&gt; || Location || 
+|-
+| &lt;code&gt;organised_by&lt;/code&gt; || Organised by || Players, an organization, or Server staff.
+|-
+| &lt;code&gt;participants&lt;/code&gt; || Participants || 
+|-
+| &lt;code&gt;factions&lt;/code&gt; || Factions involved || 
+|-
+| &lt;code&gt;outcome&lt;/code&gt; || Outcome || 
+|-
+| &lt;code&gt;casualties&lt;/code&gt; || Casualties || 
+|-
+| &lt;code&gt;arrests&lt;/code&gt; || Arrests || 
+|-
+| &lt;code&gt;previous&lt;/code&gt; || Previous event || Link to the event before this one.
+|-
+| &lt;code&gt;next&lt;/code&gt; || Next event || Link to the event after this one.
+|-
+| &lt;code&gt;media&lt;/code&gt; || Clips &amp; media || Links to clips or VODs.
+|-
+| &lt;code&gt;version&lt;/code&gt; || Server version || Which version of the server, e.g. 2.0. Adds the category Let's RP 2.0.
+|-
+| &lt;code&gt;shortdesc&lt;/code&gt; || Short description || Replaces the automatic grey line under the page title.
+|-
+|}
+
+== Example ==
+&lt;pre&gt;
+{{Infobox event
+| type         = Heist
+| date         = 14 June 2026
+| location     = Harbor Savings &amp; Loan
+| organised_by = [[Southside Saints]]
+| version      = 2.0
+}}
+&lt;/pre&gt;
+
+== Start a new page with this infobox ==
+Put this box on a page (for example a directory page) to let people start a new article with the infobox and section headings already filled in:
+&lt;pre&gt;
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox event/preload
+buttonlabel=Create a page
+placeholder=Page title
+&lt;/inputbox&gt;
+&lt;/pre&gt;
+
+== TemplateData ==
+&lt;templatedata&gt;
+{
+	"description": "For a server event: a heist, a war, a trial, an election, a community or official event.",
+	"format": "block",
+	"params": {
+		"name": {
+			"label": "Name",
+			"type": "string",
+			"description": "Shown as the infobox title. Leave empty to use the page title."
+		},
+		"image": {
+			"label": "Image",
+			"type": "wiki-file-name",
+			"description": "File name of the main picture, e.g. Tony.png (no File: needed).",
+			"suggested": true
+		},
+		"caption": {
+			"label": "Caption",
+			"type": "string",
+			"description": "Text under the main picture."
+		},
+		"image_label": {
+			"label": "Image tab label",
+			"type": "string",
+			"description": "Tab name for the main picture when there are several, e.g. 2025."
+		},
+		"image2": {
+			"label": "Image 2",
+			"type": "string",
+			"description": "Another picture: they become tabs. image3 … image5 work the same way."
+		},
+		"caption2": {
+			"label": "Caption 2",
+			"type": "string",
+			"description": "Text under image 2."
+		},
+		"image2_label": {
+			"label": "Image 2 tab label",
+			"type": "string",
+			"description": "Tab name for image 2."
+		},
+		"type": {
+			"label": "Type",
+			"type": "string",
+			"description": "Heist, Gang war, Shooting, Trial, Election, Community event, Official server event or Other.",
+			"example": "Heist",
+			"required": true,
+			"suggestedvalues": [
+				"Heist",
+				"Gang war",
+				"Shooting",
+				"Trial",
+				"Election",
+				"Community event",
+				"Official server event",
+				"Other"
+			]
+		},
+		"date": {
+			"label": "Date",
+			"type": "string",
+			"example": "14 June 2026"
+		},
+		"end_date": {
+			"label": "Ended",
+			"type": "string",
+			"description": "For events over several days."
+		},
+		"location": {
+			"label": "Location",
+			"type": "string",
+			"example": "Harbor Savings &amp; Loan"
+		},
+		"organised_by": {
+			"label": "Organised by",
+			"type": "content",
+			"description": "Players, an organization, or Server staff.",
+			"example": "[[Southside Saints]]"
+		},
+		"participants": {
+			"label": "Participants",
+			"type": "string"
+		},
+		"factions": {
+			"label": "Factions involved",
+			"type": "string"
+		},
+		"outcome": {
+			"label": "Outcome",
+			"type": "string"
+		},
+		"casualties": {
+			"label": "Casualties",
+			"type": "string"
+		},
+		"arrests": {
+			"label": "Arrests",
+			"type": "string"
+		},
+		"previous": {
+			"label": "Previous event",
+			"type": "content",
+			"description": "Link to the event before this one."
+		},
+		"next": {
+			"label": "Next event",
+			"type": "content",
+			"description": "Link to the event after this one."
+		},
+		"media": {
+			"label": "Clips &amp; media",
+			"type": "string",
+			"description": "Links to clips or VODs."
+		},
+		"version": {
+			"label": "Server version",
+			"type": "string",
+			"description": "Which version of the server, e.g. 2.0. Adds the category Let's RP 2.0.",
+			"example": "2.0"
+		},
+		"shortdesc": {
+			"label": "Short description",
+			"type": "string",
+			"description": "Replaces the automatic grey line under the page title."
+		}
+	},
+	"paramOrder": [
+		"name",
+		"image",
+		"caption",
+		"image_label",
+		"image2",
+		"caption2",
+		"image2_label",
+		"type",
+		"date",
+		"end_date",
+		"location",
+		"organised_by",
+		"participants",
+		"factions",
+		"outcome",
+		"casualties",
+		"arrests",
+		"previous",
+		"next",
+		"media",
+		"version",
+		"shortdesc"
+	]
+}
+&lt;/templatedata&gt;
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Infobox event/preload</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;noinclude&gt;The starting text for a new page; see [[Template:Infobox event]].&lt;/noinclude&gt;{{Infobox event
+| name         =
+| image        =
+| caption      =
+| type         =
+| date         =
+| end_date     =
+| location     =
+| organised_by =
+| participants =
+| factions     =
+| outcome      =
+| casualties   =
+| arrests      =
+| previous     =
+| next         =
+| media        =
+| version      =
+}}
+
+== Summary ==
+What happened, in a paragraph.
+
+== Background ==
+
+== Timeline ==
+
+== Aftermath ==
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages with infobox problems</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-05T22:51:57Z</timestamp>
+      <contributor><username>Infobox import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages whose infobox has a missing or unknown value in a checked field (like status or type). The infobox on each page says what to fix.</text>
+    </revision>
+  </page>
+</mediawiki>
