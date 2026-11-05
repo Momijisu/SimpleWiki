@@ -1,0 +1,16 @@
+{
+  "name": "simplewiki",
+  "version": "1.0.0",
+  "description": "A self-hosted, multi-user wiki for roleplay communities, with namespaces, templates, themes and moderation.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
+    "backup": "node --disable-warning=ExperimentalWarning tools/backup.js",
+    "demo": "node --disable-warning=ExperimentalWarning tools/demo.js",
+    "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.js"
+  }
+}

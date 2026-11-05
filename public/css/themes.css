@@ -1,0 +1,281 @@
+/* Themes. Each one is only a set of variables, so they all share the same
+   layout. A theme applies to <html data-theme="…"> and to any element with
+   data-theme (the namespace cards on the front page use that). To add a
+   theme: copy a block, change the values, and add it to THEMES in server/api.js. */
+
+@font-face { font-family: "Oswald"; src: url(../fonts/oswald-latin-500-normal.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Oswald"; src: url(../fonts/oswald-latin-600-normal.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Oswald"; src: url(../fonts/oswald-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-400-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-500-normal.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-600-normal.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url(../fonts/barlow-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Rye"; src: url(../fonts/rye-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Alegreya"; src: url(../fonts/alegreya-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Alegreya"; src: url(../fonts/alegreya-latin-400-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Alegreya"; src: url(../fonts/alegreya-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Alegreya Sans"; src: url(../fonts/alegreya-sans-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Alegreya Sans"; src: url(../fonts/alegreya-sans-latin-400-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Alegreya Sans"; src: url(../fonts/alegreya-sans-latin-500-normal.woff2) format("woff2"); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: "Alegreya Sans"; src: url(../fonts/alegreya-sans-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+
+/* ================================================================ Los Santos
+   Neon-and-sunset city at night: near-black, hot pink and orange, condensed
+   capitals. */
+:root, [data-theme="gta"] {
+  color-scheme: dark;
+  --bg: #0c0b11;
+  --bg-img: radial-gradient(1200px 600px at 90% -10%, rgba(255, 61, 139, .13), transparent 60%),
+            radial-gradient(900px 500px at -10% 110%, rgba(64, 120, 255, .10), transparent 60%);
+  --bg-size: auto;
+  --chrome: rgba(10, 9, 14, .92);
+  --chrome-text: #f5f2f7;
+  --chrome-muted: #8f8a9a;
+  --chrome-rule: rgba(255, 255, 255, .14);
+  --chrome-input: rgba(255, 255, 255, .07);
+  --chrome-border: 0;
+  --chrome-shadow: 0 2px 0 0 #ff3d8b, 0 3px 0 0 #ffb02e, 0 10px 30px rgba(255, 61, 139, .12);
+  --side-bg: rgba(16, 14, 22, .7);
+  --surface: #17151f;
+  --surface-2: #1f1c29;
+  --input-bg: #121019;
+  --img-bg: #24202f;
+  --hover: rgba(255, 255, 255, .06);
+  --active-bg: rgba(255, 61, 139, .12);
+  --chip-bg: rgba(255, 255, 255, .08);
+  --banner-bg: #1a1724;
+  --code-bg: rgba(255, 255, 255, .07);
+  --th-bg: rgba(255, 61, 139, .12);
+  --mark-bg: rgba(255, 176, 46, .35);
+  --rule: rgba(255, 255, 255, .08);
+  --rule-strong: rgba(255, 255, 255, .16);
+  --text: #f0edf4;
+  --text-2: #c9c3d3;
+  --muted: #8d879a;
+  --heading: #ffffff;
+  --accent: #ff3d8b;
+  --accent-fill: linear-gradient(100deg, #ff3d8b, #ff6a4d);
+  --accent-ink: #ffffff;
+  --accent-2: #ffb02e;
+  --link: #63d0ff;
+  --link-missing: #ff7a7a;
+  --ooc: #a98bff;
+  --danger: #ff4f5e;
+  --ok: #45d483;
+  --warn: #ffb02e;
+  --font-display: "Oswald", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --font-ui: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --display-weight: 600;
+  --display-transform: uppercase;
+  --display-spacing: .02em;
+  --btn-transform: uppercase;
+  --btn-spacing: .06em;
+  --brand-font: 700 22px/1 "Oswald", Impact, sans-serif;
+  --brand-mark: linear-gradient(135deg, #ff3d8b, #ffb02e);
+  --brand-clip: polygon(18% 0, 100% 0, 82% 100%, 0 100%);
+  --radius: 4px;
+  --radius-pill: 999px;
+  --panel-border: 1px solid rgba(255, 255, 255, .08);
+  --shadow: 0 18px 50px rgba(0, 0, 0, .55);
+  --title-rule: 0;
+  --h2-rule: 2px solid rgba(255, 61, 139, .45);
+  --infobox-bg: #15131c;
+  --infobox-border: 1px solid rgba(255, 255, 255, .1);
+  --infobox-head-bg: linear-gradient(100deg, #ff3d8b, #ff7b3a 60%, #ffb02e);
+  --infobox-head-text: #fff;
+  --infobox-section-bg: rgba(255, 255, 255, .05);
+  --infobox-section-text: #ffb02e;
+  --hero-fill: linear-gradient(95deg, #ff3d8b 10%, #ff7b3a 50%, #ffd23e 90%);
+  --hero-clip: text;
+  --hero-color: transparent;
+  --card-bg: linear-gradient(160deg, #1d1828 0%, #14111c 55%, #2a1020 100%);
+  --card-stripe: linear-gradient(90deg, #ff3d8b, #ffb02e);
+  --toast-bg: #f0edf4;
+  --toast-text: #121019;
+}
+[data-theme="gta"] .article-head h1, [data-theme="gta"] .page-head h1 { position: relative; }
+[data-theme="gta"] .article-head::after { content: ""; display: block; width: 120px; height: 4px; margin-top: 14px;
+  background: linear-gradient(90deg, #ff3d8b, #ffb02e); transform: skewX(-20deg); }
+[data-theme="gta"] .ns-card { border-radius: 6px; }
+[data-theme="gta"] .ns-card-title { font-size: 38px; }
+[data-theme="gta"] .infobox-title { font-size: 22px; text-shadow: 0 2px 0 rgba(0, 0, 0, .2); }
+[data-theme="gta"] .btn.primary { box-shadow: 0 4px 18px rgba(255, 61, 139, .25); }
+
+/* ================================================================ Frontier
+   1899 frontier: parchment, ink, oxblood, wanted-poster infoboxes. */
+[data-theme="rdr"] {
+  color-scheme: light;
+  --bg: #e8dbbd;
+  --bg-img: radial-gradient(ellipse at 50% 40%, rgba(246, 236, 210, .9), rgba(226, 205, 162, .9) 85%), url(../img/parchment.png);
+  --bg-size: 100% 100%, 420px;
+  --chrome: #1d140d;
+  --chrome-text: #f1e4c6;
+  --chrome-muted: #a38f70;
+  --chrome-rule: rgba(241, 228, 198, .22);
+  --chrome-input: rgba(241, 228, 198, .08);
+  --chrome-border: 3px double #8a6a3f;
+  --chrome-shadow: 0 6px 18px rgba(40, 25, 10, .35);
+  --side-bg: rgba(233, 219, 186, .55);
+  --surface: rgba(250, 243, 226, .72);
+  --surface-2: rgba(244, 233, 207, .9);
+  --input-bg: #fbf5e6;
+  --img-bg: #d8c7a2;
+  --hover: rgba(90, 60, 25, .08);
+  --active-bg: rgba(155, 28, 28, .09);
+  --chip-bg: rgba(90, 60, 25, .12);
+  --banner-bg: rgba(250, 243, 226, .8);
+  --code-bg: rgba(90, 60, 25, .1);
+  --th-bg: rgba(90, 60, 25, .12);
+  --mark-bg: rgba(212, 160, 60, .45);
+  --rule: rgba(92, 64, 36, .2);
+  --rule-strong: rgba(92, 64, 36, .38);
+  --text: #2a1d12;
+  --text-2: #4a3622;
+  --muted: #7a6448;
+  --heading: #22160c;
+  --accent: #9b1c1c;
+  --accent-fill: #9b1c1c;
+  --accent-ink: #f8eedb;
+  --accent-2: #8a5a1c;
+  --link: #8a2b16;
+  --link-missing: #c23b22;
+  --ooc: #3d5a80;
+  --danger: #b3261e;
+  --ok: #3f7a3a;
+  --warn: #b7791f;
+  --font-display: "Rye", "Rockwell", Georgia, serif;
+  --font-body: "Alegreya", Georgia, serif;
+  --font-ui: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --display-weight: 400;
+  --display-transform: none;
+  --display-spacing: .01em;
+  --btn-transform: none;
+  --btn-spacing: .02em;
+  --brand-font: 400 22px/1 "Rye", Georgia, serif;
+  --brand-mark: radial-gradient(circle at 50% 50%, #f1e4c6 0 22%, #9b1c1c 23% 60%, #d9b97d 61%);
+  --brand-clip: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  --radius: 2px;
+  --radius-pill: 2px;
+  --panel-border: 1px solid rgba(92, 64, 36, .35);
+  --shadow: 0 14px 40px rgba(60, 40, 15, .35);
+  --panel-shadow: 0 1px 0 rgba(255, 255, 255, .4) inset;
+  --title-rule: 3px double rgba(92, 64, 36, .55);
+  --h2-rule: 1px solid rgba(92, 64, 36, .4);
+  --infobox-bg: #f4e9cf;
+  --infobox-border: 4px double #5c4024;
+  --infobox-head-bg: #22160c;
+  --infobox-head-text: #f1e4c6;
+  --infobox-section-bg: rgba(92, 64, 36, .14);
+  --infobox-section-text: #5c4024;
+  --hero-fill: none;
+  --hero-clip: border-box;
+  --hero-color: #22160c;
+  --hero-shadow: 2px 2px 0 rgba(155, 28, 28, .25);
+  --tagline-style: italic;
+  --card-bg: radial-gradient(ellipse at 40% 30%, rgba(250, 242, 220, .88), rgba(222, 199, 152, .88)), url(../img/parchment.png) center / 300px, #e2cfa4;
+  --card-stripe: repeating-linear-gradient(90deg, #9b1c1c 0 14px, #22160c 14px 18px);
+  --toast-bg: #22160c;
+  --toast-text: #f1e4c6;
+}
+[data-theme="rdr"] .infobox-title { letter-spacing: .03em; }
+[data-theme="rdr"] .infobox-img img { filter: sepia(.25) contrast(1.05); }
+[data-theme="rdr"] .infobox-kind { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .2em; font-weight: 400; color: #9b1c1c; }
+[data-theme="rdr"] .article-head, [data-theme="rdr"] .ns-hero { text-align: center; }
+[data-theme="rdr"] .article-actions { justify-content: center; }
+[data-theme="rdr"] .article-head .kicker::before, [data-theme="rdr"] .article-head .kicker::after { content: " ✦ "; color: var(--accent); }
+[data-theme="rdr"] .prose h2::before { content: "❧ "; color: var(--accent); font-size: .8em; }
+[data-theme="rdr"] .ns-card { border: 1px solid #5c4024; outline: 1px solid rgba(92, 64, 36, .4); outline-offset: -7px; }
+[data-theme="rdr"] .ns-card-kicker { color: #9b1c1c; }
+[data-theme="rdr"] .tile .icon { color: var(--accent-2); }
+[data-theme="rdr"] .prose { font-size: 18px; }
+[data-theme="rdr"] #searchInput { font-style: italic; }
+
+/* ================================================================ Classic
+   Plain and quiet, for anything that isn't GTA or RDR. Follows the device's
+   light/dark setting. */
+[data-theme="classic"] {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --bg-img: none;
+  --chrome: #ffffff;
+  --chrome-text: #1d2430;
+  --chrome-muted: #7c8696;
+  --chrome-rule: #d8dde5;
+  --chrome-input: #f1f3f6;
+  --chrome-border: 1px solid #e1e5eb;
+  --side-bg: #fbfcfd;
+  --surface: #ffffff;
+  --surface-2: #f4f6f8;
+  --input-bg: #ffffff;
+  --img-bg: #e9edf2;
+  --hover: #eef1f5;
+  --active-bg: #e8f0fa;
+  --chip-bg: #edf0f4;
+  --banner-bg: #ffffff;
+  --code-bg: #eef1f5;
+  --th-bg: #f1f4f8;
+  --mark-bg: #fff2a8;
+  --rule: #e3e7ed;
+  --rule-strong: #cfd6df;
+  --text: #1d2430;
+  --text-2: #3d4757;
+  --muted: #6e7889;
+  --heading: #111722;
+  --accent: #2f6db5;
+  --accent-fill: #2f6db5;
+  --accent-ink: #ffffff;
+  --accent-2: #5f7a99;
+  --link: #2462a8;
+  --link-missing: #c0392b;
+  --ooc: #7a5cc7;
+  --danger: #c0392b;
+  --ok: #2e8b57;
+  --warn: #c98a12;
+  --font-display: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --font-ui: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --display-weight: 700;
+  --display-transform: none;
+  --display-spacing: 0;
+  --btn-transform: none;
+  --btn-spacing: 0;
+  --brand-font: 700 21px/1 "Alegreya Sans", system-ui, sans-serif;
+  --brand-mark: #2f6db5;
+  --brand-clip: none;
+  --radius: 6px;
+  --radius-pill: 999px;
+  --panel-border: 1px solid #e3e7ed;
+  --shadow: 0 12px 36px rgba(20, 30, 50, .14);
+  --title-rule: 1px solid #e3e7ed;
+  --h2-rule: 1px solid #e3e7ed;
+  --infobox-bg: #f8fafc;
+  --infobox-border: 1px solid #d8dee6;
+  --infobox-head-bg: #e8f0fa;
+  --infobox-head-text: #1d2430;
+  --infobox-section-bg: #eef2f7;
+  --infobox-section-text: #3d4757;
+  --hero-fill: none;
+  --hero-clip: border-box;
+  --hero-color: #111722;
+  --hero-shadow: none;
+  --card-bg: #ffffff;
+  --card-stripe: #2f6db5;
+  --toast-bg: #1d2430;
+  --toast-text: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  [data-theme="classic"] {
+    color-scheme: dark;
+    --bg: #121418; --chrome: #181b20; --chrome-text: #e6e9ee; --chrome-rule: #2c313a; --chrome-input: #20242b; --chrome-border: 1px solid #262a31;
+    --side-bg: #15181c; --surface: #1a1d22; --surface-2: #20242a; --input-bg: #15181c; --img-bg: #262b33; --hover: #22262d; --active-bg: #1d2a3b;
+    --chip-bg: #262b33; --banner-bg: #1a1d22; --code-bg: #22262d; --th-bg: #20252c; --mark-bg: #5a4d12;
+    --rule: #262a31; --rule-strong: #343a44; --text: #e3e6eb; --text-2: #c0c6cf; --muted: #8a93a1; --heading: #f3f5f8;
+    --accent: #5b9be0; --accent-fill: #3d7cc4; --link: #7cb3ee; --link-missing: #ef7b6c;
+    --panel-border: 1px solid #262a31; --title-rule: 1px solid #262a31; --h2-rule: 1px solid #2c313a;
+    --infobox-bg: #171a1f; --infobox-border: 1px solid #2c313a; --infobox-head-bg: #1d2a3b; --infobox-head-text: #e6e9ee;
+    --infobox-section-bg: #1f242b; --infobox-section-text: #c0c6cf; --hero-color: #f3f5f8; --card-bg: #1a1d22;
+    --toast-bg: #e6e9ee; --toast-text: #121418;
+  }
+}
