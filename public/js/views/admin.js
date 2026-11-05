@@ -37,6 +37,8 @@ function settingsTab(el) {
           ${s.logo ? '<button type="button" class="btn ghost" id="logoRemove">Remove</button>' : ''}</div></div>
       <label class="field wide"><span>Front page text (Markdown). The first part is the introduction; each <code>## Heading</code> becomes a card: rules, links, updates…</span>
         <textarea name="welcome" rows="10" maxlength="4000">${esc(s.welcome)}</textarea></label>
+      <label class="field wide"><span>Extra columns in the menu (Markdown): each <code>## Heading</code> is a column, with a list of links under it</span>
+        <textarea name="menu" rows="6" maxlength="4000" placeholder="## Community&#10;- [[gta:Server rules|Rules]]&#10;- [Discord](https://discord.gg/…)">${esc(s.menu || '')}</textarea></label>
       <label class="field wide"><span>Footer text</span><textarea name="footer" rows="2" maxlength="2000">${esc(s.footer || '')}</textarea></label>
       <label class="field wide"><span>Links in the footer, one per line as <code>Label | https://…</code> (Discord, YouTube, TikTok, Twitch, X… get their icons)</span>
         <textarea name="socialLinks" rows="4" maxlength="3000" placeholder="Discord | https://discord.gg/…">${esc(s.socialLinks || '')}</textarea></label>

@@ -1,7 +1,9 @@
 import { $, $$, esc, toast } from './util.js';
 import * as api from './api.js';
 import { icon } from './icons.js';
-import { state, loadSession, isMod, isAdmin, canWrite, nsBySlug, templatesFor, applyTheme, themePref, setThemePref } from './state.js';
+import { state, loadSession, isMod, isAdmin, canWrite, nsBySlug, templatesFor, applyTheme, themePref, setThemePref, md } from './state.js';
+import { cardsFromHtml } from './views/frontpage.js';
+import { slugify } from './shared.js';
 import { viewPortal } from './views/portal.js';
 import { viewNamespace, viewList, viewWanted } from './views/namespace.js';
 import { viewArticle, viewHistory, viewRevision } from './views/article.js';
@@ -122,7 +124,7 @@ const railIcons = { searchBtn: 'magnifying-glass', drawerBtn: 'list', newBtn: 'p
 export function renderChrome() {
   const s = state.settings;
   const u = state.user;
-  for (const [id, name] of Object.entries(railIcons)) $(`#${id}`).innerHTML = icon(name);
+  for (const [id, name] of Object.entries(railIcons)) $(`#${id}`).innerHTML = icon(id === 'drawerBtn' && !$('#drawer').hidden ? 'x' : name);
   $('.rail-logo').innerHTML = s.logo ? `<img class="logo-img" src="${esc(s.logo)}" alt="">` : '<span class="brand-mark"></span>';
   $('.rail-logo').title = s.siteName;
   $('#newBtn').hidden = !(canWrite() && state.namespaces.some((n) => !n.archived || isMod()));
@@ -153,41 +155,80 @@ function themeMenu() {
       ${pref === k ? icon('check') : `<span class="swatch theme-${k}"></span>`} ${esc(label)}</button>`).join('')}`;
 }
 
+// The menu: a panel beside the rail, as tall as its contents. A header with
+// the logo and some numbers, then columns of links, then a bar of social links.
+let drawerStats = null;
 function renderDrawer() {
   const ns = state.ns;
   const d = $('#drawer');
   if (!state.canRead) { d.innerHTML = ''; return; }
+  const s = state.settings;
+  const col = (title, links) => links.length ? `<div class="drawer-col"><div class="drawer-section">${esc(title)}</div><nav class="drawer-nav">${links.join('')}</nav></div>` : '';
+  const link = (href, ic, label) => `<a href="${href}" data-link>${ic ? icon(ic) : ''}<span>${esc(label)}</span></a>`;
+  const nav = ns ? [
+    link(`/w/${ns.slug}`, 'house', 'Main page'),
+    link(`/w/${ns.slug}/~all`, 'book-open', 'All articles'),
+    link(`/recent?ns=${ns.slug}`, 'clock-counter-clockwise', 'Recent changes'),
+    link(`/w/${ns.slug}/~random`, 'cards', 'Random article'),
+    link(`/w/${ns.slug}/~wanted`, 'ghost', 'Wanted articles'),
+  ] : [link('/', 'house', 'Home'), link('/recent', 'clock-counter-clockwise', 'Recent changes')];
+  if (canWrite() && state.namespaces.length) nav.push(`<button type="button" data-new-article>${icon('plus')}<span>New article</span></button>`);
+  const wikis = state.namespaces.length > 1 ? state.namespaces.map((n) => `<a href="/w/${n.slug}" data-link class="${n.slug === ns?.slug ? 'current' : ''}">
+      <span class="swatch theme-${n.theme}"></span><span>${esc(n.name)}${n.archived ? ' <i class="tag">archived</i>' : ''}${n.hidden ? ' <i class="tag">hidden</i>' : ''}</span></a>`) : [];
+  const browse = ns ? templatesFor(ns).map((t) => link(`/w/${ns.slug}/~t/${t.key}`, '', t.plural)) : [];
+  const tools = isMod() ? [link('/mod', 'gavel', 'Moderation'), ...(isAdmin() ? [link('/admin', 'crown', 'Admin')] : [])] : [];
+  // Admin-made columns: each "## Heading" in Admin -> Site -> menu.
+  const extra = s.menu ? cardsFromHtml(md(s.menu, ns?.slug || state.namespaces[0]?.slug || '', null)).filter((c) => c.title)
+    .map((c) => {
+      const box = document.createElement('div');
+      box.innerHTML = c.html;
+      // Wiki links in the menu go straight to the article (the menu doesn't check which exist).
+      for (const el of box.querySelectorAll('a.wikilink.missing')) {
+        const u = new URL(el.href, location.href);
+        const title = u.searchParams.get('title');
+        if (title) el.setAttribute('href', u.pathname.replace(/\/~new$/, `/${encodeURIComponent(slugify(title))}`));
+        el.classList.remove('missing');
+        el.removeAttribute('title');
+      }
+      const links = [...box.querySelectorAll('a')].map((el) => el.outerHTML);
+      const head = document.createElement('div');
+      head.innerHTML = c.title;
+      return col(head.textContent, links);
+    }) : [];
+  const socials = socialLinks();
+  const st = drawerStats;
   d.innerHTML = `
-    <div class="drawer-head">${state.settings.logo ? `<img class="logo-img small" src="${esc(state.settings.logo)}" alt="">` : '<span class="brand-mark"></span>'}<b>${esc(state.settings.siteName)}</b></div>
-    ${state.namespaces.length > 1 ? `<div class="drawer-section">Wikis</div>
-    <div class="ns-pick">${state.namespaces.map((n) => `<a href="/w/${n.slug}" data-link class="${n.slug === ns?.slug ? 'active' : ''}">
-      <span class="swatch theme-${n.theme}"></span><span><b>${esc(n.name)}</b>${n.archived ? ' <i class="tag">archived</i>' : ''}${n.hidden ? ' <i class="tag">hidden</i>' : ''}
-      ${n.tagline ? `<small>${esc(n.tagline)}</small>` : ''}</span></a>`).join('')}</div>` : ''}
-    ${ns ? `
-      <div class="drawer-section">${esc(ns.name)}</div>
-      <nav class="drawer-nav">
-        <a href="/w/${ns.slug}" data-link>${icon('house')} Main page</a>
-        <a href="/w/${ns.slug}/~all" data-link>${icon('book-open')} All articles</a>
-        <a href="/recent?ns=${ns.slug}" data-link>${icon('clock-counter-clockwise')} Recent changes</a>
-        <a href="/w/${ns.slug}/~random" data-link>${icon('cards')} Random article</a>
-        <a href="/w/${ns.slug}/~wanted" data-link>${icon('ghost')} Wanted articles</a>
-      </nav>
-      <div class="drawer-section">Browse</div>
-      <nav class="drawer-nav">
-        ${templatesFor(ns).map((t) => `<a href="/w/${ns.slug}/~t/${t.key}" data-link>${icon(t.icon)} ${esc(t.plural)}</a>`).join('')}
-      </nav>` : `
-      <div class="drawer-section">Site</div>
-      <nav class="drawer-nav">
-        <a href="/" data-link>${icon('house')} Home</a>
-        <a href="/recent" data-link>${icon('clock-counter-clockwise')} Recent changes</a>
-      </nav>`}
-    ${isMod() ? `<div class="drawer-section">Tools</div><nav class="drawer-nav">
-      <a href="/mod" data-link>${icon('gavel')} Moderation</a>
-      ${isAdmin() ? `<a href="/admin" data-link>${icon('crown')} Admin</a>` : ''}</nav>` : ''}
-    <div class="drawer-foot">${state.user ? '' : `<a href="/login?next=${encodeURIComponent(location.pathname)}" data-link>Sign in with Discord</a> to write.`}</div>`;
-  for (const a of $$('.drawer-nav a', d)) {
-    const href = a.getAttribute('href');
-    if (href === location.pathname + location.search || (href === location.pathname && !location.search)) a.classList.add('active');
+    <div class="drawer-head">
+      <span class="drawer-logo">${s.logo ? `<img src="${esc(s.logo)}" alt="">` : '<span class="brand-mark"></span>'}</span>
+      <div>
+        <div class="drawer-stats">${st ? `<span title="Articles">${icon('article')} ${compact(st.articles)}</span><span title="Writers">${icon('user')} ${compact(st.editors)}</span><span title="Edits">${icon('pencil-simple')} ${compact(st.edits)}</span>` : '&nbsp;'}</div>
+        <div class="drawer-title">${esc(s.siteName)}</div>
+      </div>
+    </div>
+    <div class="drawer-cols">
+      ${col('Navigation', nav)}
+      ${col('Wikis', wikis)}
+      ${ns ? col(`Browse ${ns.name}`, browse) : ''}
+      ${extra.join('')}
+      ${col('Tools', tools)}
+    </div>
+    <div class="drawer-bar">
+      ${state.user ? `<a href="/u/${encodeURIComponent(state.user.username)}" data-link>Signed in as ${esc(state.user.username)}</a>`
+        : `<a href="/login?next=${encodeURIComponent(location.pathname)}" data-link>Sign in with Discord to write</a>`}
+      ${socials.length ? `<span class="drawer-bar-sep"></span><span class="drawer-bar-label">Follow us</span>${socials.map(([label, url, ic]) =>
+        `<a class="icon-btn" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(label)}" aria-label="${esc(label)}">${icon(ic)}</a>`).join('')}` : ''}
+    </div>`;
+  for (const el of $$('.drawer-nav a[data-link]', d)) {
+    const href = el.getAttribute('href');
+    if (href === location.pathname + location.search || (href === location.pathname && !location.search)) el.classList.add('active');
+  }
+}
+const compact = (n) => Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+
+async function openDrawer() {
+  renderDrawer();
+  if (!drawerStats && state.canRead) {
+    try { drawerStats = await api.get('/api/stats'); renderDrawer(); } catch { /* the numbers are optional */ }
   }
 }
 
@@ -195,16 +236,22 @@ function renderDrawer() {
 const SOCIAL = [[/discord\.(gg|com)/, 'discord-logo'], [/(twitter|x)\.com/, 'x-logo'], [/youtu\.?be/, 'youtube-logo'], [/tiktok\.com/, 'tiktok-logo'],
   [/twitch\.tv/, 'twitch-logo'], [/instagram\.com/, 'instagram-logo'], [/reddit\.com/, 'reddit-logo'], [/facebook\.com/, 'facebook-logo']];
 
+function socialLinks() {
+  return String(state.settings.socialLinks || '').split('\n').map((l) => l.split('|').map((x) => x.trim()))
+    .filter(([, url]) => /^https:\/\//.test(url || ''))
+    .map(([label, url]) => [label, url, SOCIAL.find(([re]) => re.test(url))?.[1] || 'globe']);
+}
+
 function renderFooter() {
   const s = state.settings;
-  const links = String(s.socialLinks || '').split('\n').map((l) => l.split('|').map((x) => x.trim())).filter(([, url]) => /^https:\/\//.test(url || ''));
+  const links = socialLinks();
   $('#siteFooter').innerHTML = `
     <div class="footer-inner">
       <div class="footer-about">
         <div class="footer-name">${esc(s.siteName)}</div>
         ${s.footer ? `<p>${esc(s.footer)}</p>` : ''}
-        ${links.length ? `<div class="footer-label">Follow us</div><div class="footer-social">${links.map(([label, url]) =>
-          `<a href="${esc(url)}" target="_blank" rel="noopener" title="${esc(label)}" aria-label="${esc(label)}">${icon(SOCIAL.find(([re]) => re.test(url))?.[1] || 'globe')}</a>`).join('')}</div>` : ''}
+        ${links.length ? `<div class="footer-label">Follow us</div><div class="footer-social">${links.map(([label, url, ic]) =>
+          `<a href="${esc(url)}" target="_blank" rel="noopener" title="${esc(label)}" aria-label="${esc(label)}">${icon(ic)}</a>`).join('')}</div>` : ''}
       </div>
       <nav class="footer-links">
         <a href="/" data-link>Home</a>
@@ -218,6 +265,7 @@ function renderFooter() {
 // ---- open/close: drawer and the rail's menus
 
 function closeAll() {
+  if (!$('#drawer').hidden) $('#drawerBtn').innerHTML = icon('list');
   $('#drawer').hidden = true;
   $('#prefsMenu').hidden = true;
   $('#userMenu').hidden = true;
@@ -236,7 +284,11 @@ function closeSidebar() { closeAll(); }
 
 document.addEventListener('click', async (e) => {
   const t = e.target;
-  if (t.closest('#drawerBtn')) toggle($('#drawer'), 'drawer-open', $('#drawerBtn'));
+  if (t.closest('#drawerBtn')) {
+    const opening = $('#drawer').hidden;
+    toggle($('#drawer'), 'drawer-open', $('#drawerBtn'));
+    if (opening) { $('#drawerBtn').innerHTML = icon('x'); openDrawer(); }
+  } else if (t.closest('[data-new-article]')) { closeAll(); newArticleDialog(state.ns); }
   else if (t.closest('#prefsBtn')) toggle($('#prefsMenu'), 'menu-open');
   else if (t.closest('#userBtn')) toggle($('#userMenu'), 'menu-open');
   else if (t.closest('#scrim')) closeAll();

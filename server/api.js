@@ -694,6 +694,7 @@ route('PUT', '/api/admin/settings', (ctx) => {
   }
   if (b.logo !== undefined) next.logo = cleanImage(b.logo);
   if (b.footer !== undefined) next.footer = str(b.footer, 2000, 'The footer text');
+  if (b.menu !== undefined) next.menu = str(b.menu, 4000, 'The menu links');
   if (b.socialLinks !== undefined) {
     const lines = str(b.socialLinks, 3000, 'The links').split('\n').map((l) => l.trim()).filter(Boolean);
     for (const l of lines) if (!/\|\s*https:\/\/\S+$/.test(l)) fail(400, `Each link goes on its own line as “Label | https://…”. This one isn’t: ${l}`);

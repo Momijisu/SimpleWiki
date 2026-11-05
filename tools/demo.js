@@ -40,6 +40,11 @@ await call('PUT', '/api/admin/settings', {
   siteName: 'Southside RP Wiki', tagline: 'Every story from every city we’ve played.', logo,
   footer: 'The Southside RP Wiki is written by the players of the Southside roleplay community. Everything here is in-character unless it says otherwise.',
   socialLinks: 'Discord | https://discord.gg/example\nYouTube | https://www.youtube.com/@example\nTikTok | https://www.tiktok.com/@example\nTwitch | https://www.twitch.tv/example\nWebsite | https://example.com',
+  menu: `## Featured stories
+- [[gta:Harbor Bank Heist]]
+- [[gta:Southside Saints]]
+- [[rdr:Cedar Falls Train Robbery]]
+`,
   welcome: `## What is Southside RP?
 Southside RP is a story-first roleplay community. This wiki is where players write up their characters, crews, businesses and the
 events that shaped each city, across every version of the server.
@@ -56,33 +61,25 @@ await call('PUT', '/api/admin/namespaces/rdr', { name: 'Cedar Falls 1899', tagli
 
 // ---- Los Santos 4.0
 await article('gta', 'Main page', 'page', {}, `
-## What is Los Santos 4.0?
+## About Los Santos 4.0
 The current city, open since January 2026. Start with the [[Southside Saints]], the [[Los Santos Police Department]] or the
 [[Harbor Bank Heist]] that kicked off the summer.
 
-This wiki is for players to show off their characters, crews and storylines, and to keep a record of everything that happens in the city.
+## Writing here
+- Write what people in the city would know or could find out.
+- Anything only players know goes in an out-of-character box.
+- Fill in the infobox and add a picture if you have one.
+- Red links show what nobody has written yet. Pick one!
 
-## Wiki rules
-- Everything here is out-of-character information. Don’t use it in character.
-- No OOC drama or toxicity, in articles or anywhere else.
-- Don’t discuss bans or ban reasons.
-- Don’t remove content from a page unless it’s false.
-- Don’t edit-war. If you disagree with someone, take it to a moderator on Discord.
+## City news
+- The [[Southside Saints]] and the [[Eastside Vipers]] agree a truce, for now.
+- [[Big Rig Customs]] reopens after the garage fire.
+- Who drove the van? The [[Harbor Bank Heist]] case is still open.
 
-## Latest update: 4.2
-- New casino games
-- Beekeeping and hunting jobs
-- Blaine County Sheriff’s Office
-- Weazel News vans
-- Reworked phone
-- [[Harbor Bank Heist|The Harbor heist]] is now repeatable
-
-## Official links
-- [Discord](https://discord.gg/example)
-- [Server rules](https://example.com/rules)
-- [Interactive map](https://example.com/map)
-- [YouTube](https://www.youtube.com/@example)
-- [Twitch](https://www.twitch.tv/example)
+## Start here
+- [[Tony Ramirez]]
+- [[Southside Saints]]
+- [[Harbor Bank Heist]]
 `);
 await article('gta', 'Tony Ramirez', 'character', {
   'Full name': 'Antonio “Tony” Ramirez', Nicknames: 'Two-Times', Age: '34', Gender: 'Male', Nationality: 'American',

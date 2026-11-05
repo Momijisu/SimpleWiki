@@ -20,7 +20,7 @@ export function frontHero({ title, searchLabel, directories = [] }) {
 
 // Cut rendered Markdown into cards at each "## Heading". Text before the first
 // heading becomes an untitled card. A section that's only a list of links is
-// drawn as a column of buttons, like "Official links".
+// drawn as a column of buttons.
 export function cardsFromHtml(html) {
   const box = document.createElement('div');
   box.innerHTML = html;

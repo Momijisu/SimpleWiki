@@ -138,6 +138,7 @@ export const DEFAULT_SETTINGS = {
   logo: '',                  // an uploaded picture, shown round on the front page and in the rail
   footer: 'This wiki is written by the players of our roleplay server. Everything here is in-character unless it says otherwise.',
   socialLinks: '',           // one per line: Label | https://…
+  menu: '',                  // extra link columns in the menu: Markdown, a "## Heading" per column
   welcome: 'Welcome! Pick a version of the server below to start reading. Anyone with an account can write and edit articles.',
 };
 

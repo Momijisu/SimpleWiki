@@ -176,24 +176,24 @@ DATA_DIR=./data npm run backup -- /path/to/backups
 
 ### Front pages
 
-An article called **Main page** fills its namespace's front page. Its first part (or first `## Heading`) is the introduction across the top. Every other `## Heading` becomes a card in the grid below. A list that's only links turns into a column of buttons, which suits "Official links". For example:
+An article called **Main page** fills its namespace's front page. Its first part (or first `## Heading`) is the introduction across the top. Every other `## Heading` becomes a card in the grid below. A list that's only links turns into a column of buttons. For example:
 
 ```markdown
-## What is Los Santos 4.0?
+## About Los Santos 4.0
 The current city, open since January 2026…
 
-## Wiki rules
-- Everything here is out-of-character information.
-- Don't edit-war: talk to a moderator on Discord.
+## Writing here
+- Write what people in the city would know.
+- Anything only players know goes in an out-of-character box.
 
-## Official links
+## Useful links
 - [Discord](https://discord.gg/…)
-- [Server rules](https://…)
+- [[Southside Saints]]
 ```
 
 Protect the Main page (More → Protection) so only moderators can change it. Moderators can also pick a **featured article** from any article's More menu.
 
-The site's own front page works the same way, with its text under Admin → Site. The logo, footer text and footer links are set there too.
+The site's own front page works the same way, with its text under Admin → Site. The logo, footer text, footer links and extra menu columns are set there too. In the menu text, each `## Heading` is a column of links.
 
 ## Extending it
 
