@@ -3,7 +3,7 @@
     <title>Main Page</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -15,7 +15,7 @@
     <title>Module:Main page</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>Scribunto</model>
@@ -198,11 +198,24 @@ local function card(title, cls)
 	return c
 end
 
+-- ===================================================================
+-- Cards: each has a "type" in the settings
+-- ===================================================================
+
+local CARDS = {}
+
 -- Today's featured article: one page, or a list that changes every day.
-local function featured(cfg)
-	local f = cfg.featured
-	local n = f and count(f.pages) or 0
-	if n == 0 then return nil end
+CARDS.featured = function (frame, f)
+	local n = count(f.pages)
+	if n == 0 then
+		-- Nothing chosen yet: keep the space, and say how to fill it.
+		local c = card(nil, 'mp-featured')
+		local body = c:tag('div'):addClass('mp-featured-body')
+		body:tag('div'):addClass('mp-kicker'):wikitext(f.label or 'Featured')
+		body:tag('div'):addClass('mp-featured-text'):wikitext(f.emptyText or
+			'No featured article yet. Add page names to &lt;code&gt;"pages"&lt;/code&gt; in [[Module:Main page/config.json]].')
+		return c
+	end
 	local day = math.floor(os.time() / 86400)
 	local pick = f.pages[(day % n) + 1]
 	if type(pick) == 'string' then pick = { page = pick } end
@@ -218,21 +231,66 @@ local function featured(cfg)
 
 	local c = card(nil, 'mp-featured')
 	if image then
-		c:tag('div'):addClass('mp-featured-image')
-			:wikitext(string.format('[[File:%s|700px|link=%s|alt=%s]]', image, title.fullText, title.text))
+		local fig = c:tag('div'):addClass('mp-featured-image')
+		fig:wikitext(string.format('[[File:%s|700px|link=%s|alt=%s]]', image, title.fullText, title.text))
+		-- Kicker and title over the bottom of the picture
+		local over = fig:tag('div'):addClass('mp-featured-over')
+		over:tag('div'):addClass('mp-featured-kicker'):wikitext(f.label or 'Featured')
+		over:tag('div'):addClass('mp-featured-title'):wikitext(string.format('[[%s|%s]]', title.fullText, pick.label or title.text))
 	end
 	local body = c:tag('div'):addClass('mp-featured-body')
-	body:tag('div'):addClass('mp-kicker'):wikitext(f.label or 'Featured')
-	body:tag('div'):addClass('mp-featured-title'):wikitext(string.format('[[%s|%s]]', title.fullText, pick.label or title.text))
+	if not image then
+		body:tag('div'):addClass('mp-kicker'):wikitext(f.label or 'Featured')
+		body:tag('div'):addClass('mp-featured-title'):wikitext(string.format('[[%s|%s]]', title.fullText, pick.label or title.text))
+	end
 	if text then body:tag('div'):addClass('mp-featured-text'):wikitext(text) end
 	body:tag('div'):addClass('mp-more'):wikitext(string.format('[[%s|%s]]', title.fullText, f.moreText or 'Read more'))
 	return c
 end
 
-local function recentChanges(frame, cfg)
-	local rc = cfg.recentChanges
-	if rc == false or (rc and rc.show == false) then return nil end
-	rc = rc or {}
+-- "Start editing": a short invitation, a link, and the wiki's numbers.
+CARDS.startEditing = function (frame, s)
+	local c = card(nil, 'mp-start')
+	local head = c:tag('div'):addClass('mp-card-title'):addClass('mp-start-title')
+	if s.link then
+		head:wikitext(string.format('[[%s|%s]]', s.link, s.title or 'Start editing'))
+	else
+		head:wikitext(s.title or 'Start editing')
+	end
+	if s.text then c:tag('div'):addClass('mp-start-text'):wikitext(s.text) end
+	local stats = s.stats or { 'articles', 'edits' }
+	local labels = { articles = 'Articles', edits = 'Edits', files = 'Files', users = 'Members', activeUsers = 'Active members' }
+	local row = c:tag('div'):addClass('mp-start-stats')
+	for _, key in ipairs(stats) do
+		if labels[key] and mw.site.stats[key] then
+			local stat = row:tag('div'):addClass('mp-start-stat')
+			stat:tag('div'):addClass('mp-start-number'):wikitext(lang:formatNum(mw.site.stats[key]))
+			stat:tag('div'):addClass('mp-start-label'):wikitext(labels[key])
+		end
+	end
+	return c
+end
+
+-- A column of link buttons: wiki pages ("page") or websites ("url").
+-- A link with no address yet shows greyed out, so the list can be filled in later.
+CARDS.links = function (frame, l)
+	if count(l.links) == 0 then return nil end
+	local c = card(l.title, 'mp-links')
+	local list = c:tag('div'):addClass('mp-link-list')
+	for _, link in ipairs(l.links) do
+		local item = list:tag('div'):addClass('mp-link')
+		if link.page and link.page ~= '' then
+			item:wikitext(string.format('[[%s|%s]]', link.page, link.label or link.page))
+		elseif link.url and link.url:match('^https?://') then
+			item:addClass('mp-link--external'):wikitext(string.format('[%s %s]', link.url, link.label or link.url))
+		else
+			item:addClass('mp-link--empty'):attr('title', 'No address set yet'):wikitext(link.label or '')
+		end
+	end
+	return c
+end
+
+CARDS.recentChanges = function (frame, rc)
 	local opts = { 'limit=' .. (rc.limit or 8), 'days=' .. (rc.days or 30) }
 	if rc.hideBots ~= false then table.insert(opts, 'hidebots') end
 	if rc.hideMinor then table.insert(opts, 'hideminor') end
@@ -241,6 +299,14 @@ local function recentChanges(frame, cfg)
 	local c = card(rc.title or 'Recent changes', 'mp-rc')
 	c:tag('div'):addClass('mp-rc-list'):wikitext(frame:preprocess('{{Special:RecentChanges/' .. table.concat(opts, ',') .. '}}'))
 	c:tag('div'):addClass('mp-more'):wikitext('[[Special:RecentChanges|' .. (rc.moreText or 'All recent changes') .. ']]')
+	return c
+end
+
+-- Any wikitext: rules, the latest update, an announcement…
+CARDS.text = function (frame, t)
+	if not t.text or t.text == '' then return nil end
+	local c = card(t.title, 'mp-text')
+	c:tag('div'):addClass('mp-text-body'):wikitext('\n' .. t.text .. '\n')
 	return c
 end
 
@@ -269,11 +335,20 @@ function p.render(frame)
 	local i = intro(cfg)
 	if i then page:node(i) end
 
-	local grid = page:tag('div'):addClass('mp-grid')
-	local f = featured(cfg)
-	if f then grid:node(f) end
-	local rc = recentChanges(frame, cfg)
-	if rc then grid:node(rc) end
+	-- The cards, in up to three columns as listed in the settings.
+	local columns = page:tag('div'):addClass('mp-columns')
+	for _, col in ipairs(cfg.columns or {}) do
+		local column = columns:tag('div'):addClass('mp-column')
+		for _, c in ipairs(col) do
+			local make = CARDS[c.type or '']
+			if not make then
+				column:node(problem(string.format('unknown card type “%s”.', tostring(c.type))))
+			elseif c.show ~= false then
+				local built = make(frame, c)
+				if built then column:node(built) end
+			end
+		end
+	end
 
 	table.insert(out, tostring(page))
 	return table.concat(out)
@@ -287,7 +362,7 @@ return p
     <title>Module:Main page/config.json</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>json</model>
@@ -318,23 +393,63 @@ return p
 		"text": "Let's RP is a story-driven GTA roleplay server. This wiki is where players record their characters, crews, businesses and the events that shaped the city. Anyone with an account can write and edit."
 	},
 
-	"featured": {
-		"label": "Featured",
-		"pages": [],
-		"excerptLength": 220,
-		"moreText": "Read more"
-	},
-
-	"recentChanges": {
-		"title": "Recent changes",
-		"limit": 8,
-		"days": 30,
-		"hideBots": true,
-		"hideMinor": false,
-		"hideLogs": true,
-		"namespace": 0,
-		"moreText": "All recent changes"
-	}
+	"columns": [
+		[
+			{
+				"type": "featured",
+				"label": "Featured",
+				"pages": [],
+				"excerptLength": 220,
+				"moreText": "Read more"
+			}
+		],
+		[
+			{
+				"type": "startEditing",
+				"title": "Start editing",
+				"text": "The Let's RP Wiki is made by people like you! Get started here!",
+				"link": "Project:Help portal",
+				"stats": ["articles", "edits"]
+			},
+			{
+				"type": "recentChanges",
+				"title": "Recent changes",
+				"limit": 8,
+				"days": 30,
+				"hideBots": true,
+				"hideMinor": false,
+				"hideLogs": true,
+				"namespace": 0,
+				"moreText": "All recent changes"
+			}
+		],
+		[
+			{
+				"type": "links",
+				"title": "On the wiki",
+				"links": [
+					{ "label": "About the wiki", "page": "Project:About" },
+					{ "label": "Style guide", "page": "Project:Style guide" },
+					{ "label": "Help portal", "page": "Project:Help portal" }
+				]
+			},
+			{
+				"type": "links",
+				"title": "Official links",
+				"links": [
+					{ "label": "Official Website", "url": "" },
+					{ "label": "IC Intranet", "url": "" },
+					{ "label": "Interactive Map", "url": "" },
+					{ "label": "Discord", "url": "" },
+					{ "label": "Twitter", "url": "" },
+					{ "label": "Ko-Fi", "url": "" },
+					{ "label": "YouTube", "url": "" },
+					{ "label": "TikTok", "url": "" },
+					{ "label": "Twitch", "url": "" }
+				]
+			}
+		]
+	]
 }
 </text>
     </revision>
@@ -343,7 +458,7 @@ return p
     <title>Module:Main page/doc</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -368,13 +483,24 @@ return p
 |-
 | &lt;code&gt;directories&lt;/code&gt; || The row of directory buttons. Each has a &lt;code&gt;label&lt;/code&gt; and either a &lt;code&gt;category&lt;/code&gt; (it links there and shows how many pages it has) or a &lt;code&gt;link&lt;/code&gt; to any page. Optional: &lt;code&gt;icon&lt;/code&gt; (a small picture on the right), &lt;code&gt;image&lt;/code&gt; (a faint picture behind it), &lt;code&gt;description&lt;/code&gt; (instead of the count), &lt;code&gt;showCount: false&lt;/code&gt;.
 |-
-| &lt;code&gt;intro&lt;/code&gt; || An optional welcome card: &lt;code&gt;title&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt; (wikitext, links work).
+| &lt;code&gt;intro&lt;/code&gt; || An optional welcome card across the page: &lt;code&gt;title&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt; (wikitext, links work).
 |-
-| &lt;code&gt;featured.pages&lt;/code&gt; || Featured articles. With several, a different one shows each day. Each entry is a page name, or &lt;code&gt;{ "page": "…", "image": "…", "text": "…", "label": "…" }&lt;/code&gt; to override the picture, the text or the shown title. By default the picture comes from the article's infobox and the text is its first paragraph.
+| &lt;code&gt;columns&lt;/code&gt; || The cards under the intro: up to three columns, each a list of cards from top to bottom. On phones they stack. Each card has a &lt;code&gt;type&lt;/code&gt; (below); add &lt;code&gt;"show": false&lt;/code&gt; to hide one without deleting it.
+|}
+
+== Card types ==
+{| class="wikitable"
+! &lt;code&gt;type&lt;/code&gt; !! Settings
 |-
-| &lt;code&gt;featured.label&lt;/code&gt;, &lt;code&gt;excerptLength&lt;/code&gt;, &lt;code&gt;moreText&lt;/code&gt; || The small label, how many characters of text to show, and the link text.
+| &lt;code&gt;featured&lt;/code&gt; || &lt;code&gt;pages&lt;/code&gt;: featured articles; with several, a different one shows each day. Each entry is a page name, or &lt;code&gt;{ "page": "…", "image": "…", "text": "…", "label": "…" }&lt;/code&gt; to override the picture, the text or the shown title. By default the picture comes from the article's infobox and the text is its first paragraph. Also &lt;code&gt;label&lt;/code&gt;, &lt;code&gt;excerptLength&lt;/code&gt;, &lt;code&gt;moreText&lt;/code&gt;.
 |-
-| &lt;code&gt;recentChanges&lt;/code&gt; || &lt;code&gt;limit&lt;/code&gt; (how many), &lt;code&gt;days&lt;/code&gt;, &lt;code&gt;hideBots&lt;/code&gt;, &lt;code&gt;hideMinor&lt;/code&gt;, &lt;code&gt;hideLogs&lt;/code&gt; (uploads, moves, deletions), &lt;code&gt;namespace&lt;/code&gt; (0 = articles only; leave it out for every kind of page), &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;moreText&lt;/code&gt;. Set &lt;code&gt;"show": false&lt;/code&gt; to remove it.
+| &lt;code&gt;startEditing&lt;/code&gt; || &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;text&lt;/code&gt;, &lt;code&gt;link&lt;/code&gt; (the page the title goes to) and &lt;code&gt;stats&lt;/code&gt;: any of &lt;code&gt;articles&lt;/code&gt;, &lt;code&gt;edits&lt;/code&gt;, &lt;code&gt;files&lt;/code&gt;, &lt;code&gt;users&lt;/code&gt;, &lt;code&gt;activeUsers&lt;/code&gt;.
+|-
+| &lt;code&gt;links&lt;/code&gt; || &lt;code&gt;title&lt;/code&gt; and &lt;code&gt;links&lt;/code&gt;: each &lt;code&gt;{ "label": "…", "page": "…" }&lt;/code&gt; for a wiki page or &lt;code&gt;{ "label": "…", "url": "https://…" }&lt;/code&gt; for a website. A link with an empty address shows greyed out until you fill it in.
+|-
+| &lt;code&gt;recentChanges&lt;/code&gt; || &lt;code&gt;limit&lt;/code&gt; (how many), &lt;code&gt;days&lt;/code&gt;, &lt;code&gt;hideBots&lt;/code&gt;, &lt;code&gt;hideMinor&lt;/code&gt;, &lt;code&gt;hideLogs&lt;/code&gt; (uploads, moves, deletions), &lt;code&gt;namespace&lt;/code&gt; (0 = articles only; leave it out for every kind of page), &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;moreText&lt;/code&gt;.
+|-
+| &lt;code&gt;text&lt;/code&gt; || &lt;code&gt;title&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt; (wikitext): rules, the latest update, an announcement.
 |}
 
 Leave a setting out (or empty) to hide that part. Problems, like a featured page that doesn't exist, show as a red note on the front page.
@@ -387,7 +513,7 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
     <title>Template:Main page/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>sanitized-css</model>
@@ -635,37 +761,139 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
 	text-transform: uppercase;
 	opacity: 0.7;
 }
-.mp-grid {
+/* Three columns of cards; each column stacks its own cards */
+.mp-columns {
 	display: grid;
-	grid-template-columns: minmax( 0, 3fr ) minmax( 0, 2fr );
-	gap: 16px;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 12px;
 	align-items: start;
 }
+.mp-column {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+}
 
-/* Featured article */
+/* Featured article: kicker and title over the bottom of the picture */
 .mp-featured {
 	padding: 0;
 	overflow: hidden;
 }
+.mp-featured-image {
+	position: relative;
+}
 .mp-featured-image img {
 	display: block;
 	width: 100%;
-	height: auto;
-	max-height: 340px;
+	height: 220px;
 	object-fit: cover;
 }
+.mp-featured-over {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 40px 16px 12px;
+	background: linear-gradient( rgba( 0, 0, 0, 0 ), rgba( 0, 0, 0, 0.8 ) );
+	color: #fff;
+}
+.mp-featured-over a {
+	color: #fff;
+}
+.mp-featured-kicker {
+	font-size: 0.75rem;
+	opacity: 0.85;
+}
 .mp-featured-body {
-	padding: 16px 18px;
+	padding: 12px 16px 14px;
 }
 .mp-featured-title {
-	margin-top: 4px;
-	font-size: 1.375rem;
+	font-size: 1.0625rem;
 	font-weight: 600;
 	line-height: 1.25;
 }
 .mp-featured-text {
-	margin-top: 8px;
+	font-size: 0.875rem;
 	opacity: 0.85;
+}
+
+/* Start editing: invitation and the wiki's numbers */
+.mp-start-title a::after {
+	content: ' ▸';
+}
+.mp-start-text {
+	font-size: 0.875rem;
+}
+.mp-start-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px 40px;
+	margin-top: 18px;
+}
+.mp-start-number {
+	font-size: 1.375rem;
+	font-weight: 600;
+	line-height: 1.1;
+	color: #3b9eff;
+}
+.mp-start-label {
+	font-size: 0.75rem;
+	opacity: 0.7;
+}
+
+/* Lists of link buttons ("On the wiki", "Official links") */
+.mp-links .mp-card-title {
+	font-size: 0.8125rem;
+	font-weight: 500;
+	opacity: 0.75;
+}
+.mp-link-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.mp-link a {
+	display: block;
+	padding: 6px 12px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.1 );
+	color: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-align: center;
+}
+.mp-link a:hover {
+	background: rgba( 127, 127, 127, 0.2 );
+	text-decoration: none;
+}
+.mp-link--external a.external {
+	background-image: none;
+	padding-right: 12px;
+}
+.mp-link--external a::after {
+	content: ' ↗';
+	font-weight: 400;
+	opacity: 0.7;
+}
+.mp-link--empty {
+	padding: 6px 12px;
+	border: 1px dashed rgba( 127, 127, 127, 0.35 );
+	border-radius: 8px;
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-align: center;
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+/* Free-text cards */
+.mp-text-body {
+	font-size: 0.875rem;
+}
+.mp-text-body p:last-child {
+	margin-bottom: 0;
 }
 
 /* Recent changes: a short, quiet list (time and page only) */
@@ -733,9 +961,16 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
 	font-size: 0.875rem;
 }
 
+/* ---------- Tablets: two columns ---------- */
+@media ( min-width: 721px ) and ( max-width: 1000px ) {
+	.mp-columns {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+}
+
 /* ---------- Phones ---------- */
 @media ( max-width: 720px ) {
-	.mp-grid {
+	.mp-columns {
 		grid-template-columns: minmax( 0, 1fr );
 	}
 	.mp-title {

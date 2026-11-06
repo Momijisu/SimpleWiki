@@ -176,11 +176,24 @@ local function card(title, cls)
 	return c
 end
 
+-- ===================================================================
+-- Cards: each has a "type" in the settings
+-- ===================================================================
+
+local CARDS = {}
+
 -- Today's featured article: one page, or a list that changes every day.
-local function featured(cfg)
-	local f = cfg.featured
-	local n = f and count(f.pages) or 0
-	if n == 0 then return nil end
+CARDS.featured = function (frame, f)
+	local n = count(f.pages)
+	if n == 0 then
+		-- Nothing chosen yet: keep the space, and say how to fill it.
+		local c = card(nil, 'mp-featured')
+		local body = c:tag('div'):addClass('mp-featured-body')
+		body:tag('div'):addClass('mp-kicker'):wikitext(f.label or 'Featured')
+		body:tag('div'):addClass('mp-featured-text'):wikitext(f.emptyText or
+			'No featured article yet. Add page names to <code>"pages"</code> in [[Module:Main page/config.json]].')
+		return c
+	end
 	local day = math.floor(os.time() / 86400)
 	local pick = f.pages[(day % n) + 1]
 	if type(pick) == 'string' then pick = { page = pick } end
@@ -196,21 +209,66 @@ local function featured(cfg)
 
 	local c = card(nil, 'mp-featured')
 	if image then
-		c:tag('div'):addClass('mp-featured-image')
-			:wikitext(string.format('[[File:%s|700px|link=%s|alt=%s]]', image, title.fullText, title.text))
+		local fig = c:tag('div'):addClass('mp-featured-image')
+		fig:wikitext(string.format('[[File:%s|700px|link=%s|alt=%s]]', image, title.fullText, title.text))
+		-- Kicker and title over the bottom of the picture
+		local over = fig:tag('div'):addClass('mp-featured-over')
+		over:tag('div'):addClass('mp-featured-kicker'):wikitext(f.label or 'Featured')
+		over:tag('div'):addClass('mp-featured-title'):wikitext(string.format('[[%s|%s]]', title.fullText, pick.label or title.text))
 	end
 	local body = c:tag('div'):addClass('mp-featured-body')
-	body:tag('div'):addClass('mp-kicker'):wikitext(f.label or 'Featured')
-	body:tag('div'):addClass('mp-featured-title'):wikitext(string.format('[[%s|%s]]', title.fullText, pick.label or title.text))
+	if not image then
+		body:tag('div'):addClass('mp-kicker'):wikitext(f.label or 'Featured')
+		body:tag('div'):addClass('mp-featured-title'):wikitext(string.format('[[%s|%s]]', title.fullText, pick.label or title.text))
+	end
 	if text then body:tag('div'):addClass('mp-featured-text'):wikitext(text) end
 	body:tag('div'):addClass('mp-more'):wikitext(string.format('[[%s|%s]]', title.fullText, f.moreText or 'Read more'))
 	return c
 end
 
-local function recentChanges(frame, cfg)
-	local rc = cfg.recentChanges
-	if rc == false or (rc and rc.show == false) then return nil end
-	rc = rc or {}
+-- "Start editing": a short invitation, a link, and the wiki's numbers.
+CARDS.startEditing = function (frame, s)
+	local c = card(nil, 'mp-start')
+	local head = c:tag('div'):addClass('mp-card-title'):addClass('mp-start-title')
+	if s.link then
+		head:wikitext(string.format('[[%s|%s]]', s.link, s.title or 'Start editing'))
+	else
+		head:wikitext(s.title or 'Start editing')
+	end
+	if s.text then c:tag('div'):addClass('mp-start-text'):wikitext(s.text) end
+	local stats = s.stats or { 'articles', 'edits' }
+	local labels = { articles = 'Articles', edits = 'Edits', files = 'Files', users = 'Members', activeUsers = 'Active members' }
+	local row = c:tag('div'):addClass('mp-start-stats')
+	for _, key in ipairs(stats) do
+		if labels[key] and mw.site.stats[key] then
+			local stat = row:tag('div'):addClass('mp-start-stat')
+			stat:tag('div'):addClass('mp-start-number'):wikitext(lang:formatNum(mw.site.stats[key]))
+			stat:tag('div'):addClass('mp-start-label'):wikitext(labels[key])
+		end
+	end
+	return c
+end
+
+-- A column of link buttons: wiki pages ("page") or websites ("url").
+-- A link with no address yet shows greyed out, so the list can be filled in later.
+CARDS.links = function (frame, l)
+	if count(l.links) == 0 then return nil end
+	local c = card(l.title, 'mp-links')
+	local list = c:tag('div'):addClass('mp-link-list')
+	for _, link in ipairs(l.links) do
+		local item = list:tag('div'):addClass('mp-link')
+		if link.page and link.page ~= '' then
+			item:wikitext(string.format('[[%s|%s]]', link.page, link.label or link.page))
+		elseif link.url and link.url:match('^https?://') then
+			item:addClass('mp-link--external'):wikitext(string.format('[%s %s]', link.url, link.label or link.url))
+		else
+			item:addClass('mp-link--empty'):attr('title', 'No address set yet'):wikitext(link.label or '')
+		end
+	end
+	return c
+end
+
+CARDS.recentChanges = function (frame, rc)
 	local opts = { 'limit=' .. (rc.limit or 8), 'days=' .. (rc.days or 30) }
 	if rc.hideBots ~= false then table.insert(opts, 'hidebots') end
 	if rc.hideMinor then table.insert(opts, 'hideminor') end
@@ -219,6 +277,14 @@ local function recentChanges(frame, cfg)
 	local c = card(rc.title or 'Recent changes', 'mp-rc')
 	c:tag('div'):addClass('mp-rc-list'):wikitext(frame:preprocess('{{Special:RecentChanges/' .. table.concat(opts, ',') .. '}}'))
 	c:tag('div'):addClass('mp-more'):wikitext('[[Special:RecentChanges|' .. (rc.moreText or 'All recent changes') .. ']]')
+	return c
+end
+
+-- Any wikitext: rules, the latest update, an announcement…
+CARDS.text = function (frame, t)
+	if not t.text or t.text == '' then return nil end
+	local c = card(t.title, 'mp-text')
+	c:tag('div'):addClass('mp-text-body'):wikitext('\n' .. t.text .. '\n')
 	return c
 end
 
@@ -247,11 +313,20 @@ function p.render(frame)
 	local i = intro(cfg)
 	if i then page:node(i) end
 
-	local grid = page:tag('div'):addClass('mp-grid')
-	local f = featured(cfg)
-	if f then grid:node(f) end
-	local rc = recentChanges(frame, cfg)
-	if rc then grid:node(rc) end
+	-- The cards, in up to three columns as listed in the settings.
+	local columns = page:tag('div'):addClass('mp-columns')
+	for _, col in ipairs(cfg.columns or {}) do
+		local column = columns:tag('div'):addClass('mp-column')
+		for _, c in ipairs(col) do
+			local make = CARDS[c.type or '']
+			if not make then
+				column:node(problem(string.format('unknown card type “%s”.', tostring(c.type))))
+			elseif c.show ~= false then
+				local built = make(frame, c)
+				if built then column:node(built) end
+			end
+		end
+	end
 
 	table.insert(out, tostring(page))
 	return table.concat(out)

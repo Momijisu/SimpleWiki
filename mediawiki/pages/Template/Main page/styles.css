@@ -241,37 +241,139 @@
 	text-transform: uppercase;
 	opacity: 0.7;
 }
-.mp-grid {
+/* Three columns of cards; each column stacks its own cards */
+.mp-columns {
 	display: grid;
-	grid-template-columns: minmax( 0, 3fr ) minmax( 0, 2fr );
-	gap: 16px;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 12px;
 	align-items: start;
 }
+.mp-column {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+}
 
-/* Featured article */
+/* Featured article: kicker and title over the bottom of the picture */
 .mp-featured {
 	padding: 0;
 	overflow: hidden;
 }
+.mp-featured-image {
+	position: relative;
+}
 .mp-featured-image img {
 	display: block;
 	width: 100%;
-	height: auto;
-	max-height: 340px;
+	height: 220px;
 	object-fit: cover;
 }
+.mp-featured-over {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 40px 16px 12px;
+	background: linear-gradient( rgba( 0, 0, 0, 0 ), rgba( 0, 0, 0, 0.8 ) );
+	color: #fff;
+}
+.mp-featured-over a {
+	color: #fff;
+}
+.mp-featured-kicker {
+	font-size: 0.75rem;
+	opacity: 0.85;
+}
 .mp-featured-body {
-	padding: 16px 18px;
+	padding: 12px 16px 14px;
 }
 .mp-featured-title {
-	margin-top: 4px;
-	font-size: 1.375rem;
+	font-size: 1.0625rem;
 	font-weight: 600;
 	line-height: 1.25;
 }
 .mp-featured-text {
-	margin-top: 8px;
+	font-size: 0.875rem;
 	opacity: 0.85;
+}
+
+/* Start editing: invitation and the wiki's numbers */
+.mp-start-title a::after {
+	content: ' ▸';
+}
+.mp-start-text {
+	font-size: 0.875rem;
+}
+.mp-start-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px 40px;
+	margin-top: 18px;
+}
+.mp-start-number {
+	font-size: 1.375rem;
+	font-weight: 600;
+	line-height: 1.1;
+	color: #3b9eff;
+}
+.mp-start-label {
+	font-size: 0.75rem;
+	opacity: 0.7;
+}
+
+/* Lists of link buttons ("On the wiki", "Official links") */
+.mp-links .mp-card-title {
+	font-size: 0.8125rem;
+	font-weight: 500;
+	opacity: 0.75;
+}
+.mp-link-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.mp-link a {
+	display: block;
+	padding: 6px 12px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.1 );
+	color: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-align: center;
+}
+.mp-link a:hover {
+	background: rgba( 127, 127, 127, 0.2 );
+	text-decoration: none;
+}
+.mp-link--external a.external {
+	background-image: none;
+	padding-right: 12px;
+}
+.mp-link--external a::after {
+	content: ' ↗';
+	font-weight: 400;
+	opacity: 0.7;
+}
+.mp-link--empty {
+	padding: 6px 12px;
+	border: 1px dashed rgba( 127, 127, 127, 0.35 );
+	border-radius: 8px;
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-align: center;
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+/* Free-text cards */
+.mp-text-body {
+	font-size: 0.875rem;
+}
+.mp-text-body p:last-child {
+	margin-bottom: 0;
 }
 
 /* Recent changes: a short, quiet list (time and page only) */
@@ -339,9 +441,16 @@
 	font-size: 0.875rem;
 }
 
+/* ---------- Tablets: two columns ---------- */
+@media ( min-width: 721px ) and ( max-width: 1000px ) {
+	.mp-columns {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+}
+
 /* ---------- Phones ---------- */
 @media ( max-width: 720px ) {
-	.mp-grid {
+	.mp-columns {
 		grid-template-columns: minmax( 0, 1fr );
 	}
 	.mp-title {

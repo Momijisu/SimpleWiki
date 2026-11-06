@@ -7,12 +7,12 @@
 | gender        = Male
 | nationality   = American
 | occupation    = Mechanic
-| employer      = [[Big Rig Customs]]
-| affiliation   = [[Southside Saints]]
+| employer      = Big Rig Customs
+| affiliation   = Southside Saints
 | rank          = Soldier
 | residence     = Grove Street
-| family        = * [[Rosa Ramirez]] (mother)
-* [[Luis Ramirez]] (brother)
+| family        = Rosa Ramirez (mother), Luis Ramirez (brother)
+| partner       = Unknown
 | played_by     = TwoTimesTony
 | first_seen    = March 2026
 | version       = 2.0

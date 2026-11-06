@@ -3,7 +3,7 @@
     <title>Module:Infobox</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>Scribunto</model>
@@ -42,8 +42,11 @@ local PLACEHOLDER_IMAGE = 'Image unavailable.png'
 -- ===================================================================
 -- The three infoboxes
 -- ===================================================================
--- badges:   checked fields shown as coloured pills under the title.
---           values maps what people type (lower case) to how it shows.
+-- badges:   checked fields shown as coloured pills under the title, each a
+--           link to its category. values maps what people type (lower case)
+--           to how it shows; category gives the category for a value.
+-- link:     on a field, plain names typed into it become links:
+--           "Big Rig Customs" -&gt; [[Big Rig Customs]]. Lists split on commas.
 -- kicker:   the small line above the title.
 -- sections: groups of rows. The first has no title and is always open;
 --           the rest fold. `when` hides a whole section unless it's true.
@@ -54,9 +57,11 @@ TYPES.character = {
 	kind = 'Character',
 	badges = {
 		{ field = 'status', required = true,
-			values = { active = 'Active', inactive = 'Inactive', deceased = 'Deceased' } },
+			values = { active = 'Active', inactive = 'Inactive', deceased = 'Deceased' },
+			category = function (label) return label .. ' characters' end },
 		{ field = 'focus', required = true,
-			values = { civilian = 'Civilian', criminal = 'Criminal', ['public sector'] = 'Public Sector' } },
+			values = { civilian = 'Civilian', criminal = 'Criminal', ['public sector'] = 'Public Sector' },
+			category = function (label) return label .. ' characters' end },
 	},
 	sections = {
 		{ fields = {
@@ -68,20 +73,20 @@ TYPES.character = {
 		} },
 		{ title = 'Life', fields = {
 			{ 'occupation', 'Occupation' },
-			{ 'employer', 'Employer' },
-			{ 'affiliation', 'Affiliation' },
+			{ 'employer', 'Employer', link = true },
+			{ 'affiliation', 'Affiliation', link = true },
 			{ 'rank', 'Rank' },
 			{ 'residence', 'Residence' },
 			{ 'phone', 'Phone number' },
 		} },
 		{ title = 'Relationships', fields = {
-			{ 'family', 'Family' },
-			{ 'partner', 'Partner' },
+			{ 'family', 'Family', link = true },
+			{ 'partner', 'Partner', link = true },
 		} },
 		{ title = 'Death', when = function (v) return v.status == 'deceased' end, fields = {
 			{ 'died', 'Died' },
 			{ 'cause_of_death', 'Cause of death' },
-			{ 'killed_by', 'Killed by' },
+			{ 'killed_by', 'Killed by', link = true },
 		} },
 		{ title = 'Meta', fields = {
 			{ 'played_by', 'Played by' },
@@ -123,13 +128,14 @@ TYPES.organization = {
 			values = { gang = 'Gang', business = 'Business', ['emergency services'] = 'Emergency Services',
 				emergency = 'Emergency Services', ['emergency service'] = 'Emergency Services' } },
 		{ field = 'status',
-			values = { active = 'Active', inactive = 'Inactive', defunct = 'Defunct' } },
+			values = { active = 'Active', inactive = 'Inactive', defunct = 'Defunct' },
+			category = function (label) return label .. ' organizations' end },
 	},
 	sections = {
 		{ fields = {
-			{ 'leader', 'Leader' },
+			{ 'leader', 'Leader', link = true },
 			{ 'founded', 'Founded' },
-			{ 'founder', 'Founder' },
+			{ 'founder', 'Founder', link = true },
 			{ 'defunct', 'Defunct' },
 			{ 'headquarters', 'Headquarters' },
 			{ 'members', 'Members' },
@@ -142,7 +148,7 @@ TYPES.organization = {
 		{ title = 'Business', when = function (v) return v.type == 'business' end, fields = {
 			{ 'industry', 'Industry' },
 			{ 'services', 'Products &amp; services' },
-			{ 'owner', 'Owner' },
+			{ 'owner', 'Owner', link = true },
 			{ 'location', 'Location' },
 			{ 'hours', 'Opening hours' },
 			{ 'phone', 'Phone number' },
@@ -153,10 +159,10 @@ TYPES.organization = {
 			{ 'ranks', 'Ranks' },
 		} },
 		{ title = 'Relations', fields = {
-			{ 'allies', 'Allies' },
-			{ 'rivals', 'Rivals' },
-			{ 'predecessor', 'Predecessor' },
-			{ 'successor', 'Successor' },
+			{ 'allies', 'Allies', link = true },
+			{ 'rivals', 'Rivals', link = true },
+			{ 'predecessor', 'Predecessor', link = true },
+			{ 'successor', 'Successor', link = true },
 		} },
 		{ title = 'Meta', fields = {
 			{ 'first_seen', 'First seen' },
@@ -168,8 +174,7 @@ TYPES.organization = {
 		local plural = { gang = 'Gangs', business = 'Businesses', ['emergency services'] = 'Emergency Services' }
 		local c = { 'Organizations' }
 		if v.type then table.insert(c, plural[v.type]) end
-		if v.status == 'inactive' then table.insert(c, 'Inactive organizations') end
-		if v.status == 'defunct' then table.insert(c, 'Defunct organizations') end
+		if v.status then table.insert(c, v.statusLabel .. ' organizations') end
 		return c
 	end,
 	shortdesc = function (v, args)
@@ -186,18 +191,23 @@ TYPES.event = {
 			values = { heist = 'Heist', ['gang war'] = 'Gang war', shooting = 'Shooting', trial = 'Trial',
 				election = 'Election', ['community event'] = 'Community event',
 				['official server event'] = 'Official server event', official = 'Official server event',
-				other = 'Other' } },
+				other = 'Other' },
+			category = function (label)
+				local plural = { ['Gang war'] = 'Gang wars', ['Community event'] = 'Community events',
+					['Official server event'] = 'Official server events', Other = 'Other events' }
+				return plural[label] or (label .. 's')
+			end },
 	},
 	sections = {
 		{ fields = {
 			{ 'date', 'Date' },
 			{ 'end_date', 'Ended' },
 			{ 'location', 'Location' },
-			{ 'organised_by', 'Organised by' },
+			{ 'organised_by', 'Organised by', link = true },
 		} },
 		{ title = 'Who', fields = {
-			{ 'participants', 'Participants' },
-			{ 'factions', 'Factions involved' },
+			{ 'participants', 'Participants', link = true },
+			{ 'factions', 'Factions involved', link = true },
 		} },
 		{ title = 'Outcome', fields = {
 			{ 'outcome', 'Outcome' },
@@ -205,8 +215,8 @@ TYPES.event = {
 			{ 'arrests', 'Arrests' },
 		} },
 		{ title = 'Timeline', fields = {
-			{ 'previous', 'Previous event' },
-			{ 'next', 'Next event' },
+			{ 'previous', 'Previous event', link = true },
+			{ 'next', 'Next event', link = true },
 		} },
 		{ title = 'Meta', fields = {
 			{ 'media', 'Clips &amp; media' },
@@ -265,6 +275,38 @@ end
 
 local function cssKey(s)
 	return (mw.ustring.lower(s):gsub('[^%w]+', '-'))
+end
+
+-- Words that mean "nobody / not known" and should never become links.
+local NO_LINK = {
+	unknown = true, none = true, ['n/a'] = true, na = true, various = true, nobody = true,
+	['no one'] = true, tbd = true, tba = true, unemployed = true, independent = true,
+	['self-employed'] = true, self = true, ['?'] = true, ['-'] = true, ['–'] = true, ['—'] = true,
+}
+
+-- Turn plain names into links: "Big Rig Customs" -&gt; [[Big Rig Customs]].
+-- Lists split on commas, semicolons and lines; "Rosa Ramirez (mother)" keeps
+-- its note outside the link. Anything already containing markup is left as typed.
+local function autolink(value)
+	if value:find('[%[%]{}&lt;&gt;|]') or value:find("''", 1, true) then return value end
+	local lines = {}
+	for line in mw.text.gsplit(value, '\n') do
+		local bullet, rest = line:match('^([%*#:]*%s*)(.*)$')
+		local items = {}
+		for item in mw.text.gsplit(rest, '[,;]') do
+			item = mw.text.trim(item)
+			if item ~= '' then
+				local name, note = item:match('^(.-)%s*(%b())$')
+				if not name or name == '' then name, note = item, nil end
+				local skip = NO_LINK[mw.ustring.lower(name)] or name:match('^[%d%s%p]+$')
+					or not mw.title.new(name)
+				local linked = skip and name or ('[[' .. name .. ']]')
+				table.insert(items, note and (linked .. ' ' .. note) or linked)
+			end
+		end
+		table.insert(lines, bullet .. table.concat(items, ', '))
+	end
+	return table.concat(lines, '\n')
 end
 
 -- A value that starts with a list needs a newline to render as a list.
@@ -358,7 +400,10 @@ local function render(frame, typeName)
 	local pills = {}
 	for _, badge in ipairs(def.badges) do
 		if v[badge.field] and not badge.hidden then
-			table.insert(pills, { badge.field, v[badge.field], v[badge.field .. 'Label'] })
+			local label = v[badge.field .. 'Label']
+			-- Each badge links to its category, e.g. "Criminal" -&gt; Category:Criminal characters.
+			local text = badge.category and string.format('[[:Category:%s|%s]]', badge.category(label), label) or label
+			table.insert(pills, { badge.field, v[badge.field], text })
 		end
 	end
 	if #pills &gt; 0 then
@@ -378,6 +423,7 @@ local function render(frame, typeName)
 				local value = args[f[1]]
 				if value then
 					if f.version then value = string.format(VERSION_LABEL, value) end
+					if f.link then value = autolink(value) end
 					table.insert(rows, { f[2], value })
 				end
 			end
@@ -454,7 +500,7 @@ return p
     <title>Template:Infobox/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>sanitized-css</model>
@@ -540,6 +586,15 @@ return p
 	font-weight: 600;
 	line-height: 1.6;
 	white-space: nowrap;
+}
+/* Badges link to their categories but keep their own colours */
+.rp-badge a,
+.rp-badge a:visited {
+	color: inherit;
+	text-decoration: none;
+}
+.rp-badge:hover {
+	filter: brightness( 1.15 );
 }
 .rp-badge--active { background: rgba( 34, 197, 94, 0.16 ); border-color: rgba( 34, 197, 94, 0.5 ); color: #1f9d55; }
 .rp-badge--inactive { background: rgba( 148, 163, 184, 0.18 ); border-color: rgba( 148, 163, 184, 0.55 ); }
@@ -641,7 +696,7 @@ return p
     <title>Template:Infobox character</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -655,7 +710,7 @@ return p
     <title>Template:Infobox character/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -695,6 +750,8 @@ The fields, sections and look are shared by all infoboxes and live in [[Module:I
 }}
 &lt;/pre&gt;
 Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt;code&gt;image5&lt;/code&gt;) turn into tabs.
+
+In fields that name people, groups or events (employer, affiliation, family, leader, rivals, participants…), plain names become links: &lt;code&gt;Big Rig Customs&lt;/code&gt; shows as [[Big Rig Customs]]. Separate several with commas; a note in brackets stays outside the link (&lt;code&gt;Rosa Ramirez (mother)&lt;/code&gt;). Words like ''Unknown'' or ''None'', numbers, and anything that already has links or other markup are left as typed. The status, focus and type badges link to their categories.
 
 == Checked fields ==
 These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
@@ -904,14 +961,14 @@ placeholder=Page title
 		},
 		"employer": {
 			"label": "Employer",
-			"type": "content",
-			"description": "Link to an organization.",
+			"type": "wiki-page-name",
+			"description": "Link to an organization. Plain names become links; separate several with commas.",
 			"example": "[[Big Rig Customs]]"
 		},
 		"affiliation": {
 			"label": "Affiliation",
-			"type": "content",
-			"description": "Gangs or organizations, as links.",
+			"type": "string",
+			"description": "Gangs or organizations, as links. Plain names become links; separate several with commas.",
 			"example": "[[Southside Saints]]"
 		},
 		"rank": {
@@ -933,11 +990,13 @@ placeholder=Page title
 		},
 		"family": {
 			"label": "Family",
-			"type": "string"
+			"type": "string",
+			"description": "Plain names become links; separate several with commas."
 		},
 		"partner": {
 			"label": "Partner",
-			"type": "string"
+			"type": "wiki-page-name",
+			"description": "Plain names become links; separate several with commas."
 		},
 		"died": {
 			"label": "Died",
@@ -951,12 +1010,12 @@ placeholder=Page title
 		},
 		"killed_by": {
 			"label": "Killed by",
-			"type": "content",
-			"description": "Only shown when status is Deceased."
+			"type": "wiki-page-name",
+			"description": "Only shown when status is Deceased. Plain names become links; separate several with commas."
 		},
 		"played_by": {
 			"label": "Played by",
-			"type": "content",
+			"type": "string",
 			"description": "The player.",
 			"example": "TwoTimesTony"
 		},
@@ -1023,7 +1082,7 @@ placeholder=Page title
     <title>Template:Infobox character/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1074,7 +1133,7 @@ Where they came from and how they ended up here.
     <title>Template:Infobox organization</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1088,7 +1147,7 @@ Where they came from and how they ended up here.
     <title>Template:Infobox organization/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1134,6 +1193,8 @@ The fields, sections and look are shared by all infoboxes and live in [[Module:I
 }}
 &lt;/pre&gt;
 Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt;code&gt;image5&lt;/code&gt;) turn into tabs.
+
+In fields that name people, groups or events (employer, affiliation, family, leader, rivals, participants…), plain names become links: &lt;code&gt;Big Rig Customs&lt;/code&gt; shows as [[Big Rig Customs]]. Separate several with commas; a note in brackets stays outside the link (&lt;code&gt;Rosa Ramirez (mother)&lt;/code&gt;). Words like ''Unknown'' or ''None'', numbers, and anything that already has links or other markup are left as typed. The status, focus and type badges link to their categories.
 
 == Checked fields ==
 These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
@@ -1322,8 +1383,8 @@ placeholder=Page title
 		},
 		"leader": {
 			"label": "Leader",
-			"type": "content",
-			"description": "The boss, owner or chief.",
+			"type": "wiki-page-name",
+			"description": "The boss, owner or chief. Plain names become links; separate several with commas.",
 			"example": "[[Marisol Vega]]"
 		},
 		"founded": {
@@ -1333,7 +1394,8 @@ placeholder=Page title
 		},
 		"founder": {
 			"label": "Founder",
-			"type": "string"
+			"type": "wiki-page-name",
+			"description": "Plain names become links; separate several with commas."
 		},
 		"defunct": {
 			"label": "Defunct",
@@ -1378,8 +1440,8 @@ placeholder=Page title
 		},
 		"owner": {
 			"label": "Owner",
-			"type": "string",
-			"description": "Businesses only."
+			"type": "wiki-page-name",
+			"description": "Businesses only. Plain names become links; separate several with commas."
 		},
 		"location": {
 			"label": "Location",
@@ -1413,22 +1475,24 @@ placeholder=Page title
 		},
 		"allies": {
 			"label": "Allies",
-			"type": "content"
+			"type": "string",
+			"description": "Plain names become links; separate several with commas."
 		},
 		"rivals": {
 			"label": "Rivals",
-			"type": "content",
-			"example": "[[Eastside Vipers]]"
+			"type": "string",
+			"example": "[[Eastside Vipers]]",
+			"description": "Plain names become links; separate several with commas."
 		},
 		"predecessor": {
 			"label": "Predecessor",
-			"type": "string",
-			"description": "What it grew out of."
+			"type": "wiki-page-name",
+			"description": "What it grew out of. Plain names become links; separate several with commas."
 		},
 		"successor": {
 			"label": "Successor",
-			"type": "string",
-			"description": "What it became."
+			"type": "wiki-page-name",
+			"description": "What it became. Plain names become links; separate several with commas."
 		},
 		"first_seen": {
 			"label": "First seen",
@@ -1497,7 +1561,7 @@ placeholder=Page title
     <title>Template:Infobox organization/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1555,7 +1619,7 @@ placeholder=Page title
     <title>Template:Infobox event</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1569,7 +1633,7 @@ placeholder=Page title
     <title>Template:Infobox event/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1601,6 +1665,8 @@ The fields, sections and look are shared by all infoboxes and live in [[Module:I
 }}
 &lt;/pre&gt;
 Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt;code&gt;image5&lt;/code&gt;) turn into tabs.
+
+In fields that name people, groups or events (employer, affiliation, family, leader, rivals, participants…), plain names become links: &lt;code&gt;Big Rig Customs&lt;/code&gt; shows as [[Big Rig Customs]]. Separate several with commas; a note in brackets stays outside the link (&lt;code&gt;Rosa Ramirez (mother)&lt;/code&gt;). Words like ''Unknown'' or ''None'', numbers, and anything that already has links or other markup are left as typed. The status, focus and type badges link to their categories.
 
 == Checked fields ==
 These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
@@ -1759,17 +1825,19 @@ placeholder=Page title
 		},
 		"organised_by": {
 			"label": "Organised by",
-			"type": "content",
-			"description": "Players, an organization, or Server staff.",
+			"type": "wiki-page-name",
+			"description": "Players, an organization, or Server staff. Plain names become links; separate several with commas.",
 			"example": "[[Southside Saints]]"
 		},
 		"participants": {
 			"label": "Participants",
-			"type": "string"
+			"type": "string",
+			"description": "Plain names become links; separate several with commas."
 		},
 		"factions": {
 			"label": "Factions involved",
-			"type": "string"
+			"type": "string",
+			"description": "Plain names become links; separate several with commas."
 		},
 		"outcome": {
 			"label": "Outcome",
@@ -1785,13 +1853,13 @@ placeholder=Page title
 		},
 		"previous": {
 			"label": "Previous event",
-			"type": "content",
-			"description": "Link to the event before this one."
+			"type": "wiki-page-name",
+			"description": "Link to the event before this one. Plain names become links; separate several with commas."
 		},
 		"next": {
 			"label": "Next event",
-			"type": "content",
-			"description": "Link to the event after this one."
+			"type": "wiki-page-name",
+			"description": "Link to the event after this one. Plain names become links; separate several with commas."
 		},
 		"media": {
 			"label": "Clips &amp; media",
@@ -1843,7 +1911,7 @@ placeholder=Page title
     <title>Template:Infobox event/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1880,10 +1948,352 @@ What happened, in a paragraph.
     </revision>
   </page>
   <page>
+    <title>Category:Characters</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Every character on the wiki. Pages are added by [[Template:Infobox character]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Active characters</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Characters who are still being played.
+
+[[Category:Characters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Inactive characters</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Characters whose player has stopped playing them. They're alive in the story.
+
+[[Category:Characters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Deceased characters</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Characters who have died.
+
+[[Category:Characters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Civilian characters</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Characters currently focused on civilian life.
+
+[[Category:Characters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Criminal characters</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Characters currently focused on crime.
+
+[[Category:Characters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Public Sector characters</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Characters currently working in the public sector: police, medical, government.
+
+[[Category:Characters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Organizations</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Every gang, business and emergency service. Pages are added by [[Template:Infobox organization]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Gangs</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Gangs, crews, cartels, families and posses.
+
+[[Category:Organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Businesses</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Shops, bars, garages, clubs and other businesses.
+
+[[Category:Organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Emergency Services</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Police, EMS, fire and other emergency services.
+
+[[Category:Organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Active organizations</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Organizations that are active now.
+
+[[Category:Organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Inactive organizations</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Organizations that are quiet but not gone.
+
+[[Category:Organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Defunct organizations</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Organizations that no longer exist.
+
+[[Category:Organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Events</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Every server event. Pages are added by [[Template:Infobox event]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Heists</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Heists and robberies.
+
+[[Category:Events]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Gang wars</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Wars between gangs.
+
+[[Category:Events]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Shootings</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Shootings.
+
+[[Category:Events]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Trials</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Trials and court cases.
+
+[[Category:Events]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Elections</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Elections.
+
+[[Category:Events]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Community events</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Events organised by players.
+
+[[Category:Events]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Official server events</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Events run by the server staff.
+
+[[Category:Events]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Other events</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Events that fit no other type.
+
+[[Category:Events]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages with short description</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Added automatically to pages that have a short description (the grey line under the title). Hidden from readers.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages using Tabber parser tag</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Added automatically to pages that use tabs (the &lt;nowiki&gt;&lt;tabber&gt;&lt;/nowiki&gt; tag). Hidden from readers.</text>
+    </revision>
+  </page>
+  <page>
     <title>Category:Pages with infobox problems</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-05T23:56:44Z</timestamp>
+      <timestamp>2026-11-06T00:41:51Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>

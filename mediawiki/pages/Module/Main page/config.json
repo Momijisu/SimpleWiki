@@ -24,21 +24,61 @@
 		"text": "Let's RP is a story-driven GTA roleplay server. This wiki is where players record their characters, crews, businesses and the events that shaped the city. Anyone with an account can write and edit."
 	},
 
-	"featured": {
-		"label": "Featured",
-		"pages": [],
-		"excerptLength": 220,
-		"moreText": "Read more"
-	},
-
-	"recentChanges": {
-		"title": "Recent changes",
-		"limit": 8,
-		"days": 30,
-		"hideBots": true,
-		"hideMinor": false,
-		"hideLogs": true,
-		"namespace": 0,
-		"moreText": "All recent changes"
-	}
+	"columns": [
+		[
+			{
+				"type": "featured",
+				"label": "Featured",
+				"pages": [],
+				"excerptLength": 220,
+				"moreText": "Read more"
+			}
+		],
+		[
+			{
+				"type": "startEditing",
+				"title": "Start editing",
+				"text": "The Let's RP Wiki is made by people like you! Get started here!",
+				"link": "Project:Help portal",
+				"stats": ["articles", "edits"]
+			},
+			{
+				"type": "recentChanges",
+				"title": "Recent changes",
+				"limit": 8,
+				"days": 30,
+				"hideBots": true,
+				"hideMinor": false,
+				"hideLogs": true,
+				"namespace": 0,
+				"moreText": "All recent changes"
+			}
+		],
+		[
+			{
+				"type": "links",
+				"title": "On the wiki",
+				"links": [
+					{ "label": "About the wiki", "page": "Project:About" },
+					{ "label": "Style guide", "page": "Project:Style guide" },
+					{ "label": "Help portal", "page": "Project:Help portal" }
+				]
+			},
+			{
+				"type": "links",
+				"title": "Official links",
+				"links": [
+					{ "label": "Official Website", "url": "" },
+					{ "label": "IC Intranet", "url": "" },
+					{ "label": "Interactive Map", "url": "" },
+					{ "label": "Discord", "url": "" },
+					{ "label": "Twitter", "url": "" },
+					{ "label": "Ko-Fi", "url": "" },
+					{ "label": "YouTube", "url": "" },
+					{ "label": "TikTok", "url": "" },
+					{ "label": "Twitch", "url": "" }
+				]
+			}
+		]
+	]
 }

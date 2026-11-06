@@ -32,8 +32,11 @@ local PLACEHOLDER_IMAGE = 'Image unavailable.png'
 -- ===================================================================
 -- The three infoboxes
 -- ===================================================================
--- badges:   checked fields shown as coloured pills under the title.
---           values maps what people type (lower case) to how it shows.
+-- badges:   checked fields shown as coloured pills under the title, each a
+--           link to its category. values maps what people type (lower case)
+--           to how it shows; category gives the category for a value.
+-- link:     on a field, plain names typed into it become links:
+--           "Big Rig Customs" -> [[Big Rig Customs]]. Lists split on commas.
 -- kicker:   the small line above the title.
 -- sections: groups of rows. The first has no title and is always open;
 --           the rest fold. `when` hides a whole section unless it's true.
@@ -44,9 +47,11 @@ TYPES.character = {
 	kind = 'Character',
 	badges = {
 		{ field = 'status', required = true,
-			values = { active = 'Active', inactive = 'Inactive', deceased = 'Deceased' } },
+			values = { active = 'Active', inactive = 'Inactive', deceased = 'Deceased' },
+			category = function (label) return label .. ' characters' end },
 		{ field = 'focus', required = true,
-			values = { civilian = 'Civilian', criminal = 'Criminal', ['public sector'] = 'Public Sector' } },
+			values = { civilian = 'Civilian', criminal = 'Criminal', ['public sector'] = 'Public Sector' },
+			category = function (label) return label .. ' characters' end },
 	},
 	sections = {
 		{ fields = {
@@ -58,20 +63,20 @@ TYPES.character = {
 		} },
 		{ title = 'Life', fields = {
 			{ 'occupation', 'Occupation' },
-			{ 'employer', 'Employer' },
-			{ 'affiliation', 'Affiliation' },
+			{ 'employer', 'Employer', link = true },
+			{ 'affiliation', 'Affiliation', link = true },
 			{ 'rank', 'Rank' },
 			{ 'residence', 'Residence' },
 			{ 'phone', 'Phone number' },
 		} },
 		{ title = 'Relationships', fields = {
-			{ 'family', 'Family' },
-			{ 'partner', 'Partner' },
+			{ 'family', 'Family', link = true },
+			{ 'partner', 'Partner', link = true },
 		} },
 		{ title = 'Death', when = function (v) return v.status == 'deceased' end, fields = {
 			{ 'died', 'Died' },
 			{ 'cause_of_death', 'Cause of death' },
-			{ 'killed_by', 'Killed by' },
+			{ 'killed_by', 'Killed by', link = true },
 		} },
 		{ title = 'Meta', fields = {
 			{ 'played_by', 'Played by' },
@@ -113,13 +118,14 @@ TYPES.organization = {
 			values = { gang = 'Gang', business = 'Business', ['emergency services'] = 'Emergency Services',
 				emergency = 'Emergency Services', ['emergency service'] = 'Emergency Services' } },
 		{ field = 'status',
-			values = { active = 'Active', inactive = 'Inactive', defunct = 'Defunct' } },
+			values = { active = 'Active', inactive = 'Inactive', defunct = 'Defunct' },
+			category = function (label) return label .. ' organizations' end },
 	},
 	sections = {
 		{ fields = {
-			{ 'leader', 'Leader' },
+			{ 'leader', 'Leader', link = true },
 			{ 'founded', 'Founded' },
-			{ 'founder', 'Founder' },
+			{ 'founder', 'Founder', link = true },
 			{ 'defunct', 'Defunct' },
 			{ 'headquarters', 'Headquarters' },
 			{ 'members', 'Members' },
@@ -132,7 +138,7 @@ TYPES.organization = {
 		{ title = 'Business', when = function (v) return v.type == 'business' end, fields = {
 			{ 'industry', 'Industry' },
 			{ 'services', 'Products & services' },
-			{ 'owner', 'Owner' },
+			{ 'owner', 'Owner', link = true },
 			{ 'location', 'Location' },
 			{ 'hours', 'Opening hours' },
 			{ 'phone', 'Phone number' },
@@ -143,10 +149,10 @@ TYPES.organization = {
 			{ 'ranks', 'Ranks' },
 		} },
 		{ title = 'Relations', fields = {
-			{ 'allies', 'Allies' },
-			{ 'rivals', 'Rivals' },
-			{ 'predecessor', 'Predecessor' },
-			{ 'successor', 'Successor' },
+			{ 'allies', 'Allies', link = true },
+			{ 'rivals', 'Rivals', link = true },
+			{ 'predecessor', 'Predecessor', link = true },
+			{ 'successor', 'Successor', link = true },
 		} },
 		{ title = 'Meta', fields = {
 			{ 'first_seen', 'First seen' },
@@ -158,8 +164,7 @@ TYPES.organization = {
 		local plural = { gang = 'Gangs', business = 'Businesses', ['emergency services'] = 'Emergency Services' }
 		local c = { 'Organizations' }
 		if v.type then table.insert(c, plural[v.type]) end
-		if v.status == 'inactive' then table.insert(c, 'Inactive organizations') end
-		if v.status == 'defunct' then table.insert(c, 'Defunct organizations') end
+		if v.status then table.insert(c, v.statusLabel .. ' organizations') end
 		return c
 	end,
 	shortdesc = function (v, args)
@@ -176,18 +181,23 @@ TYPES.event = {
 			values = { heist = 'Heist', ['gang war'] = 'Gang war', shooting = 'Shooting', trial = 'Trial',
 				election = 'Election', ['community event'] = 'Community event',
 				['official server event'] = 'Official server event', official = 'Official server event',
-				other = 'Other' } },
+				other = 'Other' },
+			category = function (label)
+				local plural = { ['Gang war'] = 'Gang wars', ['Community event'] = 'Community events',
+					['Official server event'] = 'Official server events', Other = 'Other events' }
+				return plural[label] or (label .. 's')
+			end },
 	},
 	sections = {
 		{ fields = {
 			{ 'date', 'Date' },
 			{ 'end_date', 'Ended' },
 			{ 'location', 'Location' },
-			{ 'organised_by', 'Organised by' },
+			{ 'organised_by', 'Organised by', link = true },
 		} },
 		{ title = 'Who', fields = {
-			{ 'participants', 'Participants' },
-			{ 'factions', 'Factions involved' },
+			{ 'participants', 'Participants', link = true },
+			{ 'factions', 'Factions involved', link = true },
 		} },
 		{ title = 'Outcome', fields = {
 			{ 'outcome', 'Outcome' },
@@ -195,8 +205,8 @@ TYPES.event = {
 			{ 'arrests', 'Arrests' },
 		} },
 		{ title = 'Timeline', fields = {
-			{ 'previous', 'Previous event' },
-			{ 'next', 'Next event' },
+			{ 'previous', 'Previous event', link = true },
+			{ 'next', 'Next event', link = true },
 		} },
 		{ title = 'Meta', fields = {
 			{ 'media', 'Clips & media' },
@@ -255,6 +265,38 @@ end
 
 local function cssKey(s)
 	return (mw.ustring.lower(s):gsub('[^%w]+', '-'))
+end
+
+-- Words that mean "nobody / not known" and should never become links.
+local NO_LINK = {
+	unknown = true, none = true, ['n/a'] = true, na = true, various = true, nobody = true,
+	['no one'] = true, tbd = true, tba = true, unemployed = true, independent = true,
+	['self-employed'] = true, self = true, ['?'] = true, ['-'] = true, ['–'] = true, ['—'] = true,
+}
+
+-- Turn plain names into links: "Big Rig Customs" -> [[Big Rig Customs]].
+-- Lists split on commas, semicolons and lines; "Rosa Ramirez (mother)" keeps
+-- its note outside the link. Anything already containing markup is left as typed.
+local function autolink(value)
+	if value:find('[%[%]{}<>|]') or value:find("''", 1, true) then return value end
+	local lines = {}
+	for line in mw.text.gsplit(value, '\n') do
+		local bullet, rest = line:match('^([%*#:]*%s*)(.*)$')
+		local items = {}
+		for item in mw.text.gsplit(rest, '[,;]') do
+			item = mw.text.trim(item)
+			if item ~= '' then
+				local name, note = item:match('^(.-)%s*(%b())$')
+				if not name or name == '' then name, note = item, nil end
+				local skip = NO_LINK[mw.ustring.lower(name)] or name:match('^[%d%s%p]+$')
+					or not mw.title.new(name)
+				local linked = skip and name or ('[[' .. name .. ']]')
+				table.insert(items, note and (linked .. ' ' .. note) or linked)
+			end
+		end
+		table.insert(lines, bullet .. table.concat(items, ', '))
+	end
+	return table.concat(lines, '\n')
 end
 
 -- A value that starts with a list needs a newline to render as a list.
@@ -348,7 +390,10 @@ local function render(frame, typeName)
 	local pills = {}
 	for _, badge in ipairs(def.badges) do
 		if v[badge.field] and not badge.hidden then
-			table.insert(pills, { badge.field, v[badge.field], v[badge.field .. 'Label'] })
+			local label = v[badge.field .. 'Label']
+			-- Each badge links to its category, e.g. "Criminal" -> Category:Criminal characters.
+			local text = badge.category and string.format('[[:Category:%s|%s]]', badge.category(label), label) or label
+			table.insert(pills, { badge.field, v[badge.field], text })
 		end
 	end
 	if #pills > 0 then
@@ -368,6 +413,7 @@ local function render(frame, typeName)
 				local value = args[f[1]]
 				if value then
 					if f.version then value = string.format(VERSION_LABEL, value) end
+					if f.link then value = autolink(value) end
 					table.insert(rows, { f[2], value })
 				end
 			end

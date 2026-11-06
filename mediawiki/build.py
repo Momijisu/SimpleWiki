@@ -169,6 +169,13 @@ def blank(t, with_examples=False):
     return '\n'.join(lines)
 
 
+# Fields where plain names become links (must match `link = true` in Module:Infobox).
+# Single ones get VisualEditor's page-name suggestions; lists stay free text.
+LINK_SINGLE = {'employer', 'partner', 'killed_by', 'leader', 'founder', 'owner',
+               'predecessor', 'successor', 'organised_by', 'previous', 'next'}
+LINK_LIST = {'affiliation', 'family', 'allies', 'rivals', 'participants', 'factions'}
+
+
 def templatedata(key, t):
     checked = {c[0]: c[1] for c in t['checked']}
     params = {}
@@ -183,8 +190,10 @@ def templatedata(key, t):
         elif name in ('image',):
             param['type'] = 'wiki-file-name'
             param['suggested'] = True
-        if name.endswith('_by') or name in ('employer', 'affiliation', 'leader', 'previous', 'next', 'rivals', 'allies'):
-            param['type'] = 'content'
+        if name in LINK_SINGLE:
+            param['type'] = 'wiki-page-name'
+        if name in LINK_SINGLE | LINK_LIST:
+            param['description'] = (desc + ' ' if desc else '') + 'Plain names become links; separate several with commas.'
         params[name] = param
     if key == 'character':
         params['status']['suggestedvalues'] = ['Active', 'Inactive', 'Deceased']
@@ -218,6 +227,8 @@ The fields, sections and look are shared by all infoboxes and live in [[Module:I
 {blank(t)}
 </pre>
 Empty fields don't show. Extra pictures (<code>image2</code> … <code>image5</code>) turn into tabs.
+
+In fields that name people, groups or events (employer, affiliation, family, leader, rivals, participants…), plain names become links: <code>Big Rig Customs</code> shows as [[Big Rig Customs]]. Separate several with commas; a note in brackets stays outside the link (<code>Rosa Ramirez (mother)</code>). Words like ''Unknown'' or ''None'', numbers, and anything that already has links or other markup are left as typed. The status, focus and type badges link to their categories.
 
 == Checked fields ==
 These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
@@ -257,6 +268,33 @@ placeholder=Page title
 """
 
 
+CATEGORIES = [
+    ('Characters', None, 'Every character on the wiki. Pages are added by [[Template:Infobox character]].'),
+    ('Active characters', 'Characters', 'Characters who are still being played.'),
+    ('Inactive characters', 'Characters', "Characters whose player has stopped playing them. They're alive in the story."),
+    ('Deceased characters', 'Characters', 'Characters who have died.'),
+    ('Civilian characters', 'Characters', 'Characters currently focused on civilian life.'),
+    ('Criminal characters', 'Characters', 'Characters currently focused on crime.'),
+    ('Public Sector characters', 'Characters', 'Characters currently working in the public sector: police, medical, government.'),
+    ('Organizations', None, 'Every gang, business and emergency service. Pages are added by [[Template:Infobox organization]].'),
+    ('Gangs', 'Organizations', 'Gangs, crews, cartels, families and posses.'),
+    ('Businesses', 'Organizations', 'Shops, bars, garages, clubs and other businesses.'),
+    ('Emergency Services', 'Organizations', 'Police, EMS, fire and other emergency services.'),
+    ('Active organizations', 'Organizations', 'Organizations that are active now.'),
+    ('Inactive organizations', 'Organizations', 'Organizations that are quiet but not gone.'),
+    ('Defunct organizations', 'Organizations', 'Organizations that no longer exist.'),
+    ('Events', None, 'Every server event. Pages are added by [[Template:Infobox event]].'),
+    ('Heists', 'Events', 'Heists and robberies.'),
+    ('Gang wars', 'Events', 'Wars between gangs.'),
+    ('Shootings', 'Events', 'Shootings.'),
+    ('Trials', 'Events', 'Trials and court cases.'),
+    ('Elections', 'Events', 'Elections.'),
+    ('Community events', 'Events', 'Events organised by players.'),
+    ('Official server events', 'Events', 'Events run by the server staff.'),
+    ('Other events', 'Events', 'Events that fit no other type.'),
+]
+
+
 def pages():
     out = []
     out.append(('Module:Infobox', 828, 'Scribunto', 'text/plain', (HERE / 'pages/Module/Infobox.lua').read_text()))
@@ -269,6 +307,17 @@ def pages():
         out.append((title + '/preload', 10, 'wikitext', 'text/x-wiki',
                     '<noinclude>The starting text for a new page; see [[' + title + ']].</noinclude>'
                     + blank(t) + '\n\n' + t['skeleton']))
+    # The categories the infoboxes put pages in, so badge links and directory buttons
+    # lead to real category pages. (category, parent, description)
+    for cat, parent, about in CATEGORIES:
+        text = about + ('\n\n[[Category:' + parent + ']]' if parent else '')
+        out.append(('Category:' + cat, 14, 'wikitext', 'text/x-wiki', text))
+    # Categories the ShortDescription and TabberNeue extensions add to every page that
+    # uses them: hidden, so they don't show at the bottom of articles.
+    for cat, what in (('Pages with short description', 'have a short description (the grey line under the title)'),
+                      ('Pages using Tabber parser tag', 'use tabs (the <nowiki><tabber></nowiki> tag)')):
+        out.append(('Category:' + cat, 14, 'wikitext', 'text/x-wiki',
+                    f'__HIDDENCAT__\nAdded automatically to pages that {what}. Hidden from readers.'))
     out.append(('Category:Pages with infobox problems', 14, 'wikitext', 'text/x-wiki',
                 '__HIDDENCAT__\nPages whose infobox has a missing or unknown value in a checked field '
                 '(like status or type). The infobox on each page says what to fix.'))
@@ -314,13 +363,24 @@ MAINPAGE_DOC = """The front page. The '''Main Page''' only contains <code><nowik
 |-
 | <code>directories</code> || The row of directory buttons. Each has a <code>label</code> and either a <code>category</code> (it links there and shows how many pages it has) or a <code>link</code> to any page. Optional: <code>icon</code> (a small picture on the right), <code>image</code> (a faint picture behind it), <code>description</code> (instead of the count), <code>showCount: false</code>.
 |-
-| <code>intro</code> || An optional welcome card: <code>title</code> and <code>text</code> (wikitext, links work).
+| <code>intro</code> || An optional welcome card across the page: <code>title</code> and <code>text</code> (wikitext, links work).
 |-
-| <code>featured.pages</code> || Featured articles. With several, a different one shows each day. Each entry is a page name, or <code>{ "page": "…", "image": "…", "text": "…", "label": "…" }</code> to override the picture, the text or the shown title. By default the picture comes from the article's infobox and the text is its first paragraph.
+| <code>columns</code> || The cards under the intro: up to three columns, each a list of cards from top to bottom. On phones they stack. Each card has a <code>type</code> (below); add <code>"show": false</code> to hide one without deleting it.
+|}
+
+== Card types ==
+{| class="wikitable"
+! <code>type</code> !! Settings
 |-
-| <code>featured.label</code>, <code>excerptLength</code>, <code>moreText</code> || The small label, how many characters of text to show, and the link text.
+| <code>featured</code> || <code>pages</code>: featured articles; with several, a different one shows each day. Each entry is a page name, or <code>{ "page": "…", "image": "…", "text": "…", "label": "…" }</code> to override the picture, the text or the shown title. By default the picture comes from the article's infobox and the text is its first paragraph. Also <code>label</code>, <code>excerptLength</code>, <code>moreText</code>.
 |-
-| <code>recentChanges</code> || <code>limit</code> (how many), <code>days</code>, <code>hideBots</code>, <code>hideMinor</code>, <code>hideLogs</code> (uploads, moves, deletions), <code>namespace</code> (0 = articles only; leave it out for every kind of page), <code>title</code>, <code>moreText</code>. Set <code>"show": false</code> to remove it.
+| <code>startEditing</code> || <code>title</code>, <code>text</code>, <code>link</code> (the page the title goes to) and <code>stats</code>: any of <code>articles</code>, <code>edits</code>, <code>files</code>, <code>users</code>, <code>activeUsers</code>.
+|-
+| <code>links</code> || <code>title</code> and <code>links</code>: each <code>{ "label": "…", "page": "…" }</code> for a wiki page or <code>{ "label": "…", "url": "https://…" }</code> for a website. A link with an empty address shows greyed out until you fill it in.
+|-
+| <code>recentChanges</code> || <code>limit</code> (how many), <code>days</code>, <code>hideBots</code>, <code>hideMinor</code>, <code>hideLogs</code> (uploads, moves, deletions), <code>namespace</code> (0 = articles only; leave it out for every kind of page), <code>title</code>, <code>moreText</code>.
+|-
+| <code>text</code> || <code>title</code> and <code>text</code> (wikitext): rules, the latest update, an announcement.
 |}
 
 Leave a setting out (or empty) to hide that part. Problems, like a featured page that doesn't exist, show as a red note on the front page.

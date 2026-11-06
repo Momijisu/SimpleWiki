@@ -35,6 +35,11 @@ done
 if [ -n "$FRESH" ]; then
 	echo '{{#invoke:Main page|render}}' | run edit --summary "Front page" --user Admin "Main Page" > /dev/null
 fi
+# Test only: feature two of the example pages, so the featured card shows.
+# (Every start: each import brings back the empty list from the XML.)
+run getText "Module:Main page/config.json" \
+	| sed 's/"pages": \[\]/"pages": ["Southside Saints", "Tony Ramirez"]/' \
+	| run edit --summary "Test: featured articles" --user Admin "Module:Main page/config.json" > /dev/null
 
 echo "== Uploading pictures"
 run importImages --user=Admin --skip-dupes /import/files > /dev/null 2>&1 || true
