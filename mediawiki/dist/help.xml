@@ -3,7 +3,7 @@
     <title>Help:Contents</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:36:37Z</timestamp>
+      <timestamp>2026-11-06T17:49:00Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -17,7 +17,7 @@ Take a look through the below categories to find out where we can help you best.
 {{Card
  | heading = yes
  | title   = I want to ''EDIT'' an Article
- | text    = Contributing to the wiki is simple; check out our [[Help:Getting Started|Getting Started]] guide to get started, the [[Help:Editing/Cheat sheet|cheat sheet]] page for a syntax guide, or practice in your own [[Special:MyPage/Sandbox|Sandbox]] to get the hang of wikicode; or simply take a chance and edit your first article!
+ | text    = Contributing to the wiki is simple; check out our [[Help:Getting Started|Getting Started]] guide to get started, the [[Help:Editing/Cheat sheet|cheat sheet]] page for a syntax guide, or practise in your own [[Special:MyPage/Sandbox|Sandbox]] to get the hang of wikicode; or simply take a chance and edit your first article!
 
 Don't be afraid to edit any page that needs updates, fixes, or more content; we would rather that you created an article with simple, limited content and request some assistance than to create no article at all.
  | link    = Help:Getting Started
@@ -61,7 +61,7 @@ Beyond small fixes, take a look through our [[Project:Tasks|Tasks]] page to see 
 
 == Start a new page ==
 &lt;div class="rp-create"&gt;
-Type the page's name (the character's full name, the organization's or the event's) and the page opens with its infobox and headings ready to fill in.
+Type the page's name (the character's full name, the organisation's or the event's) and the page opens with its infobox and headings ready to fill in.
 
 &lt;inputbox&gt;
 type=create
@@ -74,8 +74,8 @@ width=30
 &lt;inputbox&gt;
 type=create
 preload=Template:Infobox organization/preload
-placeholder=Organization name
-buttonlabel=Create organization page
+placeholder=Organisation name
+buttonlabel=Create organisation page
 break=no
 width=30
 &lt;/inputbox&gt;
@@ -155,7 +155,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
 &lt;div class="rp-cards rp-cards--3"&gt;
 {{Card
  | title  = Infoboxes
- | text   = The box at the top of every character, organization and event page: how to fill in each field, and what the badges mean.
+ | text   = The box at the top of every character, organisation and event page: how to fill in each field, and what the badges mean.
  | link   = Help:Infoboxes
  | colour = purple
 }}
@@ -208,7 +208,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
     <title>Project:Help portal</title>
     <ns>4</ns>
     <revision>
-      <timestamp>2026-11-06T17:36:37Z</timestamp>
+      <timestamp>2026-11-06T17:49:00Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -220,7 +220,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
     <title>Template:Card</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T17:36:37Z</timestamp>
+      <timestamp>2026-11-06T17:49:00Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -238,7 +238,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
     <title>Template:Card/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T17:36:37Z</timestamp>
+      <timestamp>2026-11-06T17:49:00Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>sanitized-css</model>
@@ -376,7 +376,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
     <title>Template:Card/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T17:36:37Z</timestamp>
+      <timestamp>2026-11-06T17:49:00Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -421,7 +421,7 @@ Wrap the cards in a &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-cards rp-cards--
     <title>Category:Help</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T17:36:37Z</timestamp>
+      <timestamp>2026-11-06T17:49:00Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -433,7 +433,7 @@ Wrap the cards in a &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-cards rp-cards--
     <title>Category:Help templates</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T17:36:37Z</timestamp>
+      <timestamp>2026-11-06T17:49:00Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>

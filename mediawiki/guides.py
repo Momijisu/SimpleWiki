@@ -99,7 +99,7 @@ This guide is made from the perspective of a logged-in user with default prefere
 
 == Walkthrough ==
 === Spotting an error ===
-Finding an error to fix can sometimes be hard, but there are definitely pages that need fixing; the wiki is far from perfect. Let's assume you've found a page with something simple to fix (e.g. just something in the prose). For this demonstration we'll use the introduction of the [[Tony Ramirez]] page, which is a bit short and could say more about who he is. We're going to reword it.
+Finding an error to fix can sometimes be hard, but there are definitely pages that need fixing; the wiki is far from perfect. Let's assume you've found a page with something simple to fix (e.g. just something in the prose). For this demonstration we'll use the introduction of the Tony Ramirez page, which is a bit short and could say more about who he is. We're going to reword it.
 
 {img('YFE - problem found.png', 'The introduction we are going to improve')}
 
@@ -157,7 +157,7 @@ There are several simple things you should fix if you see them, for example:
 
 * Typos
 * Links to incorrect places
-* Incorrect or outdated information (a character's status, an organization's leader)
+* Incorrect or outdated information (a character's status, an organisation's leader)
 * Poorly-formatted or poorly-worded paragraphs
 
 Things you shouldn't change or should otherwise bear in mind:
@@ -167,7 +167,7 @@ Things you shouldn't change or should otherwise bear in mind:
 ** Dates should be written as ''14 June 2026'' (day, month, year).
 * Always use sentence case unless the name is or includes a proper noun; i.e. don't capitalise words unless they are part of a name. "Tony works at Big Rig Customs as a mechanic." not "Tony works at Big Rig Customs as a Mechanic."
 * Write in-character history as it happened, in the past tense, and keep out-of-character details (the player, their stream) for the ''Meta'' part of the infobox.
-* Opinions are not valuable content; e.g. "Tony is the best getaway driver in the city" is not appropriate, but "Tony drove the getaway car in the [[Harbor Bank Heist]]" is.
+* Opinions are not valuable content; e.g. "Tony is the best getaway driver in the city" is not appropriate, but "Tony drove the getaway car in the Harbor Bank Heist" is.
 
 == See also ==
 * The next guide in the series is [[Help:Editing/VisualEditor basics]], about using VisualEditor to edit other parts of an article. You may prefer to skip straight to source mode with [[Help:Editing/Source mode basics]].
@@ -188,7 +188,7 @@ This guide covers four very common things:
 
 == Walkthrough ==
 === Starting ===
-For this demonstration we'll use [[Tony Ramirez]] again, but we won't save any of the edits. This is just to show how to do things. The sections below were done in this order, but you don't have to follow it.
+For this demonstration we'll use Tony Ramirez again, but we won't save any of the edits. This is just to show how to do things. The sections below were done in this order, but you don't have to follow it.
 
 Open up the editor.
 
@@ -215,7 +215,7 @@ That's really all there is for links.
 How to link is covered by [[Help:Style guide#Linking|the style guide]]. The main takeaways for VisualEditor are:
 
 * If you mention the same thing on a page several times, in general, it should only be linked once, unless the page is very long (not counting tables, infoboxes and navigation boxes).
-* Link the names of characters, organizations, places and events the first time they come up: it's how readers find their way around the city's story.
+* Link the names of characters, organisations, places and events the first time they come up: it's how readers find their way around the city's story.
 
 === Bold and italics ===
 This is simpler than links but generally less important. '''Bold''' and ''italic'' are applied by selecting the text and clicking '''B''' or ''I'' in the ''Style text'' menu (the ''A'' button) in the toolbar.
@@ -292,7 +292,7 @@ How to use pictures is, again, covered by [[Help:Style guide|the style guide]].
 ** The infobox takes up the right side at the top of most pages. Put pictures near it on the left or in the centre instead.
 ** Keep in mind that pictures can sit differently on phones.
 * Captions should end in a full stop if they are a complete sentence, and not have one if they are not.
-* The main picture of a character, organization or event goes in its infobox, not in the text. See [[Help:Editing/Adding images#Adding an image to an infobox|adding an image to an infobox]].
+* The main picture of a character, organisation or event goes in its infobox, not in the text. See [[Help:Editing/Adding images#Adding an image to an infobox|adding an image to an infobox]].
 
 Every picture you upload needs a licence; see [[Template:License/doc|choosing a licence]] and [[Help:Editing/Adding images|the adding images guide]].
 
@@ -327,7 +327,7 @@ This inserts a blank table, with the top row as header cells.
 
 {img('VE advanced - table inserted.png', 'A new, empty table')}
 
-You can type into a cell by clicking it and typing; you can add links, pictures, bold and so on as normal. For this example we'll make a list of the [[Southside Saints]]' members, with their rank and when they joined.
+You can type into a cell by clicking it and typing; you can add links, pictures, bold and so on as normal. For this example we'll make a list of the Southside Saints' members, with their rank and when they joined.
 
 {img('VE advanced - table filled out.png', 'The table, filled in')}
 
@@ -387,7 +387,7 @@ Templates use a process called '''transclusion''': including part or all of one 
 * When the information needs updating, all those pages change at once.
 * Pages look and work the same way, making the key information easy to find.
 
-You can also pass information into a template, and it changes what it shows to match. On this wiki, the most important templates are the '''infoboxes''': the box at the top right of every character, organization and event page.
+You can also pass information into a template, and it changes what it shows to match. On this wiki, the most important templates are the '''infoboxes''': the box at the top right of every character, organisation and event page.
 
 Templates are made up of two parts:
 
@@ -493,13 +493,13 @@ Makes:
 * Second point
 
 === Links ===
-* To add a link, put <nowiki>[[ ]]</nowiki> around the name of the page you want to link to. You can type these yourself or use the link button. E.g. <nowiki>[[Southside Saints]]</nowiki> creates [[Southside Saints]].
+* To add a link, put <nowiki>[[ ]]</nowiki> around the name of the page you want to link to. You can type these yourself or use the link button. E.g. <nowiki>[[Southside Saints]]</nowiki> creates Southside Saints.
 * If the text between <nowiki>[[ ]]</nowiki> doesn't match an existing page or redirect, you get a red link. Red links lead to an empty page, inviting the reader to create it. Use ''Show preview'' to check your links go where you expect.
 
 Links should fit in with the rest of the sentence. You can do this in a few ways:
 
-* Letters straight after a link, without a space, become part of the link's text; this is useful for plurals, e.g. <nowiki>[[Heist]]s</nowiki> gives [[Heist]]s.
-* You can change the text a link shows without changing where it goes; this is useful when a page's name doesn't fit your sentence, e.g. <nowiki>[[Los Santos Police Department|the police]]</nowiki> gives [[Los Santos Police Department|the police]].
+* Letters straight after a link, without a space, become part of the link's text; this is useful for plurals, e.g. <nowiki>[[Heist]]s</nowiki> gives Heists.
+* You can change the text a link shows without changing where it goes; this is useful when a page's name doesn't fit your sentence, e.g. <nowiki>[[Los Santos Police Department|the police]]</nowiki> gives the police.
 * All page names start with a capital letter, but you don't have to capitalise the first letter of a link for it to work. This helps keep the right capitalisation in sentences, e.g. <nowiki>[[heist]]</nowiki> links to the ''Heist'' page.
 ** Other words in a page name have to match its capitals exactly. If they don't fit your sentence, change the link's text instead, e.g. <nowiki>[[Official Server Events|official server events]]</nowiki>.
 * Sometimes something doesn't have its own page, but has a section on a bigger one. You can link straight to that section by adding # and the section's heading after the page name, e.g. <nowiki>[[Tony Ramirez#Background]]</nowiki>. This is usually combined with changing the link's text, e.g. <nowiki>[[Tony Ramirez#Background|Tony's early life]]</nowiki>.
@@ -529,7 +529,7 @@ Which gives a table with headings and rows like this one:
 {{| class="wikitable"
 ! Member !! Rank !! Joined
 |-
-| [[Tony Ramirez]] || Getaway driver || March 2026
+| Tony Ramirez || Getaway driver || March 2026
 |-
 | Rosa Ramirez || Associate || May 2026
 |}}
@@ -544,7 +544,7 @@ If you search for a page that doesn't exist, the search results offer to create 
 
 {img('SM basics - making a page.png', 'Creating a page from the search results')}
 
-The quickest way to start a character, organization or event page is with the boxes under ''Start a new page'' on [[Help:Contents]]: the new page opens with its infobox and headings ready to fill in.
+The quickest way to start a character, organisation or event page is with the boxes under ''Start a new page'' on [[Help:Contents]]: the new page opens with its infobox and headings ready to fill in.
 
 Start adding what you know. The page is only created when you save it.
 
@@ -572,7 +572,7 @@ This page is a '''cheat sheet''' to help you learn the basics of editing and for
     + row('Bold and italic', "<code><nowiki>'''''bold & italic'''''</nowiki></code>", "'''''bold & italic'''''") \
     + row('Internal link',
           "<code><nowiki>[[Southside Saints]]</nowiki></code><br /><code><nowiki>[[Southside Saints|the Saints]]</nowiki></code><br /><code><nowiki>[[Heist]]s</nowiki></code>",
-          "[[Southside Saints]]<br />[[Southside Saints|the Saints]]<br />[[Heist]]s", 'within the wiki') \
+          "Southside Saints<br />the Saints<br />Heists", 'within the wiki') \
     + row('Link to a section',
           "<code><nowiki>[[#Heading|Heading]]</nowiki></code><br /><code><nowiki>[[Other page#Heading|Heading]]</nowiki></code>",
           "''Scrolls this page down to the heading.''<br />''Goes to the other page, then scrolls to the heading.''") \
@@ -580,7 +580,7 @@ This page is a '''cheat sheet''' to help you learn the basics of editing and for
     + row('External link',
           "<code><nowiki>[https://www.example.org Text to show]</nowiki></code><br /><code><nowiki>[https://www.example.org]</nowiki></code><br /><code><nowiki>https://www.example.org</nowiki></code>",
           "[https://www.example.org Text to show]<br />[https://www.example.org]<br />https://www.example.org", 'to other websites') \
-    + row('Redirect to another page', "<code><nowiki>#REDIRECT [[Target page]]</nowiki></code>", "''Sends readers straight to [[Target page]]''", 'the only thing on the page') \
+    + row('Redirect to another page', "<code><nowiki>#REDIRECT [[Target page]]</nowiki></code>", "''Sends readers straight to Target page''", 'the only thing on the page') \
     + row('Picture', "<code><nowiki>[[File:Example portrait.png|thumb|right|200px|Caption]]</nowiki></code>", "''A 200-pixel picture on the right, with a caption''") \
     + row('Template', "<code><nowiki>{{Infobox character}}</nowiki></code>", "''Adds the template; see [[Help:Templates]]''") \
     + row('Section headings',
@@ -628,9 +628,9 @@ When a page has references it needs a section that lists them, at the end of the
 <references /></pre>
 
 == Redirects and disambiguation ==
-Redirects send readers to another page when they search for or follow a link to a name. For example, a redirect called ''LSPD'' would take readers to the [[Los Santos Police Department]] page when they search for the short name.
+Redirects send readers to another page when they search for or follow a link to a name. For example, a redirect called ''LSPD'' would take readers to the Los Santos Police Department page when they search for the short name.
 
-Pages should always use the full, correct name of things; redirects make the wiki easier to get around by catching nicknames, short names and common misspellings. Characters' nicknames are a good use: a redirect from ''Two-Times'' to [[Tony Ramirez]].
+Pages should always use the full, correct name of things; redirects make the wiki easier to get around by catching nicknames, short names and common misspellings. Characters' nicknames are a good use: a redirect from ''Two-Times'' to Tony Ramirez.
 
 To create a redirect, [[Help:Editing/Source mode basics#Making a new page|create a new page]] with the redirect's name, containing only:
 

@@ -186,7 +186,7 @@ Take a look through the below categories to find out where we can help you best.
 {{Card
  | heading = yes
  | title   = I want to ''EDIT'' an Article
- | text    = Contributing to the wiki is simple; check out our [[Help:Getting Started|Getting Started]] guide to get started, the [[Help:Editing/Cheat sheet|cheat sheet]] page for a syntax guide, or practice in your own [[Special:MyPage/Sandbox|Sandbox]] to get the hang of wikicode; or simply take a chance and edit your first article!
+ | text    = Contributing to the wiki is simple; check out our [[Help:Getting Started|Getting Started]] guide to get started, the [[Help:Editing/Cheat sheet|cheat sheet]] page for a syntax guide, or practise in your own [[Special:MyPage/Sandbox|Sandbox]] to get the hang of wikicode; or simply take a chance and edit your first article!
 
 Don't be afraid to edit any page that needs updates, fixes, or more content; we would rather that you created an article with simple, limited content and request some assistance than to create no article at all.
  | link    = Help:Getting Started
@@ -230,7 +230,7 @@ Beyond small fixes, take a look through our [[Project:Tasks|Tasks]] page to see 
 
 == Start a new page ==
 <div class="rp-create">
-Type the page's name (the character's full name, the organization's or the event's) and the page opens with its infobox and headings ready to fill in.
+Type the page's name (the character's full name, the organisation's or the event's) and the page opens with its infobox and headings ready to fill in.
 
 <inputbox>
 type=create
@@ -243,8 +243,8 @@ width=30
 <inputbox>
 type=create
 preload=Template:Infobox organization/preload
-placeholder=Organization name
-buttonlabel=Create organization page
+placeholder=Organisation name
+buttonlabel=Create organisation page
 break=no
 width=30
 </inputbox>
@@ -324,7 +324,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
 <div class="rp-cards rp-cards--3">
 {{Card
  | title  = Infoboxes
- | text   = The box at the top of every character, organization and event page: how to fill in each field, and what the badges mean.
+ | text   = The box at the top of every character, organisation and event page: how to fill in each field, and what the badges mean.
  | link   = Help:Infoboxes
  | colour = purple
 }}
