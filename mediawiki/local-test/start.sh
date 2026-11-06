@@ -23,8 +23,8 @@ echo "<?php require '/data/LocalSettings.php';" > LocalSettings.php
 chown www-data:www-data LocalSettings.php
 run update --quick > /dev/null
 
-echo "== Importing dist/infoboxes.xml and dist/mainpage.xml"
-for f in /import/dist/infoboxes.xml /import/dist/mainpage.xml; do
+echo "== Importing the files in dist/"
+for f in /import/dist/infoboxes.xml /import/dist/mainpage.xml /import/dist/licenses.xml; do
 	if [ -f "$f" ]; then
 		run importDump --username-prefix=tpl "$f" > /dev/null 2>&1 && echo "   $(basename "$f"): imported" || echo "   $(basename "$f"): FAILED"
 	fi

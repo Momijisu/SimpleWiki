@@ -4,12 +4,16 @@
   dist/infoboxes.xml  the three infoboxes, their docs and preload pages
   dist/mainpage.xml   the front page: the Main Page itself (one line), the module,
                       its settings and styles
+  dist/licenses.xml   the upload licences: the list on Special:Upload, the licence
+                      templates and their categories (see licenses.py)
 
 Hand-written pages live in pages/ (the Lua module and the CSS). The
 templates, their documentation and their "preload" starter pages are
 generated here from FIELDS, so the docs always match the templates."""
 
 import json
+
+import licenses
 from datetime import datetime, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -403,7 +407,8 @@ def mainpage_pages():
 if __name__ == '__main__':
     dist = HERE / 'dist'
     dist.mkdir(exist_ok=True)
-    for name, built, summary in (('infoboxes.xml', pages(), 'Infobox templates'), ('mainpage.xml', mainpage_pages(), 'Front page')):
+    for name, built, summary in (('infoboxes.xml', pages(), 'Infobox templates'), ('mainpage.xml', mainpage_pages(), 'Front page'),
+                                  ('licenses.xml', licenses.pages(), 'Upload licences')):
         (dist / name).write_text(xml(built, summary))
         print(f'Wrote {dist / name} with {len(built)} pages:')
         for p in built:

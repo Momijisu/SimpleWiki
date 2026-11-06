@@ -1,0 +1,411 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" version="0.11" xml:lang="en">
+  <page>
+    <title>MediaWiki:Licenses</title>
+    <ns>8</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">* Pictures from the game
+** Screenshot|A screenshot or video still from the game
+* Made by you
+** Self|I made it, and anyone may reuse it (CC BY-SA 4.0)
+** Permission|I made it, but it may only be used on this wiki
+* Made by someone else
+** Permission|The creator gave permission to use it here
+** Server|Official Let's RP material (logos, artwork, announcements)
+** Fair use|Copyrighted material (logos, covers, artwork) used as fair use
+* Free licences
+** CC-BY-SA-4.0|Creative Commons Attribution-ShareAlike 4.0
+** CC-BY-4.0|Creative Commons Attribution 4.0
+** CC0|Public domain (CC0)
+* Not sure
+** No license|I don't know where it comes from
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:License</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:License/styles.css" /&gt;&lt;div class="rp-license rp-license--{{{kind|none}}}"&gt;
+&lt;div class="rp-license-title"&gt;{{{title|Licence}}}&lt;/div&gt;
+&lt;div class="rp-license-text"&gt;{{{text|}}}&lt;/div&gt;
+&lt;/div&gt;{{#ifeq:{{NAMESPACE}}|{{ns:File}}|{{#if:{{{category|}}}|[[Category:{{{category}}}]]}}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Template:License/doc}}
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:License/styles.css</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>sanitized-css</model>
+      <format>text/css</format>
+      <text xml:space="preserve">/* Template:License/styles.css: the licence box on file pages (TemplateStyles). */
+.rp-license {
+	margin: 0.5em 0 1em;
+	padding: 10px 14px;
+	max-width: 46em;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-left: 4px solid rgba( 127, 127, 127, 0.6 );
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.07 );
+	font-size: 0.875rem;
+	line-height: 1.5;
+}
+.rp-license-title {
+	font-weight: 600;
+	margin-bottom: 2px;
+}
+.rp-license-text {
+	opacity: 0.85;
+}
+.rp-license--game { border-left-color: rgba( 59, 130, 246, 0.8 ); }
+.rp-license--free { border-left-color: rgba( 34, 197, 94, 0.8 ); }
+.rp-license--permission { border-left-color: rgba( 168, 85, 247, 0.8 ); }
+.rp-license--fairuse { border-left-color: rgba( 245, 158, 11, 0.85 ); }
+.rp-license--none {
+	border-left-color: rgba( 239, 68, 68, 0.85 );
+	background: rgba( 239, 68, 68, 0.08 );
+}
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:License/doc</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Every uploaded file should say where it comes from and who may use it. When you upload with [[Special:Upload]], pick a licence from the '''Licensing''' list and its box is added to the file page for you. To fix or add one later, edit the file page and put one of these under &lt;code&gt;&lt;nowiki&gt;== Licensing ==&lt;/nowiki&gt;&lt;/code&gt;.
+
+{| class="wikitable"
+! Template !! Means !! Category !! Optional values
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Screenshot}}&lt;/nowiki&gt;&lt;/code&gt; || In-game screenshot || [[:Category:In-game screenshots]] || &lt;code&gt;1&lt;/code&gt; = the game, if not GTA V; &lt;code&gt;2&lt;/code&gt; = who owns it.
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Self}}&lt;/nowiki&gt;&lt;/code&gt; || Own work, shared under CC BY-SA 4.0 || [[:Category:Own work]] || &lt;code&gt;1&lt;/code&gt; = your name, to be credited.
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Permission}}&lt;/nowiki&gt;&lt;/code&gt; || Used with the creator's permission || [[:Category:Files used with permission]] || &lt;code&gt;1&lt;/code&gt; = who gave permission.
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Server}}&lt;/nowiki&gt;&lt;/code&gt; || Official Let's RP material || [[:Category:Official Let's RP files]] || 
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Fair use}}&lt;/nowiki&gt;&lt;/code&gt; || Copyrighted, used as fair use || [[:Category:Fair use files]] || &lt;code&gt;1&lt;/code&gt; = who owns the copyright.
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{CC-BY-SA-4.0}}&lt;/nowiki&gt;&lt;/code&gt; || Creative Commons Attribution-ShareAlike 4.0 || [[:Category:CC BY-SA 4.0 files]] || &lt;code&gt;1&lt;/code&gt; = the creator, to be credited.
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{CC-BY-4.0}}&lt;/nowiki&gt;&lt;/code&gt; || Creative Commons Attribution 4.0 || [[:Category:CC BY 4.0 files]] || &lt;code&gt;1&lt;/code&gt; = the creator, to be credited.
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{CC0}}&lt;/nowiki&gt;&lt;/code&gt; || Public domain || [[:Category:Public domain files]] || 
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{No license}}&lt;/nowiki&gt;&lt;/code&gt; || No licence given || [[:Category:Files with no license]] || 
+|}
+
+Which one?
+* '''Screenshots and clips from the game''' (even ones you took yourself): &lt;code&gt;&lt;nowiki&gt;{{Screenshot}}&lt;/nowiki&gt;&lt;/code&gt;. The game's pictures belong to Rockstar.
+* '''Your own drawing, edit or photo''': &lt;code&gt;&lt;nowiki&gt;{{Self}}&lt;/nowiki&gt;&lt;/code&gt; to let anyone reuse it, or &lt;code&gt;&lt;nowiki&gt;{{Permission|your name}}&lt;/nowiki&gt;&lt;/code&gt; to keep it to this wiki.
+* '''Someone else's art''' (a commission, stream art): ask them first, then &lt;code&gt;&lt;nowiki&gt;{{Permission|their name}}&lt;/nowiki&gt;&lt;/code&gt;.
+* '''Real-world logos, album covers, film posters''': &lt;code&gt;&lt;nowiki&gt;{{Fair use|owner}}&lt;/nowiki&gt;&lt;/code&gt;, at a small size.
+
+Files tagged &lt;code&gt;&lt;nowiki&gt;{{No license}}&lt;/nowiki&gt;&lt;/code&gt; are listed in [[:Category:Files with no license]] (hidden) for moderators to check.
+
+The list on the upload page is set in [[MediaWiki:Licenses]]. All licence templates use [[Template:License]] for their box, styled by [[Template:License/styles.css]].
+
+== The shared box ==
+&lt;code&gt;&lt;nowiki&gt;{{License|kind=…|title=…|text=…|category=…}}&lt;/nowiki&gt;&lt;/code&gt;: &lt;code&gt;kind&lt;/code&gt; sets the colour (&lt;code&gt;game&lt;/code&gt;, &lt;code&gt;free&lt;/code&gt;, &lt;code&gt;permission&lt;/code&gt;, &lt;code&gt;fairuse&lt;/code&gt;, &lt;code&gt;none&lt;/code&gt;). The category is only added on file pages.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Screenshot</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=game|category=In-game screenshots|title=In-game screenshot|text=A screenshot or video still from ''{{{1|Grand Theft Auto V}}}'', taken on the Let's RP server. The game and everything in it are the copyright of {{{2|Rockstar Games and Take-Two Interactive}}}. It is used here to record the server's roleplay, on a non-commercial fan wiki.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Self</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=free|category=Own work|title=Own work, shared under CC BY-SA 4.0|text={{{1|The uploader}}} made this and shares it under the [https://creativecommons.org/licenses/by-sa/4.0/ Creative Commons Attribution-ShareAlike 4.0] licence: anyone may reuse or change it, if they credit the creator and share their version the same way.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Permission</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=permission|category=Files used with permission|title=Used with the creator's permission|text={{{1|The creator}}} has allowed this file to be used on the Let's RP Wiki. All other rights stay with the creator: ask them before using it anywhere else.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Server</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=permission|category=Official Let's RP files|title=Official Let's RP material|text=Official material of the Let's RP server (logos, artwork or announcements), used with the server's permission. Ask the server team before using it anywhere else.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Fair use</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=fairuse|category=Fair use files|title=Copyrighted, used as fair use|text=This file is the copyright of {{{1|its owner}}}. It is believed to be fair use: it is a small copy, used to identify or comment on its subject on a non-commercial fan wiki, and it does not replace the original. It may be removed if the owner asks.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:CC-BY-SA-4.0</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=free|category=CC BY-SA 4.0 files|title=Creative Commons Attribution-ShareAlike 4.0|text=Made by {{{1|the creator named in the description}}} and shared under the [https://creativecommons.org/licenses/by-sa/4.0/ CC BY-SA 4.0] licence: anyone may reuse or change it, if they credit the creator and share their version the same way.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:CC-BY-4.0</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=free|category=CC BY 4.0 files|title=Creative Commons Attribution 4.0|text=Made by {{{1|the creator named in the description}}} and shared under the [https://creativecommons.org/licenses/by/4.0/ CC BY 4.0] licence: anyone may reuse or change it, if they credit the creator.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:CC0</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=free|category=Public domain files|title=Public domain|text=The creator has given up all rights to this file ([https://creativecommons.org/publicdomain/zero/1.0/ CC0]), or its copyright has run out. Anyone may use it for anything.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:No license</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{License|kind=none|category=Files with no license|title=No licence given|text=Nobody has said where this file comes from or who may use it. If you know, edit this page and replace this box with the right licence. Files without a licence may be deleted.}}&lt;noinclude&gt;
+The licence box for file pages. See [[Template:License/doc]] for all licences.
+[[Category:License templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Files by license</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Uploaded files, sorted by licence. See [[Template:License/doc]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:License templates</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">The licence boxes for file pages. See [[Template:License/doc]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:In-game screenshots</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Files tagged &lt;code&gt;&lt;nowiki&gt;{{Screenshot}}&lt;/nowiki&gt;&lt;/code&gt;: in-game screenshot.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Own work</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Files tagged &lt;code&gt;&lt;nowiki&gt;{{Self}}&lt;/nowiki&gt;&lt;/code&gt;: Own work, shared under CC BY-SA 4.0.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Files used with permission</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Files tagged &lt;code&gt;&lt;nowiki&gt;{{Permission}}&lt;/nowiki&gt;&lt;/code&gt;: used with the creator's permission.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Official Let's RP files</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Files tagged &lt;code&gt;&lt;nowiki&gt;{{Server}}&lt;/nowiki&gt;&lt;/code&gt;: official let's rp material.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Fair use files</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Files tagged &lt;code&gt;&lt;nowiki&gt;{{Fair use}}&lt;/nowiki&gt;&lt;/code&gt;: copyrighted, used as fair use.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:CC BY-SA 4.0 files</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Files tagged &lt;code&gt;&lt;nowiki&gt;{{CC-BY-SA-4.0}}&lt;/nowiki&gt;&lt;/code&gt;: Creative Commons Attribution-ShareAlike 4.0.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:CC BY 4.0 files</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Files tagged &lt;code&gt;&lt;nowiki&gt;{{CC-BY-4.0}}&lt;/nowiki&gt;&lt;/code&gt;: Creative Commons Attribution 4.0.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Public domain files</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Files tagged &lt;code&gt;&lt;nowiki&gt;{{CC0}}&lt;/nowiki&gt;&lt;/code&gt;: Public domain.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Files with no license</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Upload licences</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Files with no licence. Find out where each comes from and replace &lt;code&gt;&lt;nowiki&gt;{{No license}}&lt;/nowiki&gt;&lt;/code&gt; with the right licence, or delete the file.
+
+[[Category:Files by license]]</text>
+    </revision>
+  </page>
+</mediawiki>

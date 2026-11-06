@@ -55,6 +55,32 @@ article itself; several rotate daily) and recent changes.
 3. Add featured articles to `"featured": { "pages": [ … ] }` in the settings.
 4. Protect `Module:Main page/config.json` and `Main Page` (admins only) so they can't be vandalised.
 
+# Upload licences
+
+`dist/licenses.xml` sets up the **Licensing** list on Special:Upload. Picking an entry adds its
+licence box to the new file page, and the box files the picture in a category.
+
+| Template | For |
+|---|---|
+| `{{Screenshot}}` | Screenshots and clips from the game, including your own (the game's pictures belong to Rockstar) |
+| `{{Self}}` | Your own work, anyone may reuse it (CC BY-SA 4.0) |
+| `{{Permission\|name}}` | Used with the creator's permission, all other rights kept |
+| `{{Server}}` | Official Let's RP logos, artwork, announcements |
+| `{{Fair use\|owner}}` | Real-world logos, covers or artwork, at a small size |
+| `{{CC-BY-SA-4.0}}`, `{{CC-BY-4.0}}`, `{{CC0}}` | Someone else's freely licensed work |
+| `{{No license}}` | Unknown: lands in the hidden *Files with no license* category for moderators |
+
+Import it at **Special:Import** (prefix `tpl`). It replaces `MediaWiki:Licenses`. The wording is in
+`licenses.py`; change it there and rebuild. `Template:License/doc` on the wiki explains which to use.
+
+Optional, for the licence of the wiki's **text** (shown in the footer), in `LocalSettings.php`:
+
+```php
+$wgRightsUrl = 'https://creativecommons.org/licenses/by-sa/4.0/';
+$wgRightsText = 'Creative Commons Attribution-ShareAlike 4.0';
+$wgRightsIcon = "$wgResourceBasePath/resources/assets/licenses/cc-by-sa.png";
+```
+
 # If an import doesn't seem to change a page
 
 MediaWiki only makes an imported version the current one when it's **newer than the page's last
