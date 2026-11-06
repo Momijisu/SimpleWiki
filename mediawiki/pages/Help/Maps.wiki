@@ -1,0 +1,153 @@
+{{SHORTDESC:How to add maps of Los Santos to pages}}
+The wiki can show interactive maps of Los Santos and Blaine County: a small map inside a page, with pins, areas and routes, that readers can drag, zoom and open full screen. Every map has an '''Atlas | Satellite''' switch in the bottom corner, and readers' choice is remembered.
+
+Maps use the '''same coordinates as the game''': <code>x</code> runs west to east and <code>y</code> runs south to north, in metres. A spot you stand on in game at X −1860, Y −1218 is the same spot on the wiki map.
+
+== Quick start ==
+Put this where you want the map, then change the numbers:
+
+<pre>
+<mapframe x=-1860 y=-1218 zoom=5 width=400 height=300 text="Del Perro Pier">
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [ -1860, -1218 ] },
+  "properties": { "title": "Del Perro Pier" }
+}
+</mapframe>
+</pre>
+
+That gives a 400 × 300 map centred on Del Perro Pier, with a pin on it and a caption underneath:
+
+<mapframe x=-1860 y=-1218 zoom=5 width=400 height=300 align=left text="Del Perro Pier">
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [ -1860, -1218 ] },
+  "properties": { "title": "Del Perro Pier" }
+}
+</mapframe>
+<div style="clear: both;"></div>
+
+== Finding coordinates ==
+* '''On the wiki:''' put any map on the page and click '''Show preview''' (in source editing). '''Right-click''' a spot on the map in the preview: a box shows its <code>x</code>, <code>y</code> and the current zoom. Copy them into your map.
+* '''In game:''' if you have a command or script that shows your coordinates, stand on the spot and note X and Y. Height (Z) isn't needed.
+
+Coordinates can have decimals (<code>-1860.5</code>), but whole numbers are close enough: one unit is one metre.
+
+== A map in a page: <code><nowiki><mapframe></nowiki></code> ==
+{| class="wikitable"
+! Setting !! What it does
+|-
+| <code>x</code>, <code>y</code> || The centre of the map, in game coordinates.
+|-
+| <code>zoom</code> || How close in: from <code>0</code> (the whole state, small) to <code>8</code>. Roughly: <code>1</code> the whole map, <code>3</code> a region (the city, Sandy Shores), <code>5</code> a neighbourhood, <code>7</code> a street or a single building.
+|-
+| <code>width</code> || Width in pixels (<code>400</code>), as a percentage (<code>50%</code>), or <code>full</code> for the full width of the page.
+|-
+| <code>height</code> || Height in pixels.
+|-
+| <code>align</code> || <code>right</code> (the default), <code>left</code> or <code>center</code>.
+|-
+| <code>text</code> || A caption under the map. Leave it out, and add <code>frameless</code>, for a map with no frame or caption.
+|}
+
+The map's contents (pins, areas, routes) go between <code><nowiki><mapframe></nowiki></code> and <code><nowiki></mapframe></nowiki></code>, written in [[#Pins, areas and routes|GeoJSON]]. A map with nothing inside is fine too: <code><nowiki><mapframe x=0 y=1500 zoom=1 width=300 height=400 /></nowiki></code>.
+
+== A link to the full map: <code><nowiki><maplink></nowiki></code> ==
+<code><nowiki><maplink></nowiki></code> makes a link in the text that opens the full-screen map at a spot. It takes the same <code>x</code>, <code>y</code>, <code>zoom</code> and <code>text</code> (the link's words), and can hold pins too:
+
+<pre>
+Tony's garage is <maplink x=-1150 y=-2000 zoom=6 text="on the edge of the docks" />.
+</pre>
+
+Use it when a full map would take too much room: in a table or a list of places.
+
+== Pins, areas and routes ==
+Everything drawn on a map is written in '''GeoJSON''', a common format for map data. Each thing is a ''feature'' with a '''shape''' (<code>geometry</code>) and '''details''' (<code>properties</code>). Coordinates are always <code>[ x, y ]</code>.
+
+=== A pin ===
+<pre>
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [ 1293, -3351 ] },
+  "properties": {
+    "title": "Container terminal",
+    "description": "Where the '''Harbor Bank Heist''' crew changed cars.",
+    "icon": "redPin"
+  }
+}
+</pre>
+* <code>title</code> and <code>description</code> show when a reader clicks the pin. The description can use wikitext: bold, italics and <nowiki>[[links]]</nowiki>.
+* <code>icon</code> picks the pin's colour: <code>greyPin</code> (the default), <code>redPin</code>, <code>greenPin</code>, <code>bluePin</code>, <code>cyanPin</code>, <code>magentaPin</code> or <code>yellowPin</code>.
+
+=== Several things on one map ===
+Put the features in a list inside a ''FeatureCollection'', separated by commas:
+
+<pre>
+<mapframe x=700 y=-3350 zoom=4 width=400 height=300 text="The port">
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ 105, -3344 ] }, "properties": { "title": "West pier" } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ 1293, -3351 ] }, "properties": { "title": "Container terminal", "icon": "redPin" } }
+  ]
+}
+</mapframe>
+</pre>
+
+=== An area ===
+A ''Polygon'' is a list of corners that ends where it started. Use it for gang territory, a business's grounds, or where an event happened:
+
+<pre>
+{
+  "type": "Feature",
+  "geometry": { "type": "Polygon", "coordinates": [ [ [ -1900, -1150 ], [ -1600, -1150 ], [ -1600, -1450 ], [ -1900, -1450 ], [ -1900, -1150 ] ] ] },
+  "properties": { "title": "Southside Saints turf", "stroke": "#e03131", "fill": "#e03131", "fill-opacity": 0.2 }
+}
+</pre>
+Note the three sets of brackets around the corners, and that the last corner repeats the first.
+
+=== A route ===
+A ''LineString'' is a line through a list of points, for a chase, a getaway or a convoy:
+
+<pre>
+{
+  "type": "Feature",
+  "geometry": { "type": "LineString", "coordinates": [ [ -1860, -1218 ], [ -1500, -1500 ], [ -1200, -1450 ] ] },
+  "properties": { "title": "Getaway route", "stroke": "#1c7ed6", "stroke-width": 4 }
+}
+</pre>
+
+=== Circles and labels ===
+A point can also be drawn as a circle or as plain text, using <code>shape</code>:
+* <code>"shape": "circle", "radius": 120</code>: a circle reaching 120 metres out from the point, e.g. a search area.
+* <code>"shape": "text", "label": "Del Perro Pier"</code>: words on the map, with no pin.
+
+=== Colours and lines ===
+These properties style areas, routes and circles:
+{| class="wikitable"
+! Property !! What it does !! Example
+|-
+| <code>stroke</code> || Line colour || <code>"#e03131"</code>
+|-
+| <code>stroke-width</code> || Line thickness in pixels || <code>4</code>
+|-
+| <code>stroke-opacity</code> || Line see-through, from 0 to 1 || <code>0.8</code>
+|-
+| <code>fill</code> || Inside colour (areas and circles) || <code>"#e03131"</code>
+|-
+| <code>fill-opacity</code> || Inside see-through, from 0 to 1 || <code>0.2</code>
+|}
+
+== Tips ==
+* '''Check the commas and brackets.''' A missing comma, or a comma after the last item in a list, breaks the whole map: the page shows ''Couldn't parse JSON'' instead. Use '''Show preview''' before saving, and if it breaks, look for the comma or bracket around the part you last changed.
+* '''One map per section''' is usually enough. Several small maps in a row are hard to use on phones; a <code><nowiki><maplink></nowiki></code> takes up no room.
+* '''Pick the zoom for the story:''' close enough to recognise the place, far enough to see where it is in the city.
+* '''Keep pins in character.''' Pins mark places in the city; out-of-character notes don't belong on maps.
+* Pages with maps are listed in [[:Category:Pages with maps]].
+
+== See also ==
+* [[Help:Infoboxes]]
+* [[Help:Editing/Cheat sheet]]
+* [[Help:Style guide]]
+
+[[Category:Help]]
