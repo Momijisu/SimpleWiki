@@ -3,7 +3,7 @@ for each sub-category, a box to start a new page, and a sortable table of every
 page made with DynamicPageList4. Also the {{Directory card}} template the cards
 use. build.py writes these to dist/directories.xml."""
 
-CARD = """<includeonly><templatestyles src="Template:Directory card/styles.css" />{{#if:{{{image|}}}{{{fallback|}}}|<div class="rp-dcard rp-dcard--image">{{#ifexist:File:{{{image|-}}}|<div class="rp-dcard-bg">[[File:{{{image}}}|600px|link=|alt=]]</div>|{{#ifexist:File:{{{fallback|-}}}|<div class="rp-dcard-bg">[[File:{{{fallback}}}|600px|link=|alt=]]</div>}}}}|<div class="rp-dcard">}}<div class="rp-dcard-text"><div class="rp-dcard-label">[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]</div>{{#if:{{{category|}}}|<div class="rp-dcard-count">{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}</div>}}</div></div></includeonly><noinclude>
+CARD = """<includeonly><templatestyles src="Template:Directory card/styles.css" /><div class="rp-dcard rp-dcard--image">{{#ifexist:File:{{{image|-}}}|<div class="rp-dcard-bg">[[File:{{{image}}}|600px|link=|alt=]]</div>|{{#ifexist:File:{{{fallback|-}}}|<div class="rp-dcard-bg">[[File:{{{fallback}}}|600px|link=|alt=]]</div>|{{#ifexist:File:CardBackground_Default.png|<div class="rp-dcard-bg">[[File:CardBackground_Default.png|600px|link=|alt=]]</div>}}}}}}<div class="rp-dcard-text"><div class="rp-dcard-label">[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]</div>{{#if:{{{category|}}}|<div class="rp-dcard-count">{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}</div>}}</div></div></includeonly><noinclude>
 {{Template:Directory card/doc}}
 </noinclude>"""
 
@@ -133,7 +133,7 @@ DOC = """A picture card linking to a category, with how many pages are in it. Us
 
 <pre>
 <div class="rp-dcards">
-{{Directory card | label = Criminal | category = Criminal characters | image = CardBackground_Criminal.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Criminal | category = Criminal characters | image = CardBackground_Criminal.png }}
 {{Directory card | label = Civilian | category = Civilian characters }}
 </div>
 </pre>
@@ -145,9 +145,9 @@ DOC = """A picture card linking to a category, with how many pages are in it. Us
 |-
 | <code>label</code> || The words on the card (default: the category's name).
 |-
-| <code>image</code> || The picture, as on the front page: see-through art (skyline and icon) on the right, roughly 3:1. If it hasn't been uploaded yet, <code>fallback</code> is used.
+| <code>image</code> || The picture, as on the front page: art on the right, roughly 3:1. Until it's uploaded, the card uses <code>fallback</code> if given, then the default background, [[:File:CardBackground_Default.png]].
 |-
-| <code>fallback</code> || A picture to use until <code>image</code> exists, e.g. the directory's own background.
+| <code>fallback</code> || Optional: a picture to use before the default, until <code>image</code> exists.
 |-
 | <code>link</code> || A page to link to instead of the category.
 |}
@@ -162,7 +162,7 @@ def cards(group):
     """group: (heading, [(label, category, image)], fallback)"""
     heading, items, fallback = group
     rows = '\n'.join(
-        f'{{{{Directory card | label = {label} | category = {cat} | image = {img} | fallback = {fallback} }}}}'
+        f'{{{{Directory card | label = {label} | category = {cat} | image = {img} }}}}'
         for label, cat, img in items)
     return f"=== {heading} ===\n<div class=\"rp-dcards\">\n{rows}\n</div>\n"
 

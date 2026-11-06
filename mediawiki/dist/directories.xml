@@ -3,12 +3,12 @@
     <title>Template:Directory card</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <timestamp>2026-11-06T21:06:09Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
-      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Directory card/styles.css" /&gt;{{#if:{{{image|}}}{{{fallback|}}}|&lt;div class="rp-dcard rp-dcard--image"&gt;{{#ifexist:File:{{{image|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{image}}}|600px|link=|alt=]]&lt;/div&gt;|{{#ifexist:File:{{{fallback|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{fallback}}}|600px|link=|alt=]]&lt;/div&gt;}}}}|&lt;div class="rp-dcard"&gt;}}&lt;div class="rp-dcard-text"&gt;&lt;div class="rp-dcard-label"&gt;[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]&lt;/div&gt;{{#if:{{{category|}}}|&lt;div class="rp-dcard-count"&gt;{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}&lt;/div&gt;}}&lt;/div&gt;&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Directory card/styles.css" /&gt;&lt;div class="rp-dcard rp-dcard--image"&gt;{{#ifexist:File:{{{image|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{image}}}|600px|link=|alt=]]&lt;/div&gt;|{{#ifexist:File:{{{fallback|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{fallback}}}|600px|link=|alt=]]&lt;/div&gt;|{{#ifexist:File:CardBackground_Default.png|&lt;div class="rp-dcard-bg"&gt;[[File:CardBackground_Default.png|600px|link=|alt=]]&lt;/div&gt;}}}}}}&lt;div class="rp-dcard-text"&gt;&lt;div class="rp-dcard-label"&gt;[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]&lt;/div&gt;{{#if:{{{category|}}}|&lt;div class="rp-dcard-count"&gt;{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}&lt;/div&gt;}}&lt;/div&gt;&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
 {{Template:Directory card/doc}}
 &lt;/noinclude&gt;</text>
     </revision>
@@ -17,7 +17,7 @@
     <title>Template:Directory card/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <timestamp>2026-11-06T21:06:09Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>sanitized-css</model>
@@ -149,7 +149,7 @@
     <title>Template:Directory card/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <timestamp>2026-11-06T21:06:09Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -158,7 +158,7 @@
 
 &lt;pre&gt;
 &lt;div class="rp-dcards"&gt;
-{{Directory card | label = Criminal | category = Criminal characters | image = CardBackground_Criminal.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Criminal | category = Criminal characters | image = CardBackground_Criminal.png }}
 {{Directory card | label = Civilian | category = Civilian characters }}
 &lt;/div&gt;
 &lt;/pre&gt;
@@ -170,9 +170,9 @@
 |-
 | &lt;code&gt;label&lt;/code&gt; || The words on the card (default: the category's name).
 |-
-| &lt;code&gt;image&lt;/code&gt; || The picture, as on the front page: see-through art (skyline and icon) on the right, roughly 3:1. If it hasn't been uploaded yet, &lt;code&gt;fallback&lt;/code&gt; is used.
+| &lt;code&gt;image&lt;/code&gt; || The picture, as on the front page: art on the right, roughly 3:1. Until it's uploaded, the card uses &lt;code&gt;fallback&lt;/code&gt; if given, then the default background, [[:File:CardBackground_Default.png]].
 |-
-| &lt;code&gt;fallback&lt;/code&gt; || A picture to use until &lt;code&gt;image&lt;/code&gt; exists, e.g. the directory's own background.
+| &lt;code&gt;fallback&lt;/code&gt; || Optional: a picture to use before the default, until &lt;code&gt;image&lt;/code&gt; exists.
 |-
 | &lt;code&gt;link&lt;/code&gt; || A page to link to instead of the category.
 |}
@@ -186,7 +186,7 @@ Put the cards inside &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-dcards"&gt;&lt;
     <title>Characters</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <timestamp>2026-11-06T21:06:09Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -197,15 +197,15 @@ Every character on the Let's RP Wiki. Pick a group below, or find a character in
 == Browse ==
 === By status ===
 &lt;div class="rp-dcards"&gt;
-{{Directory card | label = Active | category = Active characters | image = CardBackground_Active.png | fallback = CardBackground_Characters.png }}
-{{Directory card | label = Inactive | category = Inactive characters | image = CardBackground_Inactive.png | fallback = CardBackground_Characters.png }}
-{{Directory card | label = Deceased | category = Deceased characters | image = CardBackground_Deceased.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Active | category = Active characters | image = CardBackground_Active.png }}
+{{Directory card | label = Inactive | category = Inactive characters | image = CardBackground_Inactive.png }}
+{{Directory card | label = Deceased | category = Deceased characters | image = CardBackground_Deceased.png }}
 &lt;/div&gt;
 === By focus ===
 &lt;div class="rp-dcards"&gt;
-{{Directory card | label = Civilian | category = Civilian characters | image = CardBackground_Civilian.png | fallback = CardBackground_Characters.png }}
-{{Directory card | label = Criminal | category = Criminal characters | image = CardBackground_Criminal.png | fallback = CardBackground_Characters.png }}
-{{Directory card | label = Public Sector | category = Public Sector characters | image = CardBackground_PublicSector.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Civilian | category = Civilian characters | image = CardBackground_Civilian.png }}
+{{Directory card | label = Criminal | category = Criminal characters | image = CardBackground_Criminal.png }}
+{{Directory card | label = Public Sector | category = Public Sector characters | image = CardBackground_PublicSector.png }}
 &lt;/div&gt;
 
 == Add a character ==
@@ -242,7 +242,7 @@ __NOTOC__</text>
     <title>Organizations</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <timestamp>2026-11-06T21:06:09Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -253,23 +253,23 @@ Every group in the city: gangs, businesses, the police, EMS, the government and 
 == Browse ==
 === By focus ===
 &lt;div class="rp-dcards"&gt;
-{{Directory card | label = Criminal | category = Criminal organizations | image = CardBackground_Criminal.png | fallback = CardBackground_Factions.png }}
-{{Directory card | label = Civilian | category = Civilian organizations | image = CardBackground_Civilian.png | fallback = CardBackground_Factions.png }}
-{{Directory card | label = Public Sector | category = Public Sector organizations | image = CardBackground_PublicSector.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Criminal | category = Criminal organizations | image = CardBackground_Criminal.png }}
+{{Directory card | label = Civilian | category = Civilian organizations | image = CardBackground_Civilian.png }}
+{{Directory card | label = Public Sector | category = Public Sector organizations | image = CardBackground_PublicSector.png }}
 &lt;/div&gt;
 === By type ===
 &lt;div class="rp-dcards"&gt;
-{{Directory card | label = Gangs | category = Gangs | image = CardBackground_Gangs.png | fallback = CardBackground_Factions.png }}
-{{Directory card | label = Businesses | category = Businesses | image = CardBackground_Businesses.png | fallback = CardBackground_Factions.png }}
-{{Directory card | label = Police | category = Police | image = CardBackground_Police.png | fallback = CardBackground_Factions.png }}
-{{Directory card | label = EMS | category = EMS | image = CardBackground_EMS.png | fallback = CardBackground_Factions.png }}
-{{Directory card | label = Government | category = Government | image = CardBackground_Government.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Gangs | category = Gangs | image = CardBackground_Gangs.png }}
+{{Directory card | label = Businesses | category = Businesses | image = CardBackground_Businesses.png }}
+{{Directory card | label = Police | category = Police | image = CardBackground_Police.png }}
+{{Directory card | label = EMS | category = EMS | image = CardBackground_EMS.png }}
+{{Directory card | label = Government | category = Government | image = CardBackground_Government.png }}
 &lt;/div&gt;
 === By status ===
 &lt;div class="rp-dcards"&gt;
-{{Directory card | label = Active | category = Active organizations | image = CardBackground_Active.png | fallback = CardBackground_Factions.png }}
-{{Directory card | label = Inactive | category = Inactive organizations | image = CardBackground_Inactive.png | fallback = CardBackground_Factions.png }}
-{{Directory card | label = Defunct | category = Defunct organizations | image = CardBackground_Defunct.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Active | category = Active organizations | image = CardBackground_Active.png }}
+{{Directory card | label = Inactive | category = Inactive organizations | image = CardBackground_Inactive.png }}
+{{Directory card | label = Defunct | category = Defunct organizations | image = CardBackground_Defunct.png }}
 &lt;/div&gt;
 
 == Add an organisation ==
@@ -306,7 +306,7 @@ __NOTOC__</text>
     <title>Server events</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <timestamp>2026-11-06T21:06:09Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -317,13 +317,13 @@ Every server event: heists, gang wars, trials, elections, community and official
 == Browse ==
 === By type ===
 &lt;div class="rp-dcards"&gt;
-{{Directory card | label = Heists | category = Heists | image = CardBackground_Heists.png | fallback = CardBackground_Events.png }}
-{{Directory card | label = Gang wars | category = Gang wars | image = CardBackground_GangWars.png | fallback = CardBackground_Events.png }}
-{{Directory card | label = Shootings | category = Shootings | image = CardBackground_Shootings.png | fallback = CardBackground_Events.png }}
-{{Directory card | label = Trials | category = Trials | image = CardBackground_Trials.png | fallback = CardBackground_Events.png }}
-{{Directory card | label = Elections | category = Elections | image = CardBackground_Elections.png | fallback = CardBackground_Events.png }}
-{{Directory card | label = Community events | category = Community events | image = CardBackground_CommunityEvents.png | fallback = CardBackground_Events.png }}
-{{Directory card | label = Official server events | category = Official server events | image = CardBackground_OfficialEvents.png | fallback = CardBackground_Events.png }}
+{{Directory card | label = Heists | category = Heists | image = CardBackground_Heists.png }}
+{{Directory card | label = Gang wars | category = Gang wars | image = CardBackground_GangWars.png }}
+{{Directory card | label = Shootings | category = Shootings | image = CardBackground_Shootings.png }}
+{{Directory card | label = Trials | category = Trials | image = CardBackground_Trials.png }}
+{{Directory card | label = Elections | category = Elections | image = CardBackground_Elections.png }}
+{{Directory card | label = Community events | category = Community events | image = CardBackground_CommunityEvents.png }}
+{{Directory card | label = Official server events | category = Official server events | image = CardBackground_OfficialEvents.png }}
 &lt;/div&gt;
 
 == Add an event ==
