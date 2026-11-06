@@ -87,3 +87,12 @@ MediaWiki only makes an imported version the current one when it's **newer than 
 edit**. The files are stamped with the time they were built, so if someone edited one of these pages
 on the wiki after that, the import is added to the page's history but doesn't replace it.
 Rebuild the files (`python3 mediawiki/build.py`) and import again, or paste the page by hand.
+
+# How can I help (Project:Tasks)
+
+`pages/Project/Tasks.wiki` is pasted onto **Project:Tasks** by hand (not part of an import).
+It lists pages tagged `{{Stub}}`, `{{Outdated}}`, `{{Cleanup}}` and `{{Needs image}}` with
+**DynamicPageList4 4.0.6 or newer**. Older versions (4.0.0) fail on MediaWiki 1.45+ with
+"Unknown column 'cl1.cl_to'". After upgrading DPL4, run the database update: on the server,
+`php maintenance/run.php update`, or without shell access, the web updater at `/mw-config/index.php`
+(it asks for `$wgUpgradeKey` from LocalSettings.php).
