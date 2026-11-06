@@ -106,7 +106,7 @@ If a page needs work you can't do yourself, flag it with a notice at the top, e.
 Use a page's '''Discussion''' tab to talk about changes to it, especially big or disputed ones. Sign your messages with <code><nowiki>~~~~</nowiki></code>, which adds your name and the time. Keep discussions about the article, and keep them friendly.
 
 == When in doubt ==
-Look at a similar article that's already well written and follow its lead. If this guide doesn't cover something, ask on Discord or a talk page, or fall back on [[wikipedia:Wikipedia:Manual of Style|Wikipedia's Manual of Style]].
+Look at a similar article that's already well written and follow its lead. If this guide doesn't cover something, ask on the page's talk page, or fall back on [[wikipedia:Wikipedia:Manual of Style|Wikipedia's Manual of Style]].
 
 == See also ==
 * [[Help:Infoboxes]]
