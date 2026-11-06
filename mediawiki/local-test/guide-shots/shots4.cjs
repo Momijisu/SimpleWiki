@@ -6,7 +6,7 @@ const { start, mark, unmark, shot, openVE, W, clickEndOf, markText, resetTony } 
   const top = { x: 0, y: 0, width: 1280, height: 520 };
   const menu = async (group) => { await p.locator(`.ve-ui-toolbar-group-${group} .oo-ui-popupToolGroup-handle`).first().click(); await p.waitForTimeout(800); };
   await openVE(p, 'Southside Saints');
-  await step('rowmenu', async () => {
+  if (process.env.ONLY_UPLOAD) {} else await step('rowmenu', async () => {
     await p.keyboard.press('Control+End'); await p.waitForTimeout(300);
     await clickEndOf(p, 'Grove Street'); await p.keyboard.press('End'); await p.keyboard.press('Enter');
     await menu('insert'); await p.locator('.oo-ui-tool-name-insertTable a').first().click(); await p.waitForTimeout(1500);
@@ -17,14 +17,14 @@ const { start, mark, unmark, shot, openVE, W, clickEndOf, markText, resetTony } 
     await p.mouse.click(rb.x + rb.width / 2, rb.y + rb.height / 2); await p.waitForTimeout(900);
     await shot(p, 'VE advanced - insert row.png', top); await p.keyboard.press('Escape');
   });
-  await step('reflist', async () => {
+  if (process.env.ONLY_UPLOAD) {} else await step('reflist', async () => {
     await clickEndOf(p, 'Grove Street');
     await menu('insert'); await p.locator('.oo-ui-tool-name-more-fewer a:visible').first().click(); await p.waitForTimeout(800);
     const rl = p.locator('.oo-ui-tool-name-referencesList').first(); await rl.scrollIntoViewIfNeeded().catch(() => {});
     await shot(p, 'VE advanced - references list.png', top); await p.keyboard.press('Escape');
   });
   // ---- citation: a references section, in preview ----
-  await step('refsection', async () => {
+  if (process.env.ONLY_UPLOAD) {} else await step('refsection', async () => {
     await p.goto(W + 'Harbor_Bank_Heist&action=edit'); await p.waitForTimeout(2500);
     const ta = p.locator('#wpTextbox1'); const cur = await ta.inputValue();
     await ta.fill(cur.replace(/(\n[^\n]*\S[^\n]*)\s*$/, '$1') + "\n\nThe crew escaped by boat.<ref>[https://clips.twitch.tv/example Clip of the boat getaway], Tony's stream, 14 June 2026</ref> Two of them were arrested at the docks the next morning.<ref>[https://www.twitch.tv/videos/123456789 VOD of the arrests] (1:23:00), 15 June 2026</ref>\n\n== References ==\n<references />");
@@ -34,7 +34,7 @@ const { start, mark, unmark, shot, openVE, W, clickEndOf, markText, resetTony } 
     await shot(p, 'Citation - reference section.png', { x: 0, y: Math.max(0, bb.y - 150), width: 1280, height: 330 });
   });
   // ---- adding images: upload ----
-  await step('menu', async () => {
+  if (process.env.ONLY_UPLOAD) {} else await step('menu', async () => {
     await p.goto(W + 'Main_Page'); await p.waitForTimeout(1500);
     await p.locator('.citizen-drawer summary').first().click(); await p.waitForTimeout(1000);
     await markText(p, 'Upload file', '.citizen-drawer a, #citizen-drawer a, nav a');
@@ -47,7 +47,7 @@ const { start, mark, unmark, shot, openVE, W, clickEndOf, markText, resetTony } 
     const fs = p.locator('#mw-htmlform-source'); const bb = await fs.boundingBox();
     await shot(p, 'Adding images - choose file.png', { x: 0, y: Math.max(0, bb.y - 80), width: 1280, height: Math.min(560, bb.height + 160) });
     await unmark(p);
-    await p.setInputFiles('#wpUploadFile', { name: 'Rosa Ramirez portrait.jpg', mimeType: 'image/jpeg', buffer: require('fs').readFileSync(__dirname + '/../../files/guides/Example portrait.jpg') });
+    await p.setInputFiles('#wpUploadFile', { name: 'Rosa Ramirez portrait.jpg', mimeType: 'image/jpeg', buffer: Buffer.concat([require('fs').readFileSync(__dirname + '/../../files/guides/Example portrait.jpg'), Buffer.from('\n')]) });
     await p.fill('#wpUploadDescription', "Rosa Ramirez's look in Let's RP 2.0, outside the UwU Cafe. From Rosa's stream on 14 June 2026.");
     const d = p.locator('#mw-htmlform-description'); await d.scrollIntoViewIfNeeded(); const db = await d.boundingBox();
     await shot(p, 'Adding images - file details.png', { x: 0, y: Math.max(0, db.y - 20), width: 1280, height: Math.min(560, db.height + 40) });
