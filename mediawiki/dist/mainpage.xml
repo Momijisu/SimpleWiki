@@ -3,7 +3,7 @@
     <title>Main Page</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <timestamp>2026-11-06T01:23:17Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -15,7 +15,7 @@
     <title>Module:Main page</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <timestamp>2026-11-06T01:23:17Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>Scribunto</model>
@@ -174,7 +174,7 @@ local function directories(cfg)
 		local item = row:tag('div'):addClass('mp-dir')
 		if d.image and fileExists(d.image) then
 			item:addClass('mp-dir--image')
-			item:tag('div'):addClass('mp-dir-bg'):wikitext(string.format('[[File:%s|400px|link=|alt=]]', cleanFile(d.image)))
+			item:tag('div'):addClass('mp-dir-bg'):wikitext(string.format('[[File:%s|600px|link=|alt=]]', cleanFile(d.image)))
 		end
 		local text = item:tag('div'):addClass('mp-dir-text')
 		text:tag('div'):addClass('mp-dir-label'):wikitext(string.format('[[%s|%s]]', link, d.label))
@@ -362,7 +362,7 @@ return p
     <title>Module:Main page/config.json</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <timestamp>2026-11-06T01:23:17Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>json</model>
@@ -458,7 +458,7 @@ return p
     <title>Module:Main page/doc</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <timestamp>2026-11-06T01:23:17Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -481,7 +481,7 @@ return p
 |-
 | &lt;code&gt;search.suggestions&lt;/code&gt; || Small buttons under the search bar. Each opens search with its &lt;code&gt;label&lt;/code&gt; (or &lt;code&gt;prefill&lt;/code&gt;) typed in.
 |-
-| &lt;code&gt;directories&lt;/code&gt; || The row of directory buttons. Each has a &lt;code&gt;label&lt;/code&gt; and either a &lt;code&gt;category&lt;/code&gt; (it links there and shows how many pages it has) or a &lt;code&gt;link&lt;/code&gt; to any page. Optional: &lt;code&gt;icon&lt;/code&gt; (a small picture on the right), &lt;code&gt;image&lt;/code&gt; (a faint picture behind it), &lt;code&gt;description&lt;/code&gt; (instead of the count), &lt;code&gt;showCount: false&lt;/code&gt;.
+| &lt;code&gt;directories&lt;/code&gt; || The row of directory buttons. Each has a &lt;code&gt;label&lt;/code&gt; and either a &lt;code&gt;category&lt;/code&gt; (it links there and shows how many pages it has) or a &lt;code&gt;link&lt;/code&gt; to any page. Optional: &lt;code&gt;icon&lt;/code&gt; (a small picture on the right), &lt;code&gt;image&lt;/code&gt; (a picture filling the whole button, shown as it is; the label sits on its left side, so keep that part plain), &lt;code&gt;description&lt;/code&gt; (instead of the count), &lt;code&gt;showCount: false&lt;/code&gt;.
 |-
 | &lt;code&gt;intro&lt;/code&gt; || An optional welcome card across the page: &lt;code&gt;title&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt; (wikitext, links work).
 |-
@@ -513,7 +513,7 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
     <title>Template:Main page/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:09:07Z</timestamp>
+      <timestamp>2026-11-06T01:23:17Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>sanitized-css</model>
@@ -691,15 +691,37 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
 	border-color: rgba( 127, 127, 127, 0.55 );
 	transform: translateY( -2px );
 }
+/* A picture fills the whole tile as it is (no dimming): make the art with its icon
+   included, and keep the left side plain enough for the label to read on. */
 .mp-dir-bg {
 	position: absolute;
 	inset: 0;
-	opacity: 0.22;
 }
-.mp-dir-bg img {
+.mp-dir-bg span,
+.mp-dir-bg a {
+	display: block;
 	width: 100%;
 	height: 100%;
+}
+.mp-dir-bg img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
 	object-fit: cover;
+}
+.mp-dir--image {
+	background: none;
+}
+.mp-dir--image .mp-dir-text {
+	text-shadow: 0 1px 3px rgba( 0, 0, 0, 0.6 );
+}
+.mp-dir--image .mp-dir-label a,
+.mp-dir--image .mp-dir-count {
+	color: #fff;
+}
+.mp-dir--image .mp-dir-count {
+	opacity: 0.85;
 }
 .mp-dir-text {
 	position: relative;

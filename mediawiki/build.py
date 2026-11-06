@@ -365,7 +365,7 @@ MAINPAGE_DOC = """The front page. The '''Main Page''' only contains <code><nowik
 |-
 | <code>search.suggestions</code> || Small buttons under the search bar. Each opens search with its <code>label</code> (or <code>prefill</code>) typed in.
 |-
-| <code>directories</code> || The row of directory buttons. Each has a <code>label</code> and either a <code>category</code> (it links there and shows how many pages it has) or a <code>link</code> to any page. Optional: <code>icon</code> (a small picture on the right), <code>image</code> (a faint picture behind it), <code>description</code> (instead of the count), <code>showCount: false</code>.
+| <code>directories</code> || The row of directory buttons. Each has a <code>label</code> and either a <code>category</code> (it links there and shows how many pages it has) or a <code>link</code> to any page. Optional: <code>icon</code> (a small picture on the right), <code>image</code> (a picture filling the whole button, shown as it is; the label sits on its left side, so keep that part plain), <code>description</code> (instead of the count), <code>showCount: false</code>.
 |-
 | <code>intro</code> || An optional welcome card across the page: <code>title</code> and <code>text</code> (wikitext, links work).
 |-

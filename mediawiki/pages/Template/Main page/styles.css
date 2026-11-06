@@ -171,15 +171,37 @@
 	border-color: rgba( 127, 127, 127, 0.55 );
 	transform: translateY( -2px );
 }
+/* A picture fills the whole tile as it is (no dimming): make the art with its icon
+   included, and keep the left side plain enough for the label to read on. */
 .mp-dir-bg {
 	position: absolute;
 	inset: 0;
-	opacity: 0.22;
 }
-.mp-dir-bg img {
+.mp-dir-bg span,
+.mp-dir-bg a {
+	display: block;
 	width: 100%;
 	height: 100%;
+}
+.mp-dir-bg img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
 	object-fit: cover;
+}
+.mp-dir--image {
+	background: none;
+}
+.mp-dir--image .mp-dir-text {
+	text-shadow: 0 1px 3px rgba( 0, 0, 0, 0.6 );
+}
+.mp-dir--image .mp-dir-label a,
+.mp-dir--image .mp-dir-count {
+	color: #fff;
+}
+.mp-dir--image .mp-dir-count {
+	opacity: 0.85;
 }
 .mp-dir-text {
 	position: relative;

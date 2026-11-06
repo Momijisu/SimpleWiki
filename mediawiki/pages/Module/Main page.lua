@@ -152,7 +152,7 @@ local function directories(cfg)
 		local item = row:tag('div'):addClass('mp-dir')
 		if d.image and fileExists(d.image) then
 			item:addClass('mp-dir--image')
-			item:tag('div'):addClass('mp-dir-bg'):wikitext(string.format('[[File:%s|400px|link=|alt=]]', cleanFile(d.image)))
+			item:tag('div'):addClass('mp-dir-bg'):wikitext(string.format('[[File:%s|600px|link=|alt=]]', cleanFile(d.image)))
 		end
 		local text = item:tag('div'):addClass('mp-dir-text')
 		text:tag('div'):addClass('mp-dir-label'):wikitext(string.format('[[%s|%s]]', link, d.label))
