@@ -1,0 +1,2 @@
+__HIDDENCAT__
+Pages that show an interactive map (<code><nowiki><mapframe></nowiki></code> or <code><nowiki><maplink></nowiki></code>). Added automatically, and hidden from readers. See [[Help:Maps]].
