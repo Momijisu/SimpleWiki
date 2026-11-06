@@ -3,7 +3,7 @@
     <title>Main Page</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -15,7 +15,7 @@
     <title>Module:Main page</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>Scribunto</model>
@@ -366,7 +366,7 @@ return p
     <title>Module:Main page/config.json</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>json</model>
@@ -462,7 +462,7 @@ return p
     <title>Module:Main page/doc</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -517,7 +517,7 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
     <title>Template:Main page/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>sanitized-css</model>
@@ -572,11 +572,13 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
 	margin-top: 18px;
 }
 .mp-logo img {
-	width: 160px;
-	height: 160px;
-	border-radius: 50%;
-	object-fit: cover;
-	box-shadow: 0 0 0 1px rgba( 127, 127, 127, 0.28 ), 0 12px 40px rgba( 0, 0, 0, 0.35 );
+	/* Shown as it is: no circle crop, so parts that stick out (like lettering) stay whole.
+	   The shadow follows the logo's own outline. */
+	width: 180px;
+	max-width: 100%;
+	height: auto;
+	object-fit: contain;
+	filter: drop-shadow( 0 10px 24px rgba( 0, 0, 0, 0.35 ) );
 }
 .mp-title {
 	margin-top: 18px;
@@ -1048,8 +1050,7 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
 		font-size: 1.5rem;
 	}
 	.mp-logo img {
-		width: 120px;
-		height: 120px;
+		width: 130px;
 	}
 	.mp-search-hint {
 		display: none;

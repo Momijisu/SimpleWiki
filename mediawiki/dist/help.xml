@@ -3,7 +3,7 @@
     <title>Help:Contents</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -208,7 +208,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
     <title>Project:Help portal</title>
     <ns>4</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -220,7 +220,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
     <title>Template:Card</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -238,7 +238,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
     <title>Template:Card/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>sanitized-css</model>
@@ -376,7 +376,7 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
     <title>Template:Card/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -421,7 +421,7 @@ Wrap the cards in a &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-cards rp-cards--
     <title>Category:Help</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
@@ -433,7 +433,7 @@ Wrap the cards in a &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-cards rp-cards--
     <title>Category:Help templates</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:25:58Z</timestamp>
+      <timestamp>2026-11-06T20:28:58Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Help pages</comment>
       <model>wikitext</model>
