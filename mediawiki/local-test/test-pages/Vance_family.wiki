@@ -1,0 +1,11 @@
+{{Infobox organization
+| type     = Crime family
+| subtype  = Mafia
+| status   = Active
+| leader   = Don Vance
+| deputy   = Sal Vance
+| territory = Little Seoul
+| fronts   = Vance Laundromat
+| version  = 2.0
+}}
+The '''Vance family''' runs Little Seoul from the back of a laundromat.

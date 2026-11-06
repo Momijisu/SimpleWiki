@@ -7,7 +7,7 @@ An '''infobox''' is the box at the top right of an article. It shows the subject
 |-
 | [[Template:Infobox character|Infobox character]] || Characters || Status ({{#invoke:Infobox|values|character|status}}) and focus ({{#invoke:Infobox|values|character|focus}})
 |-
-| [[Template:Infobox organization|Infobox organization]] || Gangs, businesses and Emergency Services || Status ({{#invoke:Infobox|values|organization|status}})
+| [[Template:Infobox organization|Infobox organization]] || Any group: gangs, businesses, the police, EMS, the government and more || Focus ({{#invoke:Infobox|values|organization|focus}}) and status ({{#invoke:Infobox|values|organization|status}})
 |-
 | [[Template:Infobox event|Infobox event]] || Server events: heists, gang wars, trials, elections and more || Type ({{#invoke:Infobox|values|event|type}})
 |}
@@ -31,7 +31,7 @@ To change an infobox later, click it in VisualEditor and click ''Edit'', or chan
 Leave a field empty if you don't know it, or if it doesn't apply: empty fields are hidden, so the box only shows what's filled in. Don't write "Unknown" in every field; use it only where it's worth saying (e.g. a partner nobody has ever met).
 
 === Fields that must be filled in ===
-A few fields decide the badges and categories, so they only accept certain values:
+A few fields decide the badges and categories:
 {| class="wikitable"
 ! Infobox !! Field !! Accepted values !! Required
 |-
@@ -39,7 +39,9 @@ A few fields decide the badges and categories, so they only accept certain value
 |-
 | Character || <code>focus</code> || {{#invoke:Infobox|values|character|focus}} || Yes
 |-
-| Organisation || <code>type</code> || {{#invoke:Infobox|values|organization|type}} || Yes
+| Organisation || <code>type</code> || Suggested: {{#invoke:Infobox|values|organization|type}}. Any other type works too, e.g. ''Crime family'' or ''Motorcycle club''. || Yes
+|-
+| Organisation || <code>focus</code> || {{#invoke:Infobox|values|organization|focus}}. Leave empty to use the type's usual focus. || No
 |-
 | Organisation || <code>status</code> || {{#invoke:Infobox|values|organization|status}} || No
 |-
@@ -52,6 +54,10 @@ Capitals don't matter (<code>active</code> works as well as <code>Active</code>)
 * '''Active''': the character is still being played.
 * '''Inactive''': the player has stopped playing them, but the character isn't dead.
 * '''Deceased''': the character has died. Fill in <code>died</code>, <code>cause_of_death</code> and <code>killed_by</code> if known.
+
+'''Organisation types''': pick a suggestion or type your own. Gang, Business, Police, EMS and Government each have their own category and directory card; any other type gets a category of its own, e.g. ''Crime family organizations''.
+
+'''Organisation focus''' is Criminal, Civilian or Public Sector. It's filled in from the type when it's obvious (a gang is Criminal, a business Civilian, the police, EMS and government Public Sector). Fill it in yourself for your own types, or to change it, e.g. <code>focus = Criminal</code> for a business that's really a front.
 
 '''Focus''' is what the character mainly does now: '''Civilian''' (legal work and life), '''Criminal''', or '''Public Sector''' (police, medical, government). If it changes, update it, and write about the change in the article.
 

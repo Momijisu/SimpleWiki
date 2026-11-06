@@ -35,6 +35,8 @@ local PLACEHOLDER_IMAGE = 'Image unavailable.png'
 -- badges:   checked fields shown as coloured pills under the title, each a
 --           link to its category. values maps what people type (lower case)
 --           to how it shows; category gives the category for a value.
+--           free = true accepts any value (values are then only suggestions,
+--           listed in `suggest`); default fills the badge in when it's empty.
 -- link:     on a field, plain names typed into it become links:
 --           "Big Rig Customs" -> [[Big Rig Customs]]. Lists split on commas.
 -- kicker:   the small line above the title.
@@ -107,35 +109,64 @@ TYPES.character = {
 	end,
 }
 
+-- Organisation types: suggested in the editor, but any type can be typed in.
+-- Known types get a tidy category name and a default focus.
+local ORG_TYPES = {
+	gang = { 'Gang', 'Gangs', 'criminal' },
+	business = { 'Business', 'Businesses', 'civilian' },
+	police = { 'Police', 'Police', 'public sector' },
+	ems = { 'EMS', 'EMS', 'public sector' },
+	government = { 'Government', 'Government', 'public sector' },
+	['emergency services'] = { 'Emergency Services', 'Emergency Services', 'public sector' },
+}
+local ORG_ALIASES = { emergency = 'emergency services', ['emergency service'] = 'emergency services',
+	['emergency medical services'] = 'ems', ['lspd'] = 'police', gangs = 'gang' }
+
 TYPES.organization = {
 	kind = function (v, args)
-		-- "Gang", or "Police · Emergency Services" when a subtype is given
+		-- "Gang", or "Motorcycle club · Gang" when a subtype is given
 		if args.subtype and v.typeLabel then return args.subtype .. ' · ' .. v.typeLabel end
 		return args.subtype or v.typeLabel or 'Organization'
 	end,
 	badges = {
-		{ field = 'type', required = true, hidden = true,
-			values = { gang = 'Gang', business = 'Business', ['emergency services'] = 'Emergency Services',
-				emergency = 'Emergency Services', ['emergency service'] = 'Emergency Services' } },
+		{ field = 'type', required = true, hidden = true, free = true,
+			suggest = { 'Gang', 'Business', 'Police', 'EMS', 'Government' },
+			values = (function ()
+				local t = {}
+				for k, d in pairs(ORG_TYPES) do t[k] = d[1] end
+				for k, target in pairs(ORG_ALIASES) do t[k] = ORG_TYPES[target][1] end
+				return t
+			end)() },
+		{ field = 'focus',
+			values = { civilian = 'Civilian', criminal = 'Criminal', ['public sector'] = 'Public Sector' },
+			default = function (v)
+				local d = v.type and ORG_TYPES[v.type]
+				return d and d[3]
+			end,
+			category = function (label) return label .. ' organizations' end },
 		{ field = 'status',
 			values = { active = 'Active', inactive = 'Inactive', defunct = 'Defunct' },
 			category = function (label) return label .. ' organizations' end },
 	},
+	-- Sections show when any of their fields is filled in.
 	sections = {
 		{ fields = {
 			{ 'leader', 'Leader', link = true },
+			{ 'deputy', 'Second in command', link = true },
 			{ 'founded', 'Founded' },
 			{ 'founder', 'Founder', link = true },
 			{ 'defunct', 'Defunct' },
 			{ 'headquarters', 'Headquarters' },
 			{ 'members', 'Members' },
+			{ 'ranks', 'Ranks' },
 		} },
-		{ title = 'Gang', when = function (v) return v.type == 'gang' end, fields = {
+		{ title = 'Territory & activity', fields = {
 			{ 'territory', 'Territory' },
 			{ 'colours', 'Colours' },
 			{ 'activities', 'Activities' },
+			{ 'fronts', 'Fronts', link = true },
 		} },
-		{ title = 'Business', when = function (v) return v.type == 'business' end, fields = {
+		{ title = 'Business', fields = {
 			{ 'industry', 'Industry' },
 			{ 'services', 'Products & services' },
 			{ 'owner', 'Owner', link = true },
@@ -143,12 +174,13 @@ TYPES.organization = {
 			{ 'hours', 'Opening hours' },
 			{ 'phone', 'Phone number' },
 		} },
-		{ title = 'Emergency Services', when = function (v) return v.type == 'emergency services' end, fields = {
+		{ title = 'Public service', fields = {
 			{ 'jurisdiction', 'Jurisdiction' },
 			{ 'divisions', 'Divisions' },
-			{ 'ranks', 'Ranks' },
 		} },
 		{ title = 'Relations', fields = {
+			{ 'parent', 'Part of', link = true },
+			{ 'subgroups', 'Chapters & branches', link = true },
 			{ 'allies', 'Allies', link = true },
 			{ 'rivals', 'Rivals', link = true },
 			{ 'predecessor', 'Predecessor', link = true },
@@ -161,9 +193,12 @@ TYPES.organization = {
 		} },
 	},
 	categories = function (v)
-		local plural = { gang = 'Gangs', business = 'Businesses', ['emergency services'] = 'Emergency Services' }
 		local c = { 'Organizations' }
-		if v.type then table.insert(c, plural[v.type]) end
+		if v.type then
+			local d = ORG_TYPES[v.type]
+			table.insert(c, d and d[2] or (v.typeLabel .. ' organizations'))
+		end
+		if v.focus then table.insert(c, v.focusLabel .. ' organizations') end
 		if v.status then table.insert(c, v.statusLabel .. ' organizations') end
 		return c
 	end,
@@ -258,7 +293,14 @@ local function pick(badge, typed)
 	if not typed then return nil, nil, nil end
 	local key = mw.ustring.lower(plain(typed))
 	local label = badge.values[key]
-	if not label then return nil, nil, typed end
+	if not label then
+		if badge.free and key ~= '' then
+			-- Any value is fine: show it as typed, with a capital first letter.
+			local shown = plain(typed)
+			return key, mw.ustring.upper(mw.ustring.sub(shown, 1, 1)) .. mw.ustring.sub(shown, 2), nil
+		end
+		return nil, nil, typed
+	end
 	-- Aliases ("emergency") share a label; the key is always the label in lower case.
 	return mw.ustring.lower(label), label, nil
 end
@@ -335,7 +377,9 @@ local function render(frame, typeName)
 	local v = {}
 	local problems = {}
 	for _, badge in ipairs(def.badges) do
-		local key, label, bad = pick(badge, args[badge.field])
+		local typed = args[badge.field]
+		if not typed and badge.default then typed = badge.default(v, args) end
+		local key, label, bad = pick(badge, typed)
 		v[badge.field] = key
 		v[badge.field .. 'Label'] = label
 		if bad then
@@ -471,6 +515,7 @@ function p.values(frame)
 	if not def then return '' end
 	for _, badge in ipairs(def.badges) do
 		if badge.field == frame.args[2] then
+			if badge.suggest then return table.concat(badge.suggest, ' · ') end
 			local seen, list = {}, {}
 			for _, label in pairs(badge.values) do
 				if not seen[label] then seen[label] = true; table.insert(list, label) end

@@ -3,7 +3,7 @@
     <title>Module:Infobox</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>Scribunto</model>
@@ -45,6 +45,8 @@ local PLACEHOLDER_IMAGE = 'Image unavailable.png'
 -- badges:   checked fields shown as coloured pills under the title, each a
 --           link to its category. values maps what people type (lower case)
 --           to how it shows; category gives the category for a value.
+--           free = true accepts any value (values are then only suggestions,
+--           listed in `suggest`); default fills the badge in when it's empty.
 -- link:     on a field, plain names typed into it become links:
 --           "Big Rig Customs" -&gt; [[Big Rig Customs]]. Lists split on commas.
 -- kicker:   the small line above the title.
@@ -117,35 +119,64 @@ TYPES.character = {
 	end,
 }
 
+-- Organisation types: suggested in the editor, but any type can be typed in.
+-- Known types get a tidy category name and a default focus.
+local ORG_TYPES = {
+	gang = { 'Gang', 'Gangs', 'criminal' },
+	business = { 'Business', 'Businesses', 'civilian' },
+	police = { 'Police', 'Police', 'public sector' },
+	ems = { 'EMS', 'EMS', 'public sector' },
+	government = { 'Government', 'Government', 'public sector' },
+	['emergency services'] = { 'Emergency Services', 'Emergency Services', 'public sector' },
+}
+local ORG_ALIASES = { emergency = 'emergency services', ['emergency service'] = 'emergency services',
+	['emergency medical services'] = 'ems', ['lspd'] = 'police', gangs = 'gang' }
+
 TYPES.organization = {
 	kind = function (v, args)
-		-- "Gang", or "Police · Emergency Services" when a subtype is given
+		-- "Gang", or "Motorcycle club · Gang" when a subtype is given
 		if args.subtype and v.typeLabel then return args.subtype .. ' · ' .. v.typeLabel end
 		return args.subtype or v.typeLabel or 'Organization'
 	end,
 	badges = {
-		{ field = 'type', required = true, hidden = true,
-			values = { gang = 'Gang', business = 'Business', ['emergency services'] = 'Emergency Services',
-				emergency = 'Emergency Services', ['emergency service'] = 'Emergency Services' } },
+		{ field = 'type', required = true, hidden = true, free = true,
+			suggest = { 'Gang', 'Business', 'Police', 'EMS', 'Government' },
+			values = (function ()
+				local t = {}
+				for k, d in pairs(ORG_TYPES) do t[k] = d[1] end
+				for k, target in pairs(ORG_ALIASES) do t[k] = ORG_TYPES[target][1] end
+				return t
+			end)() },
+		{ field = 'focus',
+			values = { civilian = 'Civilian', criminal = 'Criminal', ['public sector'] = 'Public Sector' },
+			default = function (v)
+				local d = v.type and ORG_TYPES[v.type]
+				return d and d[3]
+			end,
+			category = function (label) return label .. ' organizations' end },
 		{ field = 'status',
 			values = { active = 'Active', inactive = 'Inactive', defunct = 'Defunct' },
 			category = function (label) return label .. ' organizations' end },
 	},
+	-- Sections show when any of their fields is filled in.
 	sections = {
 		{ fields = {
 			{ 'leader', 'Leader', link = true },
+			{ 'deputy', 'Second in command', link = true },
 			{ 'founded', 'Founded' },
 			{ 'founder', 'Founder', link = true },
 			{ 'defunct', 'Defunct' },
 			{ 'headquarters', 'Headquarters' },
 			{ 'members', 'Members' },
+			{ 'ranks', 'Ranks' },
 		} },
-		{ title = 'Gang', when = function (v) return v.type == 'gang' end, fields = {
+		{ title = 'Territory &amp; activity', fields = {
 			{ 'territory', 'Territory' },
 			{ 'colours', 'Colours' },
 			{ 'activities', 'Activities' },
+			{ 'fronts', 'Fronts', link = true },
 		} },
-		{ title = 'Business', when = function (v) return v.type == 'business' end, fields = {
+		{ title = 'Business', fields = {
 			{ 'industry', 'Industry' },
 			{ 'services', 'Products &amp; services' },
 			{ 'owner', 'Owner', link = true },
@@ -153,12 +184,13 @@ TYPES.organization = {
 			{ 'hours', 'Opening hours' },
 			{ 'phone', 'Phone number' },
 		} },
-		{ title = 'Emergency Services', when = function (v) return v.type == 'emergency services' end, fields = {
+		{ title = 'Public service', fields = {
 			{ 'jurisdiction', 'Jurisdiction' },
 			{ 'divisions', 'Divisions' },
-			{ 'ranks', 'Ranks' },
 		} },
 		{ title = 'Relations', fields = {
+			{ 'parent', 'Part of', link = true },
+			{ 'subgroups', 'Chapters &amp; branches', link = true },
 			{ 'allies', 'Allies', link = true },
 			{ 'rivals', 'Rivals', link = true },
 			{ 'predecessor', 'Predecessor', link = true },
@@ -171,9 +203,12 @@ TYPES.organization = {
 		} },
 	},
 	categories = function (v)
-		local plural = { gang = 'Gangs', business = 'Businesses', ['emergency services'] = 'Emergency Services' }
 		local c = { 'Organizations' }
-		if v.type then table.insert(c, plural[v.type]) end
+		if v.type then
+			local d = ORG_TYPES[v.type]
+			table.insert(c, d and d[2] or (v.typeLabel .. ' organizations'))
+		end
+		if v.focus then table.insert(c, v.focusLabel .. ' organizations') end
 		if v.status then table.insert(c, v.statusLabel .. ' organizations') end
 		return c
 	end,
@@ -268,7 +303,14 @@ local function pick(badge, typed)
 	if not typed then return nil, nil, nil end
 	local key = mw.ustring.lower(plain(typed))
 	local label = badge.values[key]
-	if not label then return nil, nil, typed end
+	if not label then
+		if badge.free and key ~= '' then
+			-- Any value is fine: show it as typed, with a capital first letter.
+			local shown = plain(typed)
+			return key, mw.ustring.upper(mw.ustring.sub(shown, 1, 1)) .. mw.ustring.sub(shown, 2), nil
+		end
+		return nil, nil, typed
+	end
 	-- Aliases ("emergency") share a label; the key is always the label in lower case.
 	return mw.ustring.lower(label), label, nil
 end
@@ -345,7 +387,9 @@ local function render(frame, typeName)
 	local v = {}
 	local problems = {}
 	for _, badge in ipairs(def.badges) do
-		local key, label, bad = pick(badge, args[badge.field])
+		local typed = args[badge.field]
+		if not typed and badge.default then typed = badge.default(v, args) end
+		local key, label, bad = pick(badge, typed)
 		v[badge.field] = key
 		v[badge.field .. 'Label'] = label
 		if bad then
@@ -481,6 +525,7 @@ function p.values(frame)
 	if not def then return '' end
 	for _, badge in ipairs(def.badges) do
 		if badge.field == frame.args[2] then
+			if badge.suggest then return table.concat(badge.suggest, ' · ') end
 			local seen, list = {}, {}
 			for _, label in pairs(badge.values) do
 				if not seen[label] then seen[label] = true; table.insert(list, label) end
@@ -500,7 +545,7 @@ return p
     <title>Template:Infobox/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>sanitized-css</model>
@@ -696,7 +741,7 @@ return p
     <title>Template:Infobox character</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -710,7 +755,7 @@ return p
     <title>Template:Infobox character/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -754,7 +799,7 @@ Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt
 In fields that name people, groups or events (employer, affiliation, family, leader, rivals, participants…), plain names become links: &lt;code&gt;Big Rig Customs&lt;/code&gt; shows as [[Big Rig Customs]]. Separate several with commas; a note in brackets stays outside the link (&lt;code&gt;Rosa Ramirez (mother)&lt;/code&gt;). Words like ''Unknown'' or ''None'', numbers, and anything that already has links or other markup are left as typed. The status, focus and type badges link to their categories.
 
 == Checked fields ==
-These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
+These set the badges and categories. A value that isn't allowed, or a missing required one, is listed in [[:Category:Pages with infobox problems]].
 {| class="wikitable"
 ! Field !! Allowed values !! Required
 |-
@@ -1082,7 +1127,7 @@ placeholder=Page title
     <title>Template:Infobox character/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1133,7 +1178,7 @@ Where they came from and how they ended up here.
     <title>Template:Infobox organization</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1147,12 +1192,12 @@ Where they came from and how they ended up here.
     <title>Template:Infobox organization/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
-      <text xml:space="preserve">For a gang, a business or an emergency service. The type decides which extra section shows.
+      <text xml:space="preserve">For any group in the city: a gang, a business, the police, EMS, the government, or anything else. Fill in the fields that fit; sections with nothing in them stay hidden.
 
 The fields, sections and look are shared by all infoboxes and live in [[Module:Infobox]] and [[Template:Infobox/styles.css]].
 
@@ -1164,16 +1209,20 @@ The fields, sections and look are shared by all infoboxes and live in [[Module:I
 | caption      =
 | type         =
 | subtype      =
+| focus        =
 | status       =
 | leader       =
+| deputy       =
 | founded      =
 | founder      =
 | defunct      =
 | headquarters =
 | members      =
+| ranks        =
 | territory    =
 | colours      =
 | activities   =
+| fronts       =
 | industry     =
 | services     =
 | owner        =
@@ -1182,7 +1231,8 @@ The fields, sections and look are shared by all infoboxes and live in [[Module:I
 | phone        =
 | jurisdiction =
 | divisions    =
-| ranks        =
+| parent       =
+| subgroups    =
 | allies       =
 | rivals       =
 | predecessor  =
@@ -1197,11 +1247,13 @@ Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt
 In fields that name people, groups or events (employer, affiliation, family, leader, rivals, participants…), plain names become links: &lt;code&gt;Big Rig Customs&lt;/code&gt; shows as [[Big Rig Customs]]. Separate several with commas; a note in brackets stays outside the link (&lt;code&gt;Rosa Ramirez (mother)&lt;/code&gt;). Words like ''Unknown'' or ''None'', numbers, and anything that already has links or other markup are left as typed. The status, focus and type badges link to their categories.
 
 == Checked fields ==
-These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
+These set the badges and categories. A value that isn't allowed, or a missing required one, is listed in [[:Category:Pages with infobox problems]].
 {| class="wikitable"
 ! Field !! Allowed values !! Required
 |-
-| &lt;code&gt;type&lt;/code&gt; || {{#invoke:Infobox|values|organization|type}} || yes
+| &lt;code&gt;type&lt;/code&gt; || {{#invoke:Infobox|values|organization|type}} ''(suggestions: any other type works too, e.g. Crime family)'' || yes
+|-
+| &lt;code&gt;focus&lt;/code&gt; || {{#invoke:Infobox|values|organization|focus}} ''(empty: worked out from the type)'' || no
 |-
 | &lt;code&gt;status&lt;/code&gt; || {{#invoke:Infobox|values|organization|status}} || no
 |-
@@ -1225,13 +1277,17 @@ These only take certain values. Anything else is listed in [[:Category:Pages wit
 |-
 | &lt;code&gt;image2_label&lt;/code&gt; || Image 2 tab label || Tab name for image 2.
 |-
-| &lt;code&gt;type&lt;/code&gt; || Type || Gang, Business or Emergency Services.
+| &lt;code&gt;type&lt;/code&gt; || Type || What kind of group it is. Pick a suggestion (Gang, Business, Police, EMS, Government) or type your own, e.g. Crime family or Motorcycle club.
 |-
-| &lt;code&gt;subtype&lt;/code&gt; || Subtype || More detail on the type, e.g. Police, EMS, Car dealership, Motorcycle club.
+| &lt;code&gt;subtype&lt;/code&gt; || Subtype || More detail, shown before the type, e.g. Street gang, Car dealership, Sheriff's office.
+|-
+| &lt;code&gt;focus&lt;/code&gt; || Focus || Civilian, Criminal or Public Sector. Leave empty to use the type's usual focus (a gang is Criminal, a business Civilian, the police Public Sector); fill it in to change it, e.g. Criminal for a business that's a front.
 |-
 | &lt;code&gt;status&lt;/code&gt; || Status || Active, Inactive or Defunct.
 |-
 | &lt;code&gt;leader&lt;/code&gt; || Leader || The boss, owner or chief.
+|-
+| &lt;code&gt;deputy&lt;/code&gt; || Second in command || Underboss, vice president, deputy chief...
 |-
 | &lt;code&gt;founded&lt;/code&gt; || Founded || 
 |-
@@ -1241,31 +1297,37 @@ These only take certain values. Anything else is listed in [[:Category:Pages wit
 |-
 | &lt;code&gt;headquarters&lt;/code&gt; || Headquarters || 
 |-
-| &lt;code&gt;members&lt;/code&gt; || Members || A number, or a list of links.
+| &lt;code&gt;members&lt;/code&gt; || Members || A number, or a list of names.
 |-
-| &lt;code&gt;territory&lt;/code&gt; || Territory || Gangs only.
+| &lt;code&gt;ranks&lt;/code&gt; || Ranks || The ranks, from the top.
 |-
-| &lt;code&gt;colours&lt;/code&gt; || Colours || Gangs only.
+| &lt;code&gt;territory&lt;/code&gt; || Territory || Areas it controls or works in.
 |-
-| &lt;code&gt;activities&lt;/code&gt; || Activities || Gangs only.
+| &lt;code&gt;colours&lt;/code&gt; || Colours || 
 |-
-| &lt;code&gt;industry&lt;/code&gt; || Industry || Businesses only.
+| &lt;code&gt;activities&lt;/code&gt; || Activities || What it does, e.g. chop shops, street racing.
 |-
-| &lt;code&gt;services&lt;/code&gt; || Products &amp; services || Businesses only.
+| &lt;code&gt;fronts&lt;/code&gt; || Fronts || Legal businesses it uses as a cover.
 |-
-| &lt;code&gt;owner&lt;/code&gt; || Owner || Businesses only.
+| &lt;code&gt;industry&lt;/code&gt; || Industry || For businesses.
 |-
-| &lt;code&gt;location&lt;/code&gt; || Location || Businesses only.
+| &lt;code&gt;services&lt;/code&gt; || Products &amp; services || For businesses.
 |-
-| &lt;code&gt;hours&lt;/code&gt; || Opening hours || Businesses only.
+| &lt;code&gt;owner&lt;/code&gt; || Owner || For businesses.
 |-
-| &lt;code&gt;phone&lt;/code&gt; || Phone number || Businesses only.
+| &lt;code&gt;location&lt;/code&gt; || Location || Where it is.
 |-
-| &lt;code&gt;jurisdiction&lt;/code&gt; || Jurisdiction || Emergency Services only.
+| &lt;code&gt;hours&lt;/code&gt; || Opening hours || 
 |-
-| &lt;code&gt;divisions&lt;/code&gt; || Divisions || Emergency Services only.
+| &lt;code&gt;phone&lt;/code&gt; || Phone number || 
 |-
-| &lt;code&gt;ranks&lt;/code&gt; || Ranks || Emergency Services only.
+| &lt;code&gt;jurisdiction&lt;/code&gt; || Jurisdiction || For public services: the area it covers.
+|-
+| &lt;code&gt;divisions&lt;/code&gt; || Divisions || For public services, e.g. Patrol, Detectives, SWAT.
+|-
+| &lt;code&gt;parent&lt;/code&gt; || Part of || A bigger group it belongs to.
+|-
+| &lt;code&gt;subgroups&lt;/code&gt; || Chapters &amp; branches || Smaller groups within it: chapters, sets, stations.
 |-
 | &lt;code&gt;allies&lt;/code&gt; || Allies || 
 |-
@@ -1289,12 +1351,13 @@ These only take certain values. Anything else is listed in [[:Category:Pages wit
 &lt;pre&gt;
 {{Infobox organization
 | type         = Gang
+| focus        = Criminal
 | status       = Active
-| leader       = [[Marisol Vega]]
+| leader       = Marisol Vega
 | founded      = January 2026
 | territory    = Grove Street
 | colours      = Purple and gold
-| rivals       = [[Eastside Vipers]]
+| rivals       = Eastside Vipers
 | version      = 2.0
 }}
 &lt;/pre&gt;
@@ -1313,7 +1376,7 @@ placeholder=Page title
 == TemplateData ==
 &lt;templatedata&gt;
 {
-	"description": "For a gang, a business or an emergency service. The type decides which extra section shows.",
+	"description": "For any group in the city: a gang, a business, the police, EMS, the government, or anything else. Fill in the fields that fit; sections with nothing in them stay hidden.",
 	"format": "block",
 	"params": {
 		"name": {
@@ -1355,19 +1418,33 @@ placeholder=Page title
 		"type": {
 			"label": "Type",
 			"type": "string",
-			"description": "Gang, Business or Emergency Services.",
+			"description": "What kind of group it is. Pick a suggestion (Gang, Business, Police, EMS, Government) or type your own, e.g. Crime family or Motorcycle club.",
 			"example": "Gang",
 			"required": true,
 			"suggestedvalues": [
 				"Gang",
 				"Business",
-				"Emergency Services"
+				"Police",
+				"EMS",
+				"Government"
 			]
 		},
 		"subtype": {
 			"label": "Subtype",
 			"type": "string",
-			"description": "More detail on the type, e.g. Police, EMS, Car dealership, Motorcycle club."
+			"description": "More detail, shown before the type, e.g. Street gang, Car dealership, Sheriff's office."
+		},
+		"focus": {
+			"label": "Focus",
+			"type": "string",
+			"description": "Civilian, Criminal or Public Sector. Leave empty to use the type's usual focus (a gang is Criminal, a business Civilian, the police Public Sector); fill it in to change it, e.g. Criminal for a business that's a front.",
+			"example": "Criminal",
+			"suggested": true,
+			"suggestedvalues": [
+				"Civilian",
+				"Criminal",
+				"Public Sector"
+			]
 		},
 		"status": {
 			"label": "Status",
@@ -1385,7 +1462,12 @@ placeholder=Page title
 			"label": "Leader",
 			"type": "wiki-page-name",
 			"description": "The boss, owner or chief. Plain names become links; separate several with commas.",
-			"example": "[[Marisol Vega]]"
+			"example": "Marisol Vega"
+		},
+		"deputy": {
+			"label": "Second in command",
+			"type": "wiki-page-name",
+			"description": "Underboss, vice president, deputy chief... Plain names become links; separate several with commas."
 		},
 		"founded": {
 			"label": "Founded",
@@ -1409,69 +1491,81 @@ placeholder=Page title
 		"members": {
 			"label": "Members",
 			"type": "string",
-			"description": "A number, or a list of links."
+			"description": "A number, or a list of names."
+		},
+		"ranks": {
+			"label": "Ranks",
+			"type": "string",
+			"description": "The ranks, from the top."
 		},
 		"territory": {
 			"label": "Territory",
 			"type": "string",
-			"description": "Gangs only.",
+			"description": "Areas it controls or works in.",
 			"example": "Grove Street"
 		},
 		"colours": {
 			"label": "Colours",
 			"type": "string",
-			"description": "Gangs only.",
 			"example": "Purple and gold"
 		},
 		"activities": {
 			"label": "Activities",
 			"type": "string",
-			"description": "Gangs only."
+			"description": "What it does, e.g. chop shops, street racing."
+		},
+		"fronts": {
+			"label": "Fronts",
+			"type": "string",
+			"description": "Legal businesses it uses as a cover. Plain names become links; separate several with commas."
 		},
 		"industry": {
 			"label": "Industry",
 			"type": "string",
-			"description": "Businesses only."
+			"description": "For businesses."
 		},
 		"services": {
 			"label": "Products &amp; services",
 			"type": "string",
-			"description": "Businesses only."
+			"description": "For businesses."
 		},
 		"owner": {
 			"label": "Owner",
 			"type": "wiki-page-name",
-			"description": "Businesses only. Plain names become links; separate several with commas."
+			"description": "For businesses. Plain names become links; separate several with commas."
 		},
 		"location": {
 			"label": "Location",
 			"type": "string",
-			"description": "Businesses only."
+			"description": "Where it is."
 		},
 		"hours": {
 			"label": "Opening hours",
-			"type": "string",
-			"description": "Businesses only."
+			"type": "string"
 		},
 		"phone": {
 			"label": "Phone number",
-			"type": "string",
-			"description": "Businesses only."
+			"type": "string"
 		},
 		"jurisdiction": {
 			"label": "Jurisdiction",
 			"type": "string",
-			"description": "Emergency Services only."
+			"description": "For public services: the area it covers."
 		},
 		"divisions": {
 			"label": "Divisions",
 			"type": "string",
-			"description": "Emergency Services only."
+			"description": "For public services, e.g. Patrol, Detectives, SWAT."
 		},
-		"ranks": {
-			"label": "Ranks",
+		"parent": {
+			"label": "Part of",
+			"type": "wiki-page-name",
+			"description": "A bigger group it belongs to. Plain names become links; separate several with commas."
+		},
+		"subgroups": {
+			"label": "Chapters &amp; branches",
 			"type": "string",
-			"description": "Emergency Services only."
+			"description": "Smaller groups within it: chapters, sets, stations. Plain names become links; separate several with commas."
 		},
 		"allies": {
 			"label": "Allies",
@@ -1481,7 +1575,7 @@ placeholder=Page title
 		"rivals": {
 			"label": "Rivals",
 			"type": "string",
-			"example": "[[Eastside Vipers]]",
+			"example": "Eastside Vipers",
 			"description": "Plain names become links; separate several with commas."
 		},
 		"predecessor": {
@@ -1524,16 +1618,20 @@ placeholder=Page title
 		"image2_label",
 		"type",
 		"subtype",
+		"focus",
 		"status",
 		"leader",
+		"deputy",
 		"founded",
 		"founder",
 		"defunct",
 		"headquarters",
 		"members",
+		"ranks",
 		"territory",
 		"colours",
 		"activities",
+		"fronts",
 		"industry",
 		"services",
 		"owner",
@@ -1542,7 +1640,8 @@ placeholder=Page title
 		"phone",
 		"jurisdiction",
 		"divisions",
-		"ranks",
+		"parent",
+		"subgroups",
 		"allies",
 		"rivals",
 		"predecessor",
@@ -1561,7 +1660,7 @@ placeholder=Page title
     <title>Template:Infobox organization/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1572,16 +1671,20 @@ placeholder=Page title
 | caption      =
 | type         =
 | subtype      =
+| focus        =
 | status       =
 | leader       =
+| deputy       =
 | founded      =
 | founder      =
 | defunct      =
 | headquarters =
 | members      =
+| ranks        =
 | territory    =
 | colours      =
 | activities   =
+| fronts       =
 | industry     =
 | services     =
 | owner        =
@@ -1590,7 +1693,8 @@ placeholder=Page title
 | phone        =
 | jurisdiction =
 | divisions    =
-| ranks        =
+| parent       =
+| subgroups    =
 | allies       =
 | rivals       =
 | predecessor  =
@@ -1619,7 +1723,7 @@ placeholder=Page title
     <title>Template:Infobox event</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1633,7 +1737,7 @@ placeholder=Page title
     <title>Template:Infobox event/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1669,7 +1773,7 @@ Empty fields don't show. Extra pictures (&lt;code&gt;image2&lt;/code&gt; … &lt
 In fields that name people, groups or events (employer, affiliation, family, leader, rivals, participants…), plain names become links: &lt;code&gt;Big Rig Customs&lt;/code&gt; shows as [[Big Rig Customs]]. Separate several with commas; a note in brackets stays outside the link (&lt;code&gt;Rosa Ramirez (mother)&lt;/code&gt;). Words like ''Unknown'' or ''None'', numbers, and anything that already has links or other markup are left as typed. The status, focus and type badges link to their categories.
 
 == Checked fields ==
-These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
+These set the badges and categories. A value that isn't allowed, or a missing required one, is listed in [[:Category:Pages with infobox problems]].
 {| class="wikitable"
 ! Field !! Allowed values !! Required
 |-
@@ -1911,7 +2015,7 @@ placeholder=Page title
     <title>Template:Infobox event/preload</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1951,7 +2055,7 @@ What happened, in a paragraph.
     <title>Category:Characters</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1963,7 +2067,7 @@ What happened, in a paragraph.
     <title>Category:Active characters</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1977,7 +2081,7 @@ What happened, in a paragraph.
     <title>Category:Inactive characters</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -1991,7 +2095,7 @@ What happened, in a paragraph.
     <title>Category:Deceased characters</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2005,7 +2109,7 @@ What happened, in a paragraph.
     <title>Category:Civilian characters</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2019,7 +2123,7 @@ What happened, in a paragraph.
     <title>Category:Criminal characters</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2033,7 +2137,7 @@ What happened, in a paragraph.
     <title>Category:Public Sector characters</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2047,19 +2151,19 @@ What happened, in a paragraph.
     <title>Category:Organizations</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
-      <text xml:space="preserve">Every gang, business and emergency service. Pages are added by [[Template:Infobox organization]].</text>
+      <text xml:space="preserve">Every group in the city: gangs, businesses, the police, EMS, the government and more. Pages are added by [[Template:Infobox organization]]. See the [[Organizations|organisation directory]].</text>
     </revision>
   </page>
   <page>
     <title>Category:Gangs</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2073,7 +2177,7 @@ What happened, in a paragraph.
     <title>Category:Businesses</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2084,15 +2188,99 @@ What happened, in a paragraph.
     </revision>
   </page>
   <page>
-    <title>Category:Emergency Services</title>
+    <title>Category:Police</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
-      <text xml:space="preserve">Police, EMS, fire and other emergency services.
+      <text xml:space="preserve">Police departments and sheriff's offices.
+
+[[Category:Public Sector organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:EMS</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Ambulance, medical and fire services.
+
+[[Category:Public Sector organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Government</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">City hall, the courts and other government bodies.
+
+[[Category:Public Sector organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Emergency Services</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Emergency services (older pages; new pages use Police or EMS).
+
+[[Category:Public Sector organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Criminal organizations</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Groups focused on crime.
+
+[[Category:Organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Civilian organizations</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Groups focused on legal, civilian life and business.
+
+[[Category:Organizations]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Public Sector organizations</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Infobox templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Police, EMS, government and other public services.
 
 [[Category:Organizations]]</text>
     </revision>
@@ -2101,7 +2289,7 @@ What happened, in a paragraph.
     <title>Category:Active organizations</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2115,7 +2303,7 @@ What happened, in a paragraph.
     <title>Category:Inactive organizations</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2129,7 +2317,7 @@ What happened, in a paragraph.
     <title>Category:Defunct organizations</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2143,7 +2331,7 @@ What happened, in a paragraph.
     <title>Category:Events</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2155,7 +2343,7 @@ What happened, in a paragraph.
     <title>Category:Heists</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2169,7 +2357,7 @@ What happened, in a paragraph.
     <title>Category:Gang wars</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2183,7 +2371,7 @@ What happened, in a paragraph.
     <title>Category:Shootings</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2197,7 +2385,7 @@ What happened, in a paragraph.
     <title>Category:Trials</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2211,7 +2399,7 @@ What happened, in a paragraph.
     <title>Category:Elections</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2225,7 +2413,7 @@ What happened, in a paragraph.
     <title>Category:Community events</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2239,7 +2427,7 @@ What happened, in a paragraph.
     <title>Category:Official server events</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2253,7 +2441,7 @@ What happened, in a paragraph.
     <title>Category:Other events</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2267,7 +2455,7 @@ What happened, in a paragraph.
     <title>Category:Pages with short description</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2280,7 +2468,7 @@ Added automatically to pages that have a short description (the grey line under 
     <title>Category:Pages using Tabber parser tag</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>
@@ -2293,7 +2481,7 @@ Added automatically to pages that use tabs (the &lt;nowiki&gt;&lt;tabber&gt;&lt;
     <title>Category:Pages with infobox problems</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T20:28:58Z</timestamp>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Infobox templates</comment>
       <model>wikitext</model>

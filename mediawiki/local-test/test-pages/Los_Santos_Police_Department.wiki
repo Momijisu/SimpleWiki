@@ -1,6 +1,6 @@
 {{Infobox organization
-| type         = emergency
-| subtype      = Police
+| type         = Police
+| subtype      = Police department
 | status       = Active
 | leader       = [[Chief Ray Holloway]]
 | jurisdiction = City of Los Santos

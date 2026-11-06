@@ -1,0 +1,359 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" version="0.11" xml:lang="en">
+  <page>
+    <title>Template:Directory card</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Directories</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Directory card/styles.css" /&gt;{{#if:{{{image|}}}{{{fallback|}}}|&lt;div class="rp-dcard rp-dcard--image"&gt;{{#ifexist:File:{{{image|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{image}}}|600px|link=|alt=]]&lt;/div&gt;|{{#ifexist:File:{{{fallback|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{fallback}}}|600px|link=|alt=]]&lt;/div&gt;}}}}|&lt;div class="rp-dcard"&gt;}}&lt;div class="rp-dcard-text"&gt;&lt;div class="rp-dcard-label"&gt;[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]&lt;/div&gt;{{#if:{{{category|}}}|&lt;div class="rp-dcard-count"&gt;{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}&lt;/div&gt;}}&lt;/div&gt;&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Template:Directory card/doc}}
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Directory card/styles.css</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Directories</comment>
+      <model>sanitized-css</model>
+      <format>text/css</format>
+      <text xml:space="preserve">/* Template:Directory card/styles.css: the picture cards on the directory pages,
+   matching the directory buttons on the front page (TemplateStyles). */
+.rp-dcards {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 210px, 1fr ) );
+	gap: 10px;
+	margin: 0.6em 0 1.4em;
+}
+.rp-dcard {
+	position: relative;
+	display: flex;
+	align-items: center;
+	min-height: 52px;
+	padding: 10px 16px;
+	overflow: hidden;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.07 );
+	transition: border-color 0.15s, transform 0.15s;
+}
+.rp-dcard:hover {
+	border-color: rgba( 127, 127, 127, 0.55 );
+	transform: translateY( -2px );
+}
+/* With a picture: the art sits on the right, over a dark fade from the left */
+.rp-dcard--image {
+	border-color: transparent;
+	background: linear-gradient( to right, #000 0%, rgba( 0, 0, 0, 0.85 ) 35%, rgba( 0, 0, 0, 0.35 ) 100% );
+}
+.rp-dcard--image:hover {
+	border-color: rgba( 255, 255, 255, 0.25 );
+}
+.rp-dcard-bg {
+	position: absolute;
+	inset: 0;
+}
+.rp-dcard-bg span,
+.rp-dcard-bg a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.rp-dcard-bg img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	object-fit: cover;
+	object-position: right center;
+}
+.rp-dcard--image::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: linear-gradient( to right, rgba( 0, 0, 0, 0.9 ) 0%, rgba( 0, 0, 0, 0.5 ) 35%, rgba( 0, 0, 0, 0 ) 65% );
+}
+.rp-dcard-text {
+	position: relative;
+	z-index: 2;
+	flex: 1;
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	min-width: 0;
+	/* fill the whole card, so the stretched link below covers all of it */
+	margin: -10px -16px;
+	padding: 10px 16px;
+}
+.rp-dcard--image .rp-dcard-text {
+	text-shadow: 0 1px 3px rgba( 0, 0, 0, 0.7 );
+}
+.rp-dcard-label {
+	font-weight: 600;
+}
+.rp-dcard-label a,
+.rp-dcard-label a:visited {
+	color: inherit;
+}
+.rp-dcard--image .rp-dcard-label a,
+.rp-dcard--image .rp-dcard-count {
+	color: #fff;
+}
+/* The whole card is clickable: the label's link stretches over it */
+.rp-dcard-label a::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+}
+.rp-dcard-count {
+	margin-top: 2px;
+	font-size: 0.8125rem;
+	opacity: 0.8;
+}
+
+/* "Add a page" box and the tables */
+.rp-dir-add {
+	margin: 0.4em 0 1.4em;
+	padding: 12px 16px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.07 );
+}
+.rp-dir-add .mw-inputbox-centered {
+	margin: 0;
+}
+.rp-dir-add form {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start !important;
+	gap: 8px;
+}
+.rp-dir-add .cdx-text-input {
+	flex: 0 1 280px;
+	min-width: 0;
+}
+.rp-dir-table table {
+	width: 100%;
+}
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Directory card/doc</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Directories</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">A picture card linking to a category, with how many pages are in it. Used on the directory pages ([[Characters]], [[Organizations]], [[Server events]]); it looks like the directory buttons on the [[Main Page|front page]].
+
+&lt;pre&gt;
+&lt;div class="rp-dcards"&gt;
+{{Directory card | label = Criminal | category = Criminal characters | image = CardBackground_Criminal.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Civilian | category = Civilian characters }}
+&lt;/div&gt;
+&lt;/pre&gt;
+
+{| class="wikitable"
+! Value !! What it does
+|-
+| &lt;code&gt;category&lt;/code&gt; || The category it links to and counts.
+|-
+| &lt;code&gt;label&lt;/code&gt; || The words on the card (default: the category's name).
+|-
+| &lt;code&gt;image&lt;/code&gt; || The picture, as on the front page: see-through art (skyline and icon) on the right, roughly 3:1. If it hasn't been uploaded yet, &lt;code&gt;fallback&lt;/code&gt; is used.
+|-
+| &lt;code&gt;fallback&lt;/code&gt; || A picture to use until &lt;code&gt;image&lt;/code&gt; exists, e.g. the directory's own background.
+|-
+| &lt;code&gt;link&lt;/code&gt; || A page to link to instead of the category.
+|}
+
+Put the cards inside &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-dcards"&gt;&lt;/nowiki&gt;&lt;/code&gt; … &lt;code&gt;&lt;nowiki&gt;&lt;/div&gt;&lt;/nowiki&gt;&lt;/code&gt;, which lays them out in a grid.
+
+[[Category:Help templates]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Characters</title>
+    <ns>0</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Directories</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;templatestyles src="Template:Directory card/styles.css" /&gt;
+Every character on the Let's RP Wiki. Pick a group below, or find a character in the full list. Click a column heading to sort the list.
+
+== Browse ==
+=== By status ===
+&lt;div class="rp-dcards"&gt;
+{{Directory card | label = Active | category = Active characters | image = CardBackground_Active.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Inactive | category = Inactive characters | image = CardBackground_Inactive.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Deceased | category = Deceased characters | image = CardBackground_Deceased.png | fallback = CardBackground_Characters.png }}
+&lt;/div&gt;
+=== By focus ===
+&lt;div class="rp-dcards"&gt;
+{{Directory card | label = Civilian | category = Civilian characters | image = CardBackground_Civilian.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Criminal | category = Criminal characters | image = CardBackground_Criminal.png | fallback = CardBackground_Characters.png }}
+{{Directory card | label = Public Sector | category = Public Sector characters | image = CardBackground_PublicSector.png | fallback = CardBackground_Characters.png }}
+&lt;/div&gt;
+
+== Add a character ==
+Type the character's name to start their page, with the infobox and headings ready to fill in.
+&lt;div class="rp-dir-add"&gt;
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox character/preload
+placeholder=Character name
+buttonlabel=Create character page
+break=no
+width=30
+&lt;/inputbox&gt;
+&lt;/div&gt;
+
+== All characters ==
+&lt;div class="rp-dir-table"&gt;
+{{#dpl:
+ |category        = Characters
+ |ordermethod     = title
+ |count           = 500
+ |include         = {Infobox character}:status:focus:occupation:affiliation:played_by:version
+ |table           = class="wikitable sortable",Character,Status,Focus,Occupation,Affiliation,Played by,Version
+ |tablerow        = %%,%%,%%,%%,%%,%%
+ |noresultsheader = No characters yet. Add the first one above!
+ |suppresserrors  = true
+}}
+&lt;/div&gt;
+
+__NOTOC__</text>
+    </revision>
+  </page>
+  <page>
+    <title>Organizations</title>
+    <ns>0</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Directories</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;templatestyles src="Template:Directory card/styles.css" /&gt;
+Every group in the city: gangs, businesses, the police, EMS, the government and more. Pick a group below, or find one in the full list. Click a column heading to sort the list.
+
+== Browse ==
+=== By focus ===
+&lt;div class="rp-dcards"&gt;
+{{Directory card | label = Criminal | category = Criminal organizations | image = CardBackground_Criminal.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Civilian | category = Civilian organizations | image = CardBackground_Civilian.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Public Sector | category = Public Sector organizations | image = CardBackground_PublicSector.png | fallback = CardBackground_Factions.png }}
+&lt;/div&gt;
+=== By type ===
+&lt;div class="rp-dcards"&gt;
+{{Directory card | label = Gangs | category = Gangs | image = CardBackground_Gangs.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Businesses | category = Businesses | image = CardBackground_Businesses.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Police | category = Police | image = CardBackground_Police.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = EMS | category = EMS | image = CardBackground_EMS.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Government | category = Government | image = CardBackground_Government.png | fallback = CardBackground_Factions.png }}
+&lt;/div&gt;
+=== By status ===
+&lt;div class="rp-dcards"&gt;
+{{Directory card | label = Active | category = Active organizations | image = CardBackground_Active.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Inactive | category = Inactive organizations | image = CardBackground_Inactive.png | fallback = CardBackground_Factions.png }}
+{{Directory card | label = Defunct | category = Defunct organizations | image = CardBackground_Defunct.png | fallback = CardBackground_Factions.png }}
+&lt;/div&gt;
+
+== Add an organisation ==
+Type the organisation's name to start its page, with the infobox and headings ready to fill in.
+&lt;div class="rp-dir-add"&gt;
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox organization/preload
+placeholder=Organisation name
+buttonlabel=Create organisation page
+break=no
+width=30
+&lt;/inputbox&gt;
+&lt;/div&gt;
+
+== All organisations ==
+&lt;div class="rp-dir-table"&gt;
+{{#dpl:
+ |category        = Organizations
+ |ordermethod     = title
+ |count           = 500
+ |include         = {Infobox organization}:type:status:leader:headquarters:version
+ |table           = class="wikitable sortable",Organisation,Type,Status,Leader,Headquarters,Version
+ |tablerow        = %%,%%,%%,%%,%%
+ |noresultsheader = No organisations yet. Add the first one above!
+ |suppresserrors  = true
+}}
+&lt;/div&gt;
+
+__NOTOC__</text>
+    </revision>
+  </page>
+  <page>
+    <title>Server events</title>
+    <ns>0</ns>
+    <revision>
+      <timestamp>2026-11-06T20:50:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Directories</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;templatestyles src="Template:Directory card/styles.css" /&gt;
+Every server event: heists, gang wars, trials, elections, community and official events. Pick a type below, or find an event in the full list. Click a column heading to sort the list.
+
+== Browse ==
+=== By type ===
+&lt;div class="rp-dcards"&gt;
+{{Directory card | label = Heists | category = Heists | image = CardBackground_Heists.png | fallback = CardBackground_Events.png }}
+{{Directory card | label = Gang wars | category = Gang wars | image = CardBackground_GangWars.png | fallback = CardBackground_Events.png }}
+{{Directory card | label = Shootings | category = Shootings | image = CardBackground_Shootings.png | fallback = CardBackground_Events.png }}
+{{Directory card | label = Trials | category = Trials | image = CardBackground_Trials.png | fallback = CardBackground_Events.png }}
+{{Directory card | label = Elections | category = Elections | image = CardBackground_Elections.png | fallback = CardBackground_Events.png }}
+{{Directory card | label = Community events | category = Community events | image = CardBackground_CommunityEvents.png | fallback = CardBackground_Events.png }}
+{{Directory card | label = Official server events | category = Official server events | image = CardBackground_OfficialEvents.png | fallback = CardBackground_Events.png }}
+&lt;/div&gt;
+
+== Add an event ==
+Type the event's name to start its page, with the infobox and headings ready to fill in.
+&lt;div class="rp-dir-add"&gt;
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox event/preload
+placeholder=Event name
+buttonlabel=Create event page
+break=no
+width=30
+&lt;/inputbox&gt;
+&lt;/div&gt;
+
+== All events ==
+&lt;div class="rp-dir-table"&gt;
+{{#dpl:
+ |category        = Events
+ |ordermethod     = title
+ |count           = 500
+ |include         = {Infobox event}:type:date:location:organised_by:outcome
+ |table           = class="wikitable sortable",Event,Type,Date,Location,Organised by,Outcome
+ |tablerow        = %%,%%,%%,%%,%%
+ |noresultsheader = No events yet. Add the first one above!
+ |suppresserrors  = true
+}}
+&lt;/div&gt;
+
+__NOTOC__</text>
+    </revision>
+  </page>
+</mediawiki>

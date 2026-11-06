@@ -9,6 +9,7 @@
   dist/help.xml       the help hub (Help:Contents) and the Card template (see help.py)
   dist/guides.xml     the editing guides, Help:Editing and its sub-pages (see guides.py)
   dist/notices.xml    notice templates for wiki maintenance: Stub, Draft, Cleanup... (see notices.py)
+  dist/directories.xml the Characters, Organizations and Server events directories (see directories.py)
 
 Hand-written pages live in pages/ (the Lua module and the CSS). The
 templates, their documentation and their "preload" starter pages are
@@ -16,6 +17,7 @@ generated here from FIELDS, so the docs always match the templates."""
 
 import json
 
+import directories
 import guides
 import help as helppages
 import licenses
@@ -86,32 +88,37 @@ Where they came from and how they ended up here.
     },
     'organization': {
         'title': 'Infobox organization',
-        'about': 'For a gang, a business or an emergency service. The type decides which extra section shows.',
-        'checked': [('type', True), ('status', False)],
+        'about': 'For any group in the city: a gang, a business, the police, EMS, the government, or anything else. Fill in the fields that fit; sections with nothing in them stay hidden.',
+        'checked': [('type', True), ('focus', False), ('status', False)],
         'fields': COMMON_TOP + [
-            ('type', 'Type', 'Gang, Business or Emergency Services.', 'Gang'),
-            ('subtype', 'Subtype', 'More detail on the type, e.g. Police, EMS, Car dealership, Motorcycle club.', ''),
+            ('type', 'Type', 'What kind of group it is. Pick a suggestion (Gang, Business, Police, EMS, Government) or type your own, e.g. Crime family or Motorcycle club.', 'Gang'),
+            ('subtype', 'Subtype', 'More detail, shown before the type, e.g. Street gang, Car dealership, Sheriff\'s office.', ''),
+            ('focus', 'Focus', "Civilian, Criminal or Public Sector. Leave empty to use the type's usual focus (a gang is Criminal, a business Civilian, the police Public Sector); fill it in to change it, e.g. Criminal for a business that's a front.", 'Criminal'),
             ('status', 'Status', 'Active, Inactive or Defunct.', 'Active'),
-            ('leader', 'Leader', 'The boss, owner or chief.', '[[Marisol Vega]]'),
+            ('leader', 'Leader', 'The boss, owner or chief.', 'Marisol Vega'),
+            ('deputy', 'Second in command', 'Underboss, vice president, deputy chief...', ''),
             ('founded', 'Founded', '', 'January 2026'),
             ('founder', 'Founder', '', ''),
             ('defunct', 'Defunct', 'When it ended.', ''),
             ('headquarters', 'Headquarters', '', ''),
-            ('members', 'Members', 'A number, or a list of links.', ''),
-            ('territory', 'Territory', 'Gangs only.', 'Grove Street'),
-            ('colours', 'Colours', 'Gangs only.', 'Purple and gold'),
-            ('activities', 'Activities', 'Gangs only.', ''),
-            ('industry', 'Industry', 'Businesses only.', ''),
-            ('services', 'Products & services', 'Businesses only.', ''),
-            ('owner', 'Owner', 'Businesses only.', ''),
-            ('location', 'Location', 'Businesses only.', ''),
-            ('hours', 'Opening hours', 'Businesses only.', ''),
-            ('phone', 'Phone number', 'Businesses only.', ''),
-            ('jurisdiction', 'Jurisdiction', 'Emergency Services only.', ''),
-            ('divisions', 'Divisions', 'Emergency Services only.', ''),
-            ('ranks', 'Ranks', 'Emergency Services only.', ''),
+            ('members', 'Members', 'A number, or a list of names.', ''),
+            ('ranks', 'Ranks', 'The ranks, from the top.', ''),
+            ('territory', 'Territory', 'Areas it controls or works in.', 'Grove Street'),
+            ('colours', 'Colours', '', 'Purple and gold'),
+            ('activities', 'Activities', 'What it does, e.g. chop shops, street racing.', ''),
+            ('fronts', 'Fronts', 'Legal businesses it uses as a cover.', ''),
+            ('industry', 'Industry', 'For businesses.', ''),
+            ('services', 'Products & services', 'For businesses.', ''),
+            ('owner', 'Owner', 'For businesses.', ''),
+            ('location', 'Location', 'Where it is.', ''),
+            ('hours', 'Opening hours', '', ''),
+            ('phone', 'Phone number', '', ''),
+            ('jurisdiction', 'Jurisdiction', 'For public services: the area it covers.', ''),
+            ('divisions', 'Divisions', 'For public services, e.g. Patrol, Detectives, SWAT.', ''),
+            ('parent', 'Part of', 'A bigger group it belongs to.', ''),
+            ('subgroups', 'Chapters & branches', 'Smaller groups within it: chapters, sets, stations.', ''),
             ('allies', 'Allies', '', ''),
-            ('rivals', 'Rivals', '', '[[Eastside Vipers]]'),
+            ('rivals', 'Rivals', '', 'Eastside Vipers'),
             ('predecessor', 'Predecessor', 'What it grew out of.', ''),
             ('successor', 'Successor', 'What it became.', ''),
             ('first_seen', 'First seen', '', ''),
@@ -181,9 +188,9 @@ def blank(t, with_examples=False):
 
 # Fields where plain names become links (must match `link = true` in Module:Infobox).
 # Single ones get VisualEditor's page-name suggestions; lists stay free text.
-LINK_SINGLE = {'employer', 'partner', 'killed_by', 'leader', 'founder', 'owner',
+LINK_SINGLE = {'employer', 'partner', 'killed_by', 'leader', 'deputy', 'founder', 'owner', 'parent',
                'predecessor', 'successor', 'organised_by', 'previous', 'next'}
-LINK_LIST = {'affiliation', 'family', 'allies', 'rivals', 'participants', 'factions'}
+LINK_LIST = {'affiliation', 'family', 'allies', 'rivals', 'participants', 'factions', 'fronts', 'subgroups'}
 
 
 def templatedata(key, t):
@@ -209,7 +216,8 @@ def templatedata(key, t):
         params['status']['suggestedvalues'] = ['Active', 'Inactive', 'Deceased']
         params['focus']['suggestedvalues'] = ['Civilian', 'Criminal', 'Public Sector']
     if key == 'organization':
-        params['type']['suggestedvalues'] = ['Gang', 'Business', 'Emergency Services']
+        params['type']['suggestedvalues'] = ['Gang', 'Business', 'Police', 'EMS', 'Government']
+        params['focus']['suggestedvalues'] = ['Civilian', 'Criminal', 'Public Sector']
         params['status']['suggestedvalues'] = ['Active', 'Inactive', 'Defunct']
     if key == 'event':
         params['type']['suggestedvalues'] = ['Heist', 'Gang war', 'Shooting', 'Trial', 'Election',
@@ -223,8 +231,10 @@ def templatedata(key, t):
 
 
 def doc(key, t):
+    notes = {('organization', 'type'): " ''(suggestions: any other type works too, e.g. Crime family)''",
+             ('organization', 'focus'): " ''(empty: worked out from the type)''"}
     checked_rows = '\n'.join(
-        f'| <code>{f}</code> || {{{{#invoke:Infobox|values|{key}|{f}}}}} || {"yes" if req else "no"}\n|-'
+        f'| <code>{f}</code> || {{{{#invoke:Infobox|values|{key}|{f}}}}}{notes.get((key, f), "")} || {"yes" if req else "no"}\n|-'
         for f, req in t['checked'])
     field_rows = '\n'.join(
         f'| <code>{name}</code> || {label} || {desc}\n|-' for name, label, desc, _ in t['fields'])
@@ -241,7 +251,7 @@ Empty fields don't show. Extra pictures (<code>image2</code> … <code>image5</c
 In fields that name people, groups or events (employer, affiliation, family, leader, rivals, participants…), plain names become links: <code>Big Rig Customs</code> shows as [[Big Rig Customs]]. Separate several with commas; a note in brackets stays outside the link (<code>Rosa Ramirez (mother)</code>). Words like ''Unknown'' or ''None'', numbers, and anything that already has links or other markup are left as typed. The status, focus and type badges link to their categories.
 
 == Checked fields ==
-These only take certain values. Anything else is listed in [[:Category:Pages with infobox problems]].
+These set the badges and categories. A value that isn't allowed, or a missing required one, is listed in [[:Category:Pages with infobox problems]].
 {{| class="wikitable"
 ! Field !! Allowed values !! Required
 |-
@@ -286,10 +296,16 @@ CATEGORIES = [
     ('Civilian characters', 'Characters', 'Characters currently focused on civilian life.'),
     ('Criminal characters', 'Characters', 'Characters currently focused on crime.'),
     ('Public Sector characters', 'Characters', 'Characters currently working in the public sector: police, medical, government.'),
-    ('Organizations', None, 'Every gang, business and emergency service. Pages are added by [[Template:Infobox organization]].'),
+    ('Organizations', None, 'Every group in the city: gangs, businesses, the police, EMS, the government and more. Pages are added by [[Template:Infobox organization]]. See the [[Organizations|organisation directory]].'),
     ('Gangs', 'Organizations', 'Gangs, crews, cartels, families and posses.'),
     ('Businesses', 'Organizations', 'Shops, bars, garages, clubs and other businesses.'),
-    ('Emergency Services', 'Organizations', 'Police, EMS, fire and other emergency services.'),
+    ('Police', 'Public Sector organizations', 'Police departments and sheriff\'s offices.'),
+    ('EMS', 'Public Sector organizations', 'Ambulance, medical and fire services.'),
+    ('Government', 'Public Sector organizations', 'City hall, the courts and other government bodies.'),
+    ('Emergency Services', 'Public Sector organizations', 'Emergency services (older pages; new pages use Police or EMS).'),
+    ('Criminal organizations', 'Organizations', 'Groups focused on crime.'),
+    ('Civilian organizations', 'Organizations', 'Groups focused on legal, civilian life and business.'),
+    ('Public Sector organizations', 'Organizations', 'Police, EMS, government and other public services.'),
     ('Active organizations', 'Organizations', 'Organizations that are active now.'),
     ('Inactive organizations', 'Organizations', 'Organizations that are quiet but not gone.'),
     ('Defunct organizations', 'Organizations', 'Organizations that no longer exist.'),
@@ -417,7 +433,8 @@ if __name__ == '__main__':
                                   ('licenses.xml', licenses.pages(), 'Upload licences'),
                                   ('help.xml', helppages.pages(), 'Help pages'),
                                   ('guides.xml', guides.pages(), 'Editing guides'),
-                                  ('notices.xml', notices.pages(), 'Notice templates')):
+                                  ('notices.xml', notices.pages(), 'Notice templates'),
+                                  ('directories.xml', directories.pages(), 'Directories')):
         (dist / name).write_text(xml(built, summary))
         print(f'Wrote {dist / name} with {len(built)} pages:')
         for p in built:
