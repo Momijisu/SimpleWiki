@@ -1,0 +1,358 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" version="0.11" xml:lang="en">
+  <page>
+    <title>Help:Contents</title>
+    <ns>12</ns>
+    <revision>
+      <timestamp>2026-11-06T17:05:23Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Help pages</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;templatestyles src="Template:Card/styles.css" /&gt;
+Welcome to the '''Let's RP Wiki''' help pages! Whether you've never edited a wiki before or just want to look something up, start here.
+
+&lt;div class="rp-cards"&gt;
+{{Card
+ | title  = I want to edit an article
+ | text   = Anyone with an account can edit. Our [[Help:Getting started|getting started]] guide covers the basics, the [[Help:Cheat sheet|cheat sheet]] lists the formatting codes, and your own [[Special:MyPage/Sandbox|sandbox]] is a safe place to practise.
+
+Don't be afraid to edit a page that needs fixing or more detail: a short article is better than none.
+ | link   = Help:Getting started
+ | button = Getting started guide
+ | colour = green
+}}
+{{Card
+ | title  = I want to create a page or upload a picture
+ | text   = First search to check the page doesn't exist already: improving an article beats starting a second one. If it doesn't, use the boxes below to start one with the right infobox in place.
+
+Not sure what to write? [[Special:WantedPages|Wanted pages]] lists pages that are linked to but not written yet. To add a picture, use [[Special:Upload|Upload file]] and pick a licence.
+ | link   = Help:Editing
+ | button = How to edit
+ | colour = orange
+}}
+{{Card
+ | title  = How can I help?
+ | text   = Read through the big directories, like [[:Category:Characters|characters]], [[:Category:Gangs|gangs]] or [[:Category:Businesses|businesses]]. Is the page easy to follow? Does it have pictures and links to related pages? Characters always need updating as their stories go on.
+
+For bigger jobs, see the [[Project:Tasks|task list]].
+ | link   = Project:Tasks
+ | button = Tasks and issues
+}}
+&lt;/div&gt;
+
+== Start a new page ==
+&lt;div class="rp-create"&gt;
+Type the page's name (the character's full name, the organization's or the event's) and the page opens with its infobox and headings ready to fill in.
+
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox character/preload
+placeholder=Character name
+buttonlabel=Create character page
+break=no
+width=30
+&lt;/inputbox&gt;
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox organization/preload
+placeholder=Organization name
+buttonlabel=Create organization page
+break=no
+width=30
+&lt;/inputbox&gt;
+&lt;inputbox&gt;
+type=create
+preload=Template:Infobox event/preload
+placeholder=Event name
+buttonlabel=Create event page
+break=no
+width=30
+&lt;/inputbox&gt;
+&lt;/div&gt;
+
+== Editing the wiki ==
+You only need to [[Special:CreateAccount|create an account]] to start. There are two ways to edit: '''VisualEditor''', which works like a word processor, and '''source mode''', where you edit the page's wikitext directly. You can switch between them while editing.
+
+&lt;div class="rp-cards rp-cards--2"&gt;
+{{Card
+ | title = Your first edit
+ | text  = A beginner's guide to VisualEditor: edit a page without learning any code.
+ | link  = Help:Your first edit
+}}
+{{Card
+ | title = VisualEditor basics
+ | text  = More tips: adding links, pictures, bold and italic text, and infoboxes.
+ | link  = Help:VisualEditor
+}}
+{{Card
+ | title = Introduction to source mode
+ | text  = Editing the wikitext directly, for when you want full control.
+ | link  = Help:Source mode
+}}
+{{Card
+ | title = Cheat sheet
+ | text  = The codes for links, headings, bold, lists, pictures and templates, on one page.
+ | link  = Help:Cheat sheet
+}}
+&lt;/div&gt;
+
+== The wiki's building blocks ==
+&lt;div class="rp-cards"&gt;
+{{Card
+ | title  = Infoboxes
+ | text   = The box at the top of every character, organization and event page: how to fill in each field, and what the badges mean.
+ | link   = Help:Infoboxes
+ | colour = purple
+}}
+{{Card
+ | title  = Templates
+ | text   = Every template on the wiki, what it's for and how to add it.
+ | link   = Help:Templates
+ | button = See all templates
+ | colour = purple
+}}
+{{Card
+ | title  = Pictures and licences
+ | text   = Uploading screenshots and artwork, and which licence to pick for each.
+ | link   = Help:Images
+ | colour = purple
+}}
+&lt;/div&gt;
+
+== Other resources ==
+{| class="wikitable"
+! Editing articles !! Guidelines and resources
+|- style="vertical-align: top;"
+|
+* [[Help:Getting started|Getting started]]
+* [[Help:Editing|Editing guide]]
+* [[Help:Cheat sheet|Formatting cheat sheet]]
+* [[Project:Style guide|Style guide]]
+* [[Help:Images|Adding pictures to pages]]
+* [[Help:Tables|Tables]]
+* [[Help:Standard terms|Standard terms]]
+|
+* [[Help:Templates|Templates]]
+* [[Help:Infoboxes|Infoboxes]]
+* [[Template:License/doc|Choosing a licence]]
+* [[Project:Policies|Content policies]]
+* [[Help:Discussion|Discussion rules]]
+* [[:Category:Example articles|Example articles]]
+* When in doubt: [[wikipedia:Wikipedia:Manual of Style|Wikipedia's Manual of Style]]
+|}
+
+&lt;div class="rp-note"&gt;'''Remember:''' everything on this wiki is out of character. Nothing you read here can be used as in-character knowledge.&lt;/div&gt;
+
+[[Category:Help]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Project:Help portal</title>
+    <ns>4</ns>
+    <revision>
+      <timestamp>2026-11-06T17:05:23Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Help pages</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Help:Contents]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Card</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T17:05:23Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Help pages</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Card/styles.css" /&gt;&lt;div class="rp-card"&gt;
+&lt;div class="rp-card-body"&gt;
+&lt;div class="rp-card-title"&gt;{{{title|}}}&lt;/div&gt;
+{{{text|}}}
+&lt;/div&gt;{{#if:{{{link|}}}|&lt;div class="rp-card-button rp-card-button--{{#ifexist:{{{link}}}|{{{colour|{{{color|blue}}}}}}|soon}}"&gt;[[{{{link}}}|{{#ifexist:{{{link}}}|{{{button|Read this guide}}}|Coming soon}}]]&lt;/div&gt;}}
+&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Template:Card/doc}}
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Card/styles.css</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T17:05:23Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Help pages</comment>
+      <model>sanitized-css</model>
+      <format>text/css</format>
+      <text xml:space="preserve">/* Template:Card/styles.css: cards with a button along the bottom (TemplateStyles).
+   Put cards inside &lt;div class="rp-cards"&gt; to lay them out side by side. */
+.rp-cards {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 240px, 1fr ) );
+	gap: 12px;
+	margin: 1em 0 1.6em;
+}
+.rp-cards--2 {
+	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+}
+.rp-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-width: 0;
+	overflow: hidden;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.07 );
+	font-size: 0.875rem;
+	line-height: 1.55;
+	transition: border-color 0.15s, transform 0.15s;
+}
+.rp-card:hover {
+	border-color: rgba( 127, 127, 127, 0.55 );
+	transform: translateY( -2px );
+}
+.rp-card-body {
+	padding: 16px 18px;
+}
+.rp-card-body p:first-child {
+	margin-top: 0;
+}
+.rp-card-body p:last-child {
+	margin-bottom: 0;
+}
+.rp-card-title {
+	margin-bottom: 8px;
+	font-size: 1.125rem;
+	font-weight: 600;
+	line-height: 1.25;
+}
+.rp-card-button a,
+.rp-card-button a:visited,
+.rp-card-button a.new {
+	display: block;
+	padding: 10px;
+	color: #fff;
+	font-weight: 600;
+	text-align: center;
+	text-decoration: none;
+}
+.rp-card-button:hover {
+	filter: brightness( 1.12 );
+}
+.rp-card-button--blue { background: #3366cc; }
+.rp-card-button--green { background: #2e7d32; }
+.rp-card-button--orange { background: #ef6c00; }
+.rp-card-button--purple { background: #7e57c2; }
+.rp-card-button--red { background: #c62828; }
+.rp-card-button--soon { background: rgba( 127, 127, 127, 0.35 ); }
+
+/* "Start a new page" boxes */
+.rp-create {
+	margin: 1em 0 1.6em;
+	padding: 16px 18px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-radius: 12px;
+	background: rgba( 127, 127, 127, 0.07 );
+}
+.rp-create .mw-inputbox-centered {
+	margin: 0.5em 0;
+}
+.rp-create form {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start !important;
+	gap: 8px;
+	text-align: left;
+}
+.rp-create .cdx-text-input {
+	flex: 0 1 280px;
+	min-width: 0;
+}
+.rp-create .cdx-text-input input {
+	width: 100%;
+}
+
+.rp-note {
+	margin: 1em 0;
+	padding: 10px 15px;
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.1 );
+	font-size: 0.875rem;
+	opacity: 0.9;
+}
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Card/doc</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T17:05:23Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Help pages</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">A card with a title, some text and a button along the bottom. Used on [[Help:Contents]].
+
+&lt;pre&gt;
+&lt;div class="rp-cards"&gt;
+{{Card
+ | title  = Your first edit
+ | text   = A short guide to VisualEditor.
+ | link   = Help:Your first edit
+ | button = Read this guide
+ | colour = green
+}}
+{{Card | title = … | text = … | link = … }}
+&lt;/div&gt;
+&lt;/pre&gt;
+
+{| class="wikitable"
+! Value !! What it does
+|-
+| &lt;code&gt;title&lt;/code&gt; || The heading.
+|-
+| &lt;code&gt;text&lt;/code&gt; || The text (wikitext: links, lists and line breaks work).
+|-
+| &lt;code&gt;link&lt;/code&gt; || The page the button goes to. Leave it out for a card without a button. If the page doesn't exist yet, the button is grey and says "Coming soon".
+|-
+| &lt;code&gt;button&lt;/code&gt; || The button's words. Default: "Read this guide".
+|-
+| &lt;code&gt;colour&lt;/code&gt; || &lt;code&gt;blue&lt;/code&gt; (default), &lt;code&gt;green&lt;/code&gt;, &lt;code&gt;orange&lt;/code&gt;, &lt;code&gt;purple&lt;/code&gt; or &lt;code&gt;red&lt;/code&gt;.
+|}
+
+Wrap cards in &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-cards"&gt;&lt;/nowiki&gt;&lt;/code&gt; … &lt;code&gt;&lt;nowiki&gt;&lt;/div&gt;&lt;/nowiki&gt;&lt;/code&gt; to put them side by side; they wrap onto new rows on narrow screens. Use &lt;code&gt;rp-cards rp-cards--2&lt;/code&gt; for wider cards (two per row).
+
+[[Category:Help templates]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Help</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T17:05:23Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Help pages</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Help pages for editors of the Let's RP Wiki. Start at [[Help:Contents]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Help templates</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T17:05:23Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Help pages</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Templates used on the help pages.
+
+[[Category:Help]]</text>
+    </revision>
+  </page>
+</mediawiki>
