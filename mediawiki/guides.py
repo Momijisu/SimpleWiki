@@ -814,4 +814,7 @@ def pages():
         ('Category:Editing guides', 14, 'wikitext', 'text/x-wiki',
          'Step-by-step guides to editing the wiki. Start at [[Help:Editing]].\n\n[[Category:Help]]'),
     ]
-    return out + TEMPLATES
+    # The Card template (also in help.xml), so the guide hub works on its own
+    import help as helppages
+    card = [pg for pg in helppages.pages() if pg[0].startswith('Template:Card')]
+    return out + TEMPLATES + card

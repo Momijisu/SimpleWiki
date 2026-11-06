@@ -3,7 +3,7 @@
     <title>Help:Editing</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -85,7 +85,7 @@ __NOTOC__
     <title>Help:Editing/Your first edit</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -180,7 +180,7 @@ Things you shouldn't change or should otherwise bear in mind:
     <title>Help:Editing/VisualEditor basics</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -321,7 +321,7 @@ Every picture you upload needs a licence; see [[Template:License/doc|choosing a 
     <title>Help:Editing/VisualEditor advanced</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -444,7 +444,7 @@ To add a field that isn't shown yet, use ''Add more information'' at the bottom 
     <title>Help:Editing/Source mode basics</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -601,7 +601,7 @@ You can then look at existing pages about similar things to see how they're laid
     <title>Help:Editing/Cheat sheet</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -679,7 +679,7 @@ This page is a '''cheat sheet''' to help you learn the basics of editing and for
     <title>Help:Editing/Advanced editing</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -747,7 +747,7 @@ Disambiguation pages also help readers find their way. Sometimes one name could 
     <title>Help:Editing/Citations</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -807,7 +807,7 @@ Click ''Insert'', and the reference appears as a small number at the end of the 
     <title>Help:Editing/Adding images</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -873,7 +873,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Help:Getting Started</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -885,7 +885,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Help:Images</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -897,7 +897,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Category:Editing guides</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -911,7 +911,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Template:Note/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>sanitized-css</model>
@@ -939,7 +939,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Template:Note</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -955,7 +955,7 @@ A note in a blue bar. Usage: &lt;code&gt;&lt;nowiki&gt;{{Note|Your text}}&lt;/no
     <title>Template:Main</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -969,7 +969,7 @@ Points from a section to the page that covers it in full. Goes right under the h
     <title>Template:See also</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -983,7 +983,7 @@ Points to related pages. Goes right under a heading. Usage: &lt;code&gt;&lt;nowi
     <title>Template:Tl</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T18:00:41Z</timestamp>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -991,6 +991,207 @@ Points to related pages. Goes right under a heading. Usage: &lt;code&gt;&lt;nowi
       <text xml:space="preserve">&lt;code&gt;&lt;nowiki&gt;{{&lt;/nowiki&gt;[[Template:{{{1}}}|{{{1}}}]]&lt;nowiki&gt;}}&lt;/nowiki&gt;&lt;/code&gt;&lt;noinclude&gt;
 Shows a template's name as code, linked to the template: &lt;code&gt;&lt;nowiki&gt;{{tl|Infobox character}}&lt;/nowiki&gt;&lt;/code&gt; gives {{tl|Infobox character}}. Used on help pages.
 [[Category:Help templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Card</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Editing guides</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Card/styles.css" /&gt;&lt;div class="rp-card"&gt;
+&lt;div class="rp-card-body"&gt;{{#if:{{{heading|}}}|&lt;h2 class="rp-card-heading"&gt;{{{title|}}}&lt;/h2&gt;|&lt;div class="rp-card-title"&gt;{{{title|}}}&lt;/div&gt;}}
+{{{text|}}}
+&lt;/div&gt;{{#if:{{{link|}}}|&lt;div class="rp-card-button rp-card-button--{{#ifexist:{{{link}}}|{{{colour|{{{color|blue}}}}}}|soon}}"&gt;[[{{{link}}}|{{#ifexist:{{{link}}}|{{{button|Read this guide}}}|Coming soon}}]]&lt;/div&gt;}}
+&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Template:Card/doc}}
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Card/styles.css</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Editing guides</comment>
+      <model>sanitized-css</model>
+      <format>text/css</format>
+      <text xml:space="preserve">/* Template:Card/styles.css: cards with a button along the bottom (TemplateStyles).
+   Put cards inside &lt;div class="rp-cards rp-cards--3"&gt; (or --2, --1) to lay them out. */
+.rp-cards {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 240px, 1fr ) );
+	gap: 8px;
+	margin: 1.6em 0;
+}
+.rp-cards--3 { grid-template-columns: repeat( 3, minmax( 0, 1fr ) ); }
+.rp-cards--2 { grid-template-columns: repeat( 2, minmax( 0, 1fr ) ); }
+.rp-cards--1 { grid-template-columns: minmax( 0, 1fr ); }
+.rp-cards--padded { padding: 0 20px; }
+
+.rp-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-width: 0;
+	overflow: hidden;
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.1 );
+	box-shadow: 0 1px 3px rgba( 0, 0, 0, 0.03 ), 0 1px 2px rgba( 0, 0, 0, 0.06 );
+	font-size: 0.875rem;
+	line-height: 1.6;
+	transition: box-shadow 0.2s ease;
+}
+.rp-card:hover {
+	box-shadow: 0 10px 20px rgba( 0, 0, 0, 0.0475 ), 0 6px 6px rgba( 0, 0, 0, 0.0575 );
+}
+.rp-card-body {
+	padding: 1.2rem;
+}
+.rp-card-body p:first-of-type {
+	margin-top: 0;
+}
+.rp-card-body p:last-child {
+	margin-bottom: 0;
+}
+.rp-card-title {
+	margin: 0 0 0.8rem;
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.2;
+}
+/* The big centred titles of the top cards */
+.rp-card .rp-card-heading {
+	margin: 0.2em auto 0.8rem;
+	padding: 0;
+	border: 0;
+	font-size: 1.6rem;
+	font-weight: 600;
+	line-height: 1.25;
+	text-align: center;
+}
+
+.rp-card-button a,
+.rp-card-button a:visited,
+.rp-card-button a.new {
+	display: block;
+	padding: 0.6rem;
+	color: #fff;
+	font-size: 0.875rem;
+	font-weight: 600;
+	letter-spacing: 0.25px;
+	text-align: center;
+	text-decoration: none;
+}
+.rp-card-button {
+	transition: opacity 0.2s ease;
+}
+.rp-card-button:hover {
+	opacity: 0.8;
+}
+.rp-card-button--blue { background: #3366cc; }
+.rp-card-button--green { background: #2e7d32; }
+.rp-card-button--orange { background: #ef6c00; }
+.rp-card-button--purple { background: #7e57c2; }
+.rp-card-button--red { background: #c62828; }
+.rp-card-button--grey,
+.rp-card-button--soon { background: rgba( 127, 127, 127, 0.45 ); }
+
+/* "Start a new page" boxes */
+.rp-create {
+	margin: 1em 0 1.6em;
+	padding: 1.2rem;
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.1 );
+}
+.rp-create .mw-inputbox-centered {
+	margin: 0.5em 0;
+}
+.rp-create form {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start !important;
+	gap: 8px;
+	text-align: left;
+}
+.rp-create .cdx-text-input {
+	flex: 0 1 280px;
+	min-width: 0;
+}
+.rp-create .cdx-text-input input {
+	width: 100%;
+}
+
+/* A note in a grey bar */
+.rp-note {
+	margin: 0.6rem 0 0.8rem;
+	padding: 10px 15px;
+	border-radius: 8px;
+	background: rgba( 127, 127, 127, 0.12 );
+	font-size: 0.875rem;
+	line-height: 1.4;
+	opacity: 0.9;
+}
+
+/* Tablets: two across; phones: one card per row */
+@media ( max-width: 1000px ) {
+	.rp-cards--3 { grid-template-columns: repeat( 2, minmax( 0, 1fr ) ); }
+}
+@media ( max-width: 720px ) {
+	.rp-cards--3,
+	.rp-cards--2 { grid-template-columns: minmax( 0, 1fr ); }
+	.rp-cards--padded { padding: 0; }
+}
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Card/doc</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:33:01Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Editing guides</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">A card with a title, some text and a coloured button along the bottom. Used on [[Help:Contents]].
+
+&lt;pre&gt;
+&lt;div class="rp-cards rp-cards--2"&gt;
+{{Card
+ | title  = Your first edits
+ | text   = A beginner's guide to VisualEditor.
+ | link   = Help:Editing/Your first edit
+ | button = Read this guide
+ | colour = blue
+}}
+{{Card | title = … | text = … | link = … }}
+&lt;/div&gt;
+&lt;/pre&gt;
+
+{| class="wikitable"
+! Value !! What it does
+|-
+| &lt;code&gt;title&lt;/code&gt; || The card's title.
+|-
+| &lt;code&gt;heading&lt;/code&gt; || &lt;code&gt;yes&lt;/code&gt; makes the title a big centred heading that also shows in the page's contents.
+|-
+| &lt;code&gt;text&lt;/code&gt; || The text (wikitext: links, lists and line breaks work).
+|-
+| &lt;code&gt;link&lt;/code&gt; || The page the button goes to. Leave it out for a card without a button. If the page doesn't exist yet, the button is grey and says "Coming soon" until someone writes it.
+|-
+| &lt;code&gt;button&lt;/code&gt; || The button's words. Default: "Read this guide".
+|-
+| &lt;code&gt;colour&lt;/code&gt; || &lt;code&gt;blue&lt;/code&gt; (default), &lt;code&gt;green&lt;/code&gt;, &lt;code&gt;orange&lt;/code&gt;, &lt;code&gt;purple&lt;/code&gt;, &lt;code&gt;red&lt;/code&gt; or &lt;code&gt;grey&lt;/code&gt;.
+|}
+
+Wrap the cards in a &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-cards rp-cards--3"&gt;&lt;/nowiki&gt;&lt;/code&gt; … &lt;code&gt;&lt;nowiki&gt;&lt;/div&gt;&lt;/nowiki&gt;&lt;/code&gt; to set how many go side by side: &lt;code&gt;rp-cards--3&lt;/code&gt;, &lt;code&gt;rp-cards--2&lt;/code&gt; or &lt;code&gt;rp-cards--1&lt;/code&gt; (one full-width card). Add &lt;code&gt;rp-cards--padded&lt;/code&gt; for a little space at the sides. On phones the cards stack.
+
+[[Category:Help templates]]</text>
     </revision>
   </page>
 </mediawiki>
