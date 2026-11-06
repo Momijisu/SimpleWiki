@@ -3,7 +3,7 @@
     <title>Main Page</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -15,7 +15,7 @@
     <title>Module:Main page</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>Scribunto</model>
@@ -362,7 +362,7 @@ return p
     <title>Module:Main page/config.json</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>json</model>
@@ -458,7 +458,7 @@ return p
     <title>Module:Main page/doc</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -513,7 +513,7 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
     <title>Template:Main page/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>sanitized-css</model>
@@ -691,8 +691,19 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
 	border-color: rgba( 127, 127, 127, 0.55 );
 	transform: translateY( -2px );
 }
-/* A picture fills the whole tile as it is (no dimming): make the art with its icon
-   included, and keep the left side plain enough for the label to read on. */
+/* Picture buttons: the art (skyline and icon, see-through) sits on the right, over a
+   dark fade that runs from solid on the left to clear on the right, so the label
+   always reads and the icon is never cut off. */
+.mp-dir--image {
+	min-height: 52px;
+	padding: 10px 16px;
+	border-color: transparent;
+	border-radius: 8px;
+	background: linear-gradient( to right, #000 0%, rgba( 0, 0, 0, 0.85 ) 35%, rgba( 0, 0, 0, 0.35 ) 100% );
+}
+.mp-dir--image:hover {
+	border-color: rgba( 255, 255, 255, 0.25 );
+}
 .mp-dir-bg {
 	position: absolute;
 	inset: 0;
@@ -709,11 +720,32 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
 	height: 100%;
 	max-width: none;
 	object-fit: cover;
+	object-position: right center;
 }
-.mp-dir--image {
-	background: none;
+/* The fade also goes over the left of the picture, for art that isn't see-through */
+.mp-dir--image::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: linear-gradient( to right, rgba( 0, 0, 0, 0.9 ) 0%, rgba( 0, 0, 0, 0.5 ) 35%, rgba( 0, 0, 0, 0 ) 65% );
+	pointer-events: none;
+}
+.mp-dir--image .mp-dir-text,
+.mp-dir--image .mp-dir-icon {
+	z-index: 2;
 }
 .mp-dir--image .mp-dir-text {
+	text-shadow: 0 1px 3px rgba( 0, 0, 0, 0.7 );
+}
+.mp-dir--image .mp-dir-label a,
+.mp-dir--image .mp-dir-count {
+	color: #fff;
+}
+.mp-dir--image .mp-dir-count {
+	opacity: 0.8;
+}
+.mp-dir-text {
 	text-shadow: 0 1px 3px rgba( 0, 0, 0, 0.6 );
 }
 .mp-dir--image .mp-dir-label a,

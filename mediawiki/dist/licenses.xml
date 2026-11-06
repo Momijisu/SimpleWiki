@@ -3,7 +3,7 @@
     <title>MediaWiki:Licenses</title>
     <ns>8</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -30,7 +30,7 @@
     <title>Template:License</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -47,7 +47,7 @@
     <title>Template:License/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>sanitized-css</model>
@@ -86,7 +86,7 @@
     <title>Template:License/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -135,7 +135,7 @@ The list on the upload page is set in [[MediaWiki:Licenses]]. All licence templa
     <title>Template:Screenshot</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -149,7 +149,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Template:Self</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -163,7 +163,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Template:Permission</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -177,7 +177,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Template:Server</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -191,7 +191,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Template:Fair use</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -205,7 +205,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Template:CC-BY-SA-4.0</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -219,7 +219,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Template:CC-BY-4.0</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -233,7 +233,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Template:CC0</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -247,7 +247,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Template:No license</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -261,7 +261,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:Files by license</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -273,7 +273,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:License templates</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -285,7 +285,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:In-game screenshots</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -299,7 +299,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:Own work</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -313,7 +313,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:Files used with permission</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -327,7 +327,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:Official Let's RP files</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -341,7 +341,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:Fair use files</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -355,7 +355,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:CC BY-SA 4.0 files</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -369,7 +369,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:CC BY 4.0 files</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -383,7 +383,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:Public domain files</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
@@ -397,7 +397,7 @@ The licence box for file pages. See [[Template:License/doc]] for all licences.
     <title>Category:Files with no license</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T01:23:17Z</timestamp>
+      <timestamp>2026-11-06T01:27:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Upload licences</comment>
       <model>wikitext</model>
