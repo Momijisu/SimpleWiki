@@ -15,7 +15,12 @@ if [ ! -f /data/LocalSettings.php ]; then
 	chown -R www-data:www-data /data
 	FRESH=1
 fi
-ln -sf /data/LocalSettings.php LocalSettings.php
+# MediaWiki reads LocalSettings.php from its own folder. A small real file there
+# loads the actual settings, which live with the database in /data. (Not a
+# symbolic link: on some Docker Desktop setups the web server can't follow it.)
+rm -f LocalSettings.php
+echo "<?php require '/data/LocalSettings.php';" > LocalSettings.php
+chown www-data:www-data LocalSettings.php
 run update --quick > /dev/null
 
 echo "== Importing dist/infoboxes.xml and dist/mainpage.xml"
