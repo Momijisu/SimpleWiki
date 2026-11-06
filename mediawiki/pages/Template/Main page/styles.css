@@ -315,12 +315,26 @@
 }
 .mp-featured-image {
 	position: relative;
+	overflow: hidden;
 }
 .mp-featured-image img {
 	display: block;
 	width: 100%;
 	height: 220px;
 	object-fit: cover;
+	transition: transform 0.4s ease;
+}
+/* Slow zoom on the picture when the card is hovered */
+.mp-featured:hover .mp-featured-image img {
+	transform: scale( 1.06 );
+}
+@media ( prefers-reduced-motion: reduce ) {
+	.mp-featured-image img {
+		transition: none;
+	}
+	.mp-featured:hover .mp-featured-image img {
+		transform: none;
+	}
 }
 .mp-featured-over {
 	position: absolute;
