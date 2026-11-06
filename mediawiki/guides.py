@@ -706,7 +706,7 @@ Click '''Choose file''' and pick the picture from your computer.
 
 {img('Adding images - choose file.png', 'Choosing the file')}
 
-Give the file a clear '''name''' in ''Destination filename''. Use what the picture shows, like ''Tony Ramirez portrait.jpg'' or ''Harbor Bank Heist getaway.png'', not the name your computer gave it. Add a short '''summary''' of what it shows and where it's from (whose stream, and when).
+Give the file a clear '''name''' in ''Destination filename''. Use what the picture shows, like ''Rosa Ramirez portrait.jpg'' or ''Harbor Bank Heist getaway.png'', not the name your computer gave it. Add a short '''summary''' of what it shows and where it's from (whose stream, and when).
 
 {img('Adding images - file details.png', 'The file name and summary')}
 

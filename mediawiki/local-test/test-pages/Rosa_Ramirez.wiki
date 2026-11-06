@@ -1,0 +1,18 @@
+{{Infobox character
+| status        = Active
+| focus         = Civilian
+| full_name     = Rosa Ramirez
+| gender        = Female
+| nationality   = American
+| occupation    = Waitress
+| employer      = UwU Cafe
+| residence     = Grove Street
+| family        = Tony Ramirez (son), Luis Ramirez (son)
+| played_by     = RosaPlays
+| first_seen    = May 2026
+| version       = 2.0
+}}
+'''Rosa Ramirez''' is a waitress at the UwU Cafe and the mother of [[Tony Ramirez]].
+
+== Background ==
+Rosa moved to Los Santos to be closer to her sons.
