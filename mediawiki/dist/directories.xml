@@ -3,7 +3,7 @@
     <title>Template:Directory card</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T21:06:09Z</timestamp>
+      <timestamp>2026-11-06T21:12:05Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -17,7 +17,7 @@
     <title>Template:Directory card/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T21:06:09Z</timestamp>
+      <timestamp>2026-11-06T21:12:05Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>sanitized-css</model>
@@ -149,7 +149,7 @@
     <title>Template:Directory card/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T21:06:09Z</timestamp>
+      <timestamp>2026-11-06T21:12:05Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -186,7 +186,7 @@ Put the cards inside &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-dcards"&gt;&lt;
     <title>Characters</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T21:06:09Z</timestamp>
+      <timestamp>2026-11-06T21:12:05Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -225,6 +225,7 @@ width=30
 &lt;div class="rp-dir-table"&gt;
 {{#dpl:
  |category        = Characters
+ |notnamespace    = Category
  |ordermethod     = title
  |count           = 500
  |include         = {Infobox character}:status:focus:occupation:affiliation:played_by:version
@@ -242,7 +243,7 @@ __NOTOC__</text>
     <title>Organizations</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T21:06:09Z</timestamp>
+      <timestamp>2026-11-06T21:12:05Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -289,6 +290,7 @@ width=30
 &lt;div class="rp-dir-table"&gt;
 {{#dpl:
  |category        = Organizations
+ |notnamespace    = Category
  |ordermethod     = title
  |count           = 500
  |include         = {Infobox organization}:type:status:leader:headquarters:version
@@ -306,7 +308,7 @@ __NOTOC__</text>
     <title>Server events</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T21:06:09Z</timestamp>
+      <timestamp>2026-11-06T21:12:05Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -343,6 +345,7 @@ width=30
 &lt;div class="rp-dir-table"&gt;
 {{#dpl:
  |category        = Events
+ |notnamespace    = Category
  |ordermethod     = title
  |count           = 500
  |include         = {Infobox event}:type:date:location:organised_by:outcome

@@ -183,6 +183,7 @@ width=30
 def dpl(category, template, fields, headers, empty):
     return ('<div class="rp-dir-table">\n{{#dpl:\n'
             f' |category        = {category}\n'
+            ' |notnamespace    = Category\n'
             ' |ordermethod     = title\n'
             ' |count           = 500\n'
             f' |include         = {{{template}}}:' + ':'.join(fields) + '\n'
