@@ -1,0 +1,121 @@
+These are the templates used on the Let's RP Wiki, grouped by what they're for. Click a template's name for its full instructions. New to templates? See [[Help:Editing/Advanced editing#Templates|how templates work]].
+
+== Infoboxes ==
+The box at the top right of an article, with its picture and key facts. In VisualEditor, use '''Insert → Template''' and type the infobox's name to get a form with every field. In the source editor, copy the blank layout from the template's page. Or start a new page with its infobox ready from the boxes on [[Help:Contents]].
+
+{| class="wikitable"
+! Template !! Shortcode !! Where it's used
+|-
+| [[Template:Infobox character|Infobox character]] || <code><nowiki>{{Infobox character}}</nowiki></code> || Top of character articles
+|-
+| [[Template:Infobox organization|Infobox organization]] || <code><nowiki>{{Infobox organization}}</nowiki></code> || Top of gang, business and Emergency Services articles
+|-
+| [[Template:Infobox event|Infobox event]] || <code><nowiki>{{Infobox event}}</nowiki></code> || Top of server event articles (heists, gang wars, trials and so on)
+|}
+
+== Notices ==
+Put these at the top of a page (or under a section heading, with <code>small=yes</code>) to flag work that needs doing or to warn readers. Each adds the page to a maintenance category, listed under [[:Category:Wiki maintenance]]. Most take an optional reason, and all take <code>date=</code>. Full list and options: [[Template:Notice/doc]].
+
+{| class="wikitable"
+! Template !! Shortcode !! Where it's used
+|-
+| [[Template:Stub|Stub]] || <code><nowiki>{{Stub}}</nowiki></code> || Short articles that need more
+|-
+| [[Template:Draft|Draft]] || <code><nowiki>{{Draft}}</nowiki></code> || Unfinished pages
+|-
+| [[Template:In use|In use]] || <code><nowiki>{{In use}}</nowiki></code> || While making a big edit; remove it when done
+|-
+| [[Template:Cleanup|Cleanup]] || <code><nowiki>{{Cleanup|reason}}</nowiki></code> || Pages needing better formatting or wording
+|-
+| [[Template:Expand section|Expand section]] || <code><nowiki>{{Expand section}}</nowiki></code> || A section that needs more
+|-
+| [[Template:Sources|Sources]] || <code><nowiki>{{Sources}}</nowiki></code> || Pages that need clips, VODs or screenshots
+|-
+| [[Template:Outdated|Outdated]] || <code><nowiki>{{Outdated|what changed}}</nowiki></code> || Information that's out of date
+|-
+| [[Template:Disputed|Disputed]] || <code><nowiki>{{Disputed}}</nowiki></code> || Pages whose accuracy is disputed
+|-
+| [[Template:Needs image|Needs image]] || <code><nowiki>{{Needs image}}</nowiki></code> || Pages that need a picture
+|-
+| [[Template:Merge|Merge]] || <code><nowiki>{{Merge|Other page}}</nowiki></code> || Suggest combining two pages
+|-
+| [[Template:Rename|Rename]] || <code><nowiki>{{Rename|New name}}</nowiki></code> || Suggest a new page name
+|-
+| [[Template:Delete|Delete]] || <code><nowiki>{{Delete|reason}}</nowiki></code> || Pages up for deletion; a moderator decides
+|-
+| [[Template:Spoiler|Spoiler]] || <code><nowiki>{{Spoiler}}</nowiki></code> || Pages revealing things characters don't know
+|-
+| [[Template:Archived|Archived]] || <code><nowiki>{{Archived|1.0}}</nowiki></code> || Pages about past versions of the server
+|-
+| [[Template:Disambiguation|Disambiguation]] || <code><nowiki>{{Disambiguation}}</nowiki></code> || Pages listing other pages that share a name
+|}
+
+=== Inline notes ===
+Small notes inside a sentence.
+
+{| class="wikitable"
+! Template !! Shortcode !! Where it's used
+|-
+| [[Template:Citation needed|Citation needed]] || <code><nowiki>{{cn}}</nowiki></code> || After a sentence that needs a source
+|-
+| [[Template:Clarify|Clarify]] || <code><nowiki>{{Clarify|question}}</nowiki></code> || After something unclear
+|}
+
+== Licences ==
+Every uploaded file needs one, to say where it comes from and who may use it. Picking a licence on [[Special:Upload]] adds the box for you. To change one later, edit the file page and put the new template under <code><nowiki>== Licensing ==</nowiki></code>. [[Template:License/doc]] explains which one to pick, and [[Help:Editing/Adding images]] walks through uploading.
+
+{| class="wikitable"
+! Template !! Shortcode !! Where it's used
+|-
+| [[Template:Screenshot|Screenshot]] || <code><nowiki>{{Screenshot}}</nowiki></code> || In-game screenshots and video stills, including your own
+|-
+| [[Template:Self|Self]] || <code><nowiki>{{Self}}</nowiki></code> || Your own work, shared under CC BY-SA 4.0
+|-
+| [[Template:Permission|Permission]] || <code><nowiki>{{Permission|name}}</nowiki></code> || Used with the creator's permission
+|-
+| [[Template:Server|Server]] || <code><nowiki>{{Server}}</nowiki></code> || Official Let's RP logos, artwork and announcements
+|-
+| [[Template:Fair use|Fair use]] || <code><nowiki>{{Fair use|owner}}</nowiki></code> || Real-world logos, covers and artwork
+|-
+| [[Template:CC-BY-SA-4.0|CC-BY-SA-4.0]] || <code><nowiki>{{CC-BY-SA-4.0}}</nowiki></code> || Someone else's work under CC BY-SA
+|-
+| [[Template:CC-BY-4.0|CC-BY-4.0]] || <code><nowiki>{{CC-BY-4.0}}</nowiki></code> || Someone else's work under CC BY
+|-
+| [[Template:CC0|CC0]] || <code><nowiki>{{CC0}}</nowiki></code> || Public domain
+|-
+| [[Template:No license|No license]] || <code><nowiki>{{No license}}</nowiki></code> || Unknown source; flagged for moderators
+|}
+
+== Help page templates ==
+For writing help pages and guides.
+
+{| class="wikitable"
+! Template !! Shortcode !! Where it's used
+|-
+| [[Template:Card|Card]] || <code><nowiki>{{Card|title=…|text=…|link=…}}</nowiki></code> || The cards with a button on [[Help:Contents]] and [[Help:Editing]]
+|-
+| [[Template:Note|Note]] || <code><nowiki>{{Note|text}}</nowiki></code> || A note in a blue bar
+|-
+| [[Template:Main|Main]] || <code><nowiki>{{Main|Page}}</nowiki></code> || Under a heading: points to the page that covers it in full
+|-
+| [[Template:See also|See also]] || <code><nowiki>{{See also|Page}}</nowiki></code> || Under a heading: points to related pages
+|-
+| [[Template:Tl|Tl]] || <code><nowiki>{{tl|Template name}}</nowiki></code> || Shows a template's name as a link, on help pages
+|}
+
+== Behind the scenes ==
+These power the templates above and the front page. You won't need to add them to articles.
+
+{| class="wikitable"
+! Template !! Shortcode !! Where it's used
+|-
+| [[Template:Notice|Notice]] || <code><nowiki>{{Notice|type=…|title=…|text=…|category=…}}</nowiki></code> || The shared box behind all the notices
+|-
+| [[Template:License|License]] || <code><nowiki>{{License|kind=…|title=…|text=…}}</nowiki></code> || The shared box behind all the licence templates
+|-
+| [[Module:Infobox]] || <code><nowiki>{{#invoke:Infobox|character}}</nowiki></code> || The engine behind the three infoboxes
+|-
+| [[Module:Main page]] || <code><nowiki>{{#invoke:Main page|render}}</nowiki></code> || The [[Main Page]]; its settings are in [[Module:Main page/config.json]]
+|}
+
+[[Category:Help]]
