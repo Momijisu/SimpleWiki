@@ -1,0 +1,101 @@
+<templatestyles src="Template:Card/styles.css" />
+Want to help but not sure where to start? These pages have been flagged as needing work. Pick one, fix what it needs, and remove the notice from the top when you're done. The lists update themselves as notices are added and removed.
+
+New to editing? Start with [[Help:Editing/Your first edit|your first edit]]. To flag a page yourself, add one of the [[Template:Notice/doc|notices]] to the top of it.
+
+<div class="rp-cards rp-cards--2">
+{{Card
+ | title  = Stubs: {{PAGESINCATEGORY:Stubs|pages}}
+ | text   = Short articles that need more written about them.
+ | link   = :Category:Stubs
+ | button = See all stubs
+ | colour = blue
+}}
+{{Card
+ | title  = Out of date: {{PAGESINCATEGORY:Outdated pages|pages}}
+ | text   = Pages where things have changed in the city since they were written.
+ | link   = :Category:Outdated pages
+ | button = See all out-of-date pages
+ | colour = orange
+}}
+{{Card
+ | title  = Needs cleaning up: {{PAGESINCATEGORY:Pages needing cleanup|pages}}
+ | text   = Pages that need better formatting, wording or layout.
+ | link   = :Category:Pages needing cleanup
+ | button = See all pages needing cleanup
+ | colour = orange
+}}
+{{Card
+ | title  = Needs a picture: {{PAGESINCATEGORY:Pages needing pictures|pages}}
+ | text   = Pages that need a screenshot or other picture.
+ | link   = :Category:Pages needing pictures
+ | button = See all pages needing pictures
+ | colour = purple
+}}
+</div>
+
+== Stubs ==
+Short articles that need more written about them. Tagged with <code><nowiki>{{Stub}}</nowiki></code>.
+
+{{#dpl:
+ |category         = Stubs
+ |ordermethod      = lastedit
+ |order            = ascending
+ |count            = 25
+ |include          = {Stub}:1:date
+ |table            = class="wikitable sortable" style="width:100%",-,What's missing,Flagged
+ |tablerow         = %%,%%
+ |resultsheader    = The {{PAGESINCATEGORY:Stubs|pages}} stubs, least recently edited first:
+ |noresultsheader  = No stubs right now. Nice work!
+ |suppresserrors   = true
+}}
+
+== Out of date ==
+Pages where things have changed in the city since they were written. Tagged with <code><nowiki>{{Outdated}}</nowiki></code>.
+
+{{#dpl:
+ |category         = Outdated pages
+ |ordermethod      = lastedit
+ |order            = ascending
+ |count            = 25
+ |include          = {Outdated}:1:date
+ |table            = class="wikitable sortable" style="width:100%",-,What's changed,Flagged
+ |tablerow         = %%,%%
+ |noresultsheader  = Nothing out of date right now. Nice work!
+ |suppresserrors   = true
+}}
+
+== Needs cleaning up ==
+Pages that need better formatting, wording or layout to match the [[Help:Style guide|style guide]]. Tagged with <code><nowiki>{{Cleanup}}</nowiki></code>.
+
+{{#dpl:
+ |category         = Pages needing cleanup
+ |ordermethod      = lastedit
+ |order            = ascending
+ |count            = 25
+ |include          = {Cleanup}:1:date
+ |table            = class="wikitable sortable" style="width:100%",-,What needs fixing,Flagged
+ |tablerow         = %%,%%
+ |noresultsheader  = Nothing needs cleaning up right now. Nice work!
+ |suppresserrors   = true
+}}
+
+== Needs a picture ==
+Pages that need a screenshot or other picture. See [[Help:Editing/Adding images|adding images]] for how to upload one. Tagged with <code><nowiki>{{Needs image}}</nowiki></code>.
+
+{{#dpl:
+ |category         = Pages needing pictures
+ |ordermethod      = lastedit
+ |order            = ascending
+ |count            = 25
+ |include          = {Needs image}:1:date
+ |table            = class="wikitable sortable" style="width:100%",-,Picture needed,Flagged
+ |tablerow         = %%,%%
+ |noresultsheader  = No pages are waiting for pictures right now. Nice work!
+ |suppresserrors   = true
+}}
+
+== More ways to help ==
+Every notice puts its page in a list, all gathered in [[:Category:Wiki maintenance]]: pages needing sources, sections to expand, disputed pages, pages to merge or rename, and more. [[Special:WantedPages|Wanted pages]] lists pages that are linked to but don't exist yet.
+
+[[Category:Help]]
