@@ -26,7 +26,7 @@ cp "/import/test-images/Lets RP Wiki logo.png" lrp-logo.png && chmod 644 lrp-log
 run update --quick > /dev/null
 
 echo "== Importing the files in dist/"
-for f in /import/dist/infoboxes.xml /import/dist/mainpage.xml /import/dist/licenses.xml /import/dist/help.xml /import/dist/guides.xml; do
+for f in /import/dist/infoboxes.xml /import/dist/mainpage.xml /import/dist/licenses.xml /import/dist/help.xml /import/dist/guides.xml /import/dist/notices.xml; do
 	if [ -f "$f" ]; then
 		run importDump --username-prefix=tpl "$f" > /dev/null 2>&1 && echo "   $(basename "$f"): imported" || echo "   $(basename "$f"): FAILED"
 	fi

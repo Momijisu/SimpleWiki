@@ -8,6 +8,7 @@
                       templates and their categories (see licenses.py)
   dist/help.xml       the help hub (Help:Contents) and the Card template (see help.py)
   dist/guides.xml     the editing guides, Help:Editing and its sub-pages (see guides.py)
+  dist/notices.xml    notice templates for wiki maintenance: Stub, Draft, Cleanup... (see notices.py)
 
 Hand-written pages live in pages/ (the Lua module and the CSS). The
 templates, their documentation and their "preload" starter pages are
@@ -18,6 +19,7 @@ import json
 import guides
 import help as helppages
 import licenses
+import notices
 from datetime import datetime, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -414,7 +416,8 @@ if __name__ == '__main__':
     for name, built, summary in (('infoboxes.xml', pages(), 'Infobox templates'), ('mainpage.xml', mainpage_pages(), 'Front page'),
                                   ('licenses.xml', licenses.pages(), 'Upload licences'),
                                   ('help.xml', helppages.pages(), 'Help pages'),
-                                  ('guides.xml', guides.pages(), 'Editing guides')):
+                                  ('guides.xml', guides.pages(), 'Editing guides'),
+                                  ('notices.xml', notices.pages(), 'Notice templates')):
         (dist / name).write_text(xml(built, summary))
         print(f'Wrote {dist / name} with {len(built)} pages:')
         for p in built:

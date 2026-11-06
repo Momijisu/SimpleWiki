@@ -1,0 +1,847 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" version="0.11" xml:lang="en">
+  <page>
+    <title>Template:Notice</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Notice/styles.css" /&gt;&lt;div class="rp-notice rp-notice--{{{type|notice}}} {{#if:{{{small|}}}|rp-notice--small}}" role="note"&gt;
+&lt;div class="rp-notice-icon" aria-hidden="true"&gt;{{{icon|{{#switch:{{{type|notice}}}|delete=✕|content=!|style=✎|move=⇄|archive=▤|#default=i}}}}}&lt;/div&gt;
+&lt;div class="rp-notice-body"&gt;{{#if:{{{title|}}}|&lt;div class="rp-notice-title"&gt;{{{title}}}&lt;/div&gt;}}&lt;div class="rp-notice-text"&gt;{{{text|}}}{{#if:{{{date|}}}|&lt;span class="rp-notice-date"&gt; ({{{date}}})&lt;/span&gt;}}&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;{{#if:{{{category|}}}|{{#ifeq:{{NAMESPACE}}|{{ns:Template}}||{{#if:{{{nocat|}}}||[[Category:{{{category}}}]]}}}}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Template:Notice/doc}}
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Notice/styles.css</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>sanitized-css</model>
+      <format>text/css</format>
+      <text xml:space="preserve">/* Template:Notice/styles.css: notice boxes for wiki maintenance (TemplateStyles). */
+.rp-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	box-sizing: border-box;
+	margin: 0 0 1em;
+	padding: 10px 14px;
+	border: 1px solid rgba( 127, 127, 127, 0.28 );
+	border-left: 4px solid rgba( 59, 130, 246, 0.85 );
+	border-radius: 8px;
+	background: rgba( 59, 130, 246, 0.08 );
+	font-size: 0.875rem;
+	line-height: 1.5;
+	clear: both;
+}
+.rp-notice-icon {
+	flex: none;
+	width: 26px;
+	height: 26px;
+	margin-top: 1px;
+	border-radius: 50%;
+	background: rgba( 59, 130, 246, 0.85 );
+	color: #fff;
+	font-size: 0.9rem;
+	font-weight: 700;
+	line-height: 26px;
+	text-align: center;
+}
+.rp-notice-body {
+	flex: 1;
+	min-width: 0;
+}
+.rp-notice-title {
+	font-weight: 600;
+}
+.rp-notice-date {
+	opacity: 0.7;
+	font-size: 0.8125rem;
+}
+.rp-notice-text p {
+	margin: 0.3em 0 0;
+}
+
+/* Colours by type */
+.rp-notice--delete { border-left-color: rgba( 239, 68, 68, 0.9 ); background: rgba( 239, 68, 68, 0.1 ); }
+.rp-notice--delete .rp-notice-icon { background: rgba( 220, 38, 38, 0.95 ); }
+.rp-notice--content { border-left-color: rgba( 249, 115, 22, 0.9 ); background: rgba( 249, 115, 22, 0.09 ); }
+.rp-notice--content .rp-notice-icon { background: rgba( 234, 88, 12, 0.95 ); }
+.rp-notice--style { border-left-color: rgba( 234, 179, 8, 0.9 ); background: rgba( 234, 179, 8, 0.09 ); }
+.rp-notice--style .rp-notice-icon { background: rgba( 202, 138, 4, 0.95 ); }
+.rp-notice--move { border-left-color: rgba( 168, 85, 247, 0.9 ); background: rgba( 168, 85, 247, 0.09 ); }
+.rp-notice--move .rp-notice-icon { background: rgba( 147, 51, 234, 0.95 ); }
+.rp-notice--archive { border-left-color: rgba( 127, 127, 127, 0.7 ); background: rgba( 127, 127, 127, 0.1 ); }
+.rp-notice--archive .rp-notice-icon { background: rgba( 107, 114, 128, 0.95 ); }
+
+/* Small: for sections */
+.rp-notice--small {
+	padding: 6px 10px;
+	font-size: 0.8125rem;
+}
+.rp-notice--small .rp-notice-icon {
+	width: 20px;
+	height: 20px;
+	font-size: 0.75rem;
+	line-height: 20px;
+}
+
+/* Inline notes: [citation needed] */
+.rp-inline-note {
+	font-size: 0.75em;
+	font-style: italic;
+	white-space: nowrap;
+	vertical-align: super;
+	line-height: 1;
+}
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Notice/doc</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Notices flag pages that need work, or warn readers. Put a notice at the very top of the page (or under a section heading, for one section). Every notice adds the page to a maintenance category, so moderators and editors can find what needs doing: see [[:Category:Wiki maintenance]].
+
+Most notices take an optional reason as their first value, and all take &lt;code&gt;date=&lt;/code&gt; (e.g. &lt;code&gt;&lt;nowiki&gt;{{Cleanup|date=June 2026}}&lt;/nowiki&gt;&lt;/code&gt;), &lt;code&gt;small=yes&lt;/code&gt; (a smaller box, for sections) and &lt;code&gt;nocat=yes&lt;/code&gt; (no category, for examples).
+
+== Notices ==
+{| class="wikitable" style="width:100%"
+! Template !! Use
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Stub}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Stubs|Stubs]] || &lt;code&gt;1&lt;/code&gt; = what's missing, e.g. &lt;code&gt;&lt;nowiki&gt;{{Stub|their time in the LSPD}}&lt;/nowiki&gt;&lt;/code&gt;.
+|-
+| colspan="2" | {{Stub|their time in the LSPD|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Draft}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Drafts|Drafts]] || &lt;code&gt;1&lt;/code&gt; = who is writing it.
+|-
+| colspan="2" | {{Draft|[[User:Admin|Admin]]|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{In use}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages in use|Pages in use]] || &lt;code&gt;1&lt;/code&gt; = who is editing. Remove it when you finish; moderators remove forgotten ones after a day.
+|-
+| colspan="2" | {{In use|[[User:Admin|Admin]]|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Cleanup}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages needing cleanup|Pages needing cleanup]] || &lt;code&gt;1&lt;/code&gt; = what needs fixing.
+|-
+| colspan="2" | {{Cleanup|The history section is one long paragraph.|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Expand section}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages needing expansion|Pages needing expansion]] || Goes under a section heading. &lt;code&gt;1&lt;/code&gt; = what's missing.
+|-
+| colspan="2" | {{Expand section|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Sources}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages needing sources|Pages needing sources]] || 
+|-
+| colspan="2" | {{Sources|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Outdated}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Outdated pages|Outdated pages]] || &lt;code&gt;1&lt;/code&gt; = what's changed.
+|-
+| colspan="2" | {{Outdated|He left the Saints in August 2026.|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Disputed}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Disputed pages|Disputed pages]] || &lt;code&gt;1&lt;/code&gt; = what's disputed.
+|-
+| colspan="2" | {{Disputed|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Needs image}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages needing pictures|Pages needing pictures]] || &lt;code&gt;1&lt;/code&gt; = what kind of picture, e.g. &lt;code&gt;&lt;nowiki&gt;{{Needs image|a portrait}}&lt;/nowiki&gt;&lt;/code&gt;. Not needed for the main picture: an infobox with no picture already shows a placeholder.
+|-
+| colspan="2" | {{Needs image|a portrait|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Merge}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages to merge|Pages to merge]] || &lt;code&gt;1&lt;/code&gt; = the other page; &lt;code&gt;2&lt;/code&gt; = why (optional).
+|-
+| colspan="2" | {{Merge|Southside Saints (gang)|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Rename}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages to rename|Pages to rename]] || &lt;code&gt;1&lt;/code&gt; = the suggested name; &lt;code&gt;2&lt;/code&gt; = why (optional).
+|-
+| colspan="2" | {{Rename|Antonio Ramirez|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Delete}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Candidates for deletion|Candidates for deletion]] || &lt;code&gt;1&lt;/code&gt; = why. Only moderators delete pages.
+|-
+| colspan="2" | {{Delete|Duplicate of Tony Ramirez|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Spoiler}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages with spoilers|Pages with spoilers]] || &lt;code&gt;1&lt;/code&gt; = what it reveals, e.g. &lt;code&gt;&lt;nowiki&gt;{{Spoiler|who planned the heist}}&lt;/nowiki&gt;&lt;/code&gt;.
+|-
+| colspan="2" | {{Spoiler|who planned the heist|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Archived}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Archived pages|Archived pages]] || &lt;code&gt;1&lt;/code&gt; = the version, e.g. &lt;code&gt;&lt;nowiki&gt;{{Archived|1.0}}&lt;/nowiki&gt;&lt;/code&gt;.
+|-
+| colspan="2" | {{Archived|1.0|nocat=yes}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Disambiguation}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Disambiguation pages|Disambiguation pages]] || Goes at the top of a disambiguation page, above a list of the pages. &lt;code&gt;1&lt;/code&gt; = the shared name (default: this page's name).
+|-
+| colspan="2" | {{Disambiguation|nocat=yes}}
+|}
+
+== Inline notes ==
+Small notes inside a sentence.
+{| class="wikitable"
+! Template !! Use
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Citation needed}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages with unsourced statements|Pages with unsourced statements]] || After a sentence that needs a source: &lt;code&gt;&lt;nowiki&gt;He ran the city's biggest garage.{{Citation needed}}&lt;/nowiki&gt;&lt;/code&gt;. Short form: &lt;code&gt;&lt;nowiki&gt;{{cn}}&lt;/nowiki&gt;&lt;/code&gt;.&lt;br/&gt;Gives: He ran the city's biggest garage.{{Citation needed}}
+|-
+| &lt;code&gt;&lt;nowiki&gt;{{Clarify}}&lt;/nowiki&gt;&lt;/code&gt;&lt;br/&gt;[[:Category:Pages needing clarification|Pages needing clarification]] || After something unclear: &lt;code&gt;&lt;nowiki&gt;{{Clarify|which garage?}}&lt;/nowiki&gt;&lt;/code&gt; (the text shows when you hover).&lt;br/&gt;Gives: He ran the city's biggest garage.{{Clarify}}
+|}
+
+== Making a new notice ==
+All notices use &lt;code&gt;&lt;nowiki&gt;{{Notice}}&lt;/nowiki&gt;&lt;/code&gt;:
+&lt;pre&gt;{{Notice
+ | type     = content
+ | title    = Short title (optional)
+ | text     = What's wrong, and how to help.
+ | category = Pages needing something
+}}&lt;/pre&gt;
+&lt;code&gt;type&lt;/code&gt; sets the colour and icon: &lt;code&gt;delete&lt;/code&gt; (red), &lt;code&gt;content&lt;/code&gt; (orange), &lt;code&gt;style&lt;/code&gt; (yellow), &lt;code&gt;notice&lt;/code&gt; (blue), &lt;code&gt;move&lt;/code&gt; (purple) or &lt;code&gt;archive&lt;/code&gt; (grey). &lt;code&gt;icon&lt;/code&gt; changes the symbol. The box's look is in [[Template:Notice/styles.css]].
+
+[[Category:Notice templates]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Stub</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=notice|title=|text=This article is a '''stub'''. You can help the Let's RP Wiki by &lt;span class='plainlinks'&gt;[{{fullurl:{{FULLPAGENAME}}|action=edit}} adding to it]&lt;/span&gt;{{#if:{{{1|}}}|&amp;#58; {{{1}}}|.}}|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Stubs}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Stub|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Draft</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=notice|title=This page is a draft|text=It isn't finished yet and may change a lot{{#if:{{{1|}}}|. Being written by {{{1}}}}}. Feel free to help, or leave a note on the [[{{TALKPAGENAME}}|talk page]].|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Drafts}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Draft|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:In use</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=move|title=Being edited right now|text={{#if:{{{1|}}}|{{{1}}} is|Someone is}} making a big edit to this page. To avoid edit conflicts, please wait before editing. Remove this notice when you're done.|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Pages in use}}&lt;/includeonly&gt;&lt;noinclude&gt;{{In use|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Cleanup</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=style|title=This page needs cleaning up|text={{#if:{{{1|}}}|{{{1}}}|It may need better formatting, wording or layout to match the [[Help:Style guide|style guide]].}}|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Pages needing cleanup}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Cleanup|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Expand section</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=content|title=|text=This section needs more detail. You can help by &lt;span class='plainlinks'&gt;[{{fullurl:{{FULLPAGENAME}}|action=edit}} adding to it]&lt;/span&gt;{{#if:{{{1|}}}|&amp;#58; {{{1}}}|.}}|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Pages needing expansion}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Expand section|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Sources</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=content|title=This page needs sources|text=Please help by adding clips, VODs or screenshots that back up what it says. See [[Help:Editing/Citations|citing sources]].|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Pages needing sources}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Sources|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Outdated</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=content|title=This page may be out of date|text={{#if:{{{1|}}}|{{{1}}}|Things have changed in the city since it was written.}} Please help update it.|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Outdated pages}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Outdated|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Disputed</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=content|title=Disputed|text=The accuracy of this page is disputed{{#if:{{{1|}}}|&amp;#58; {{{1}}}|.}} See the [[{{TALKPAGENAME}}|talk page]] before relying on it.|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Disputed pages}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Disputed|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Needs image</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=style|title=|text=This page needs {{#if:{{{1|}}}|{{{1}}}|a picture}}. If you have one, [[Help:Editing/Adding images|upload it and add it]].|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Pages needing pictures}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Needs image|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Merge</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=move|title=|text=It has been suggested that this page be '''merged''' with [[{{{1|?}}}]].{{#if:{{{2|}}}| Reason: {{{2}}}}} Discuss on the [[{{TALKPAGENAME}}|talk page]].|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Pages to merge}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Merge|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Rename</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=move|title=|text=It has been suggested that this page be '''renamed''' to [[{{{1|?}}}]].{{#if:{{{2|}}}| Reason: {{{2}}}}} Discuss on the [[{{TALKPAGENAME}}|talk page]].|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Pages to rename}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Rename|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Delete</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=delete|title=This page is up for deletion|text=Reason: {{{1|no reason given}}}. If you disagree, explain why on the [[{{TALKPAGENAME}}|talk page]]. A moderator will decide.|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Candidates for deletion}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Delete|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Spoiler</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=content|title=Spoiler warning|text=This page reveals {{#if:{{{1|}}}|{{{1}}}|things some characters don't know}}. Everything on the wiki is out of character: don't use it in roleplay.|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Pages with spoilers}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Spoiler|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Archived</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=archive|title=Archived|text=This page is about {{#if:{{{1|}}}|Let's RP {{{1}}}, a past version of the server|a past version of the server}}. It is kept as a record and is no longer updated.|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Archived pages}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Archived|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Disambiguation</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;{{Notice|type=notice|title=|text='''{{{1|{{PAGENAME}}}}}''' may refer to more than one page. If a link led you here, you may want to change it to point straight to the right one.|date={{{date|}}}|small={{{small|}}}|nocat={{{nocat|}}}|category=Disambiguation pages}}&lt;/includeonly&gt;&lt;noinclude&gt;{{Disambiguation|nocat=yes}}
+
+A notice for wiki maintenance. See [[Template:Notice/doc]] for all notices.
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Citation needed</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Notice/styles.css" /&gt;&lt;span class="rp-inline-note" title="{{{1|}}}"&gt;[[Help:Editing/Citations|[citation needed]]]{{#if:{{{date|}}}|&lt;span title="{{{date}}}"&gt;&lt;/span&gt;}}&lt;/span&gt;{{#ifeq:{{NAMESPACE}}|{{ns:Template}}||[[Category:Pages with unsourced statements]]}}&lt;/includeonly&gt;&lt;noinclude&gt;Example: the city was quiet that night.{{Citation needed}}
+
+An inline note. See [[Template:Notice/doc]].
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Clarify</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Notice/styles.css" /&gt;&lt;span class="rp-inline-note" title="{{{1|}}}"&gt;[[Help:Editing/Citations|[clarification needed]]]{{#if:{{{date|}}}|&lt;span title="{{{date}}}"&gt;&lt;/span&gt;}}&lt;/span&gt;{{#ifeq:{{NAMESPACE}}|{{ns:Template}}||[[Category:Pages needing clarification]]}}&lt;/includeonly&gt;&lt;noinclude&gt;Example: the city was quiet that night.{{Clarify}}
+
+An inline note. See [[Template:Notice/doc]].
+[[Category:Notice templates]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Cn</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:Citation needed]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Fact</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:Citation needed]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Wip</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:In use]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Under construction</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:Draft]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Unreferenced</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:Sources]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Update</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:Outdated]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Disambig</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:Disambiguation]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Speedy</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:Delete]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Delete me</title>
+    <ns>10</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">#REDIRECT [[Template:Delete]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Wiki maintenance</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages that need work, sorted by what they need. Added by the notices on [[Template:Notice/doc]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Notice templates</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Notices for wiki maintenance. See [[Template:Notice/doc]].
+
+[[Category:Help templates]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Stubs</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Drafts</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages in use</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages needing cleanup</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages needing expansion</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages needing sources</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Outdated pages</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Disputed pages</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages needing pictures</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages to merge</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages to rename</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Candidates for deletion</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages with spoilers</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Archived pages</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Pages about past versions of the server, kept as a record.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Disambiguation pages</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">Pages that list other pages sharing a name.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages with unsourced statements</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pages needing clarification</title>
+    <ns>14</ns>
+    <revision>
+      <timestamp>2026-11-06T18:51:47Z</timestamp>
+      <contributor><username>Wiki setup import</username></contributor>
+      <comment>Notice templates</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">__HIDDENCAT__
+Pages tagged with a notice that adds them here. See [[Template:Notice/doc]].
+
+[[Category:Wiki maintenance]]</text>
+    </revision>
+  </page>
+</mediawiki>
