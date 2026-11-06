@@ -3,7 +3,7 @@
     <title>Help:Editing</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -85,7 +85,7 @@ __NOTOC__
     <title>Help:Editing/Your first edit</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -180,7 +180,7 @@ Things you shouldn't change or should otherwise bear in mind:
     <title>Help:Editing/VisualEditor basics</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -321,7 +321,7 @@ Every picture you upload needs a licence; see [[Template:License/doc|choosing a 
     <title>Help:Editing/VisualEditor advanced</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -444,7 +444,7 @@ To add a field that isn't shown yet, use ''Add more information'' at the bottom 
     <title>Help:Editing/Source mode basics</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -544,10 +544,10 @@ Links should fit in with the rest of the sentence. You can do this in a few ways
 === Images ===
 * Show a picture by linking to its file, like this: &lt;nowiki&gt;[[File:The file's name.png]]&lt;/nowiki&gt;. You must use the exact file name, including its spelling, capitals, spaces and ending (.png, .jpg...).
 * You'll usually want to set the size and position of the picture:
-** Adding &lt;code&gt;|thumb|left&lt;/code&gt;, &lt;code&gt;|thumb|right&lt;/code&gt; or &lt;code&gt;|thumb|center&lt;/code&gt; after the file name puts it on that side of the page, in a frame, e.g. &lt;nowiki&gt;[[File:Example portrait.png|thumb|left]]&lt;/nowiki&gt;.
-** Adding a width like &lt;code&gt;|200px&lt;/code&gt; in the same place sets how wide it is. E.g. &lt;nowiki&gt;[[File:Example portrait.png|thumb|center|200px|A character portrait]]&lt;/nowiki&gt; adds a centred picture 200 pixels wide, with a caption:
+** Adding &lt;code&gt;|thumb|left&lt;/code&gt;, &lt;code&gt;|thumb|right&lt;/code&gt; or &lt;code&gt;|thumb|center&lt;/code&gt; after the file name puts it on that side of the page, in a frame, e.g. &lt;nowiki&gt;[[File:Example portrait.jpg|thumb|left]]&lt;/nowiki&gt;.
+** Adding a width like &lt;code&gt;|200px&lt;/code&gt; in the same place sets how wide it is. E.g. &lt;nowiki&gt;[[File:Example portrait.jpg|thumb|center|200px|A character portrait]]&lt;/nowiki&gt; adds a centred picture 200 pixels wide, with a caption:
 
-[[File:Example portrait.png|thumb|center|200px|A character portrait]]
+[[File:Example portrait.jpg|thumb|center|200px|A character portrait]]
 
 * You can also add pictures the same way as in the visual mode. See [[Help:Editing/VisualEditor basics#Images|this guide]] for more details.
 
@@ -601,7 +601,7 @@ You can then look at existing pages about similar things to see how they're laid
     <title>Help:Editing/Cheat sheet</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -646,7 +646,7 @@ This page is a '''cheat sheet''' to help you learn the basics of editing and for
 | ''Sends readers straight to Target page''
 |-
 | Picture
-| &lt;code&gt;&lt;nowiki&gt;[[File:Example portrait.png|thumb|right|200px|Caption]]&lt;/nowiki&gt;&lt;/code&gt;
+| &lt;code&gt;&lt;nowiki&gt;[[File:Example portrait.jpg|thumb|right|200px|Caption]]&lt;/nowiki&gt;&lt;/code&gt;
 | ''A 200-pixel picture on the right, with a caption''
 |-
 | Template
@@ -679,7 +679,7 @@ This page is a '''cheat sheet''' to help you learn the basics of editing and for
     <title>Help:Editing/Advanced editing</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -747,7 +747,7 @@ Disambiguation pages also help readers find their way. Sometimes one name could 
     <title>Help:Editing/Citations</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -807,7 +807,7 @@ Click ''Insert'', and the reference appears as a small number at the end of the 
     <title>Help:Editing/Adding images</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -825,7 +825,7 @@ Click '''Choose file''' and pick the picture from your computer.
 
 [[File:Adding images - choose file.png|500px|center|thumb|Choosing the file]]
 
-Give the file a clear '''name''' in ''Destination filename''. Use what the picture shows, like ''Tony Ramirez portrait.png'' or ''Harbor Bank Heist getaway.png'', not the name your computer gave it. Add a short '''summary''' of what it shows and where it's from (whose stream, and when).
+Give the file a clear '''name''' in ''Destination filename''. Use what the picture shows, like ''Tony Ramirez portrait.jpg'' or ''Harbor Bank Heist getaway.png'', not the name your computer gave it. Add a short '''summary''' of what it shows and where it's from (whose stream, and when).
 
 [[File:Adding images - file details.png|500px|center|thumb|The file name and summary]]
 
@@ -873,7 +873,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Help:Getting Started</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -885,7 +885,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Help:Images</title>
     <ns>12</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -897,7 +897,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Category:Editing guides</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -911,7 +911,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Template:Note/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>sanitized-css</model>
@@ -939,7 +939,7 @@ For more than one picture (for example, a character's look in different versions
     <title>Template:Note</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -955,7 +955,7 @@ A note in a blue bar. Usage: &lt;code&gt;&lt;nowiki&gt;{{Note|Your text}}&lt;/no
     <title>Template:Main</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -969,7 +969,7 @@ Points from a section to the page that covers it in full. Goes right under the h
     <title>Template:See also</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>
@@ -983,7 +983,7 @@ Points to related pages. Goes right under a heading. Usage: &lt;code&gt;&lt;nowi
     <title>Template:Tl</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T17:49:00Z</timestamp>
+      <timestamp>2026-11-06T17:54:50Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Editing guides</comment>
       <model>wikitext</model>

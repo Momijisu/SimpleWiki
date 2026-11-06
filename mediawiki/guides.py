@@ -507,10 +507,10 @@ Links should fit in with the rest of the sentence. You can do this in a few ways
 === Images ===
 * Show a picture by linking to its file, like this: <nowiki>[[File:The file's name.png]]</nowiki>. You must use the exact file name, including its spelling, capitals, spaces and ending (.png, .jpg...).
 * You'll usually want to set the size and position of the picture:
-** Adding <code>|thumb|left</code>, <code>|thumb|right</code> or <code>|thumb|center</code> after the file name puts it on that side of the page, in a frame, e.g. <nowiki>[[File:Example portrait.png|thumb|left]]</nowiki>.
-** Adding a width like <code>|200px</code> in the same place sets how wide it is. E.g. <nowiki>[[File:Example portrait.png|thumb|center|200px|A character portrait]]</nowiki> adds a centred picture 200 pixels wide, with a caption:
+** Adding <code>|thumb|left</code>, <code>|thumb|right</code> or <code>|thumb|center</code> after the file name puts it on that side of the page, in a frame, e.g. <nowiki>[[File:Example portrait.jpg|thumb|left]]</nowiki>.
+** Adding a width like <code>|200px</code> in the same place sets how wide it is. E.g. <nowiki>[[File:Example portrait.jpg|thumb|center|200px|A character portrait]]</nowiki> adds a centred picture 200 pixels wide, with a caption:
 
-[[File:Example portrait.png|thumb|center|200px|A character portrait]]
+[[File:Example portrait.jpg|thumb|center|200px|A character portrait]]
 
 * You can also add pictures the same way as in the visual mode. See [[Help:Editing/VisualEditor basics#Images|this guide]] for more details.
 
@@ -581,7 +581,7 @@ This page is a '''cheat sheet''' to help you learn the basics of editing and for
           "<code><nowiki>[https://www.example.org Text to show]</nowiki></code><br /><code><nowiki>[https://www.example.org]</nowiki></code><br /><code><nowiki>https://www.example.org</nowiki></code>",
           "[https://www.example.org Text to show]<br />[https://www.example.org]<br />https://www.example.org", 'to other websites') \
     + row('Redirect to another page', "<code><nowiki>#REDIRECT [[Target page]]</nowiki></code>", "''Sends readers straight to Target page''", 'the only thing on the page') \
-    + row('Picture', "<code><nowiki>[[File:Example portrait.png|thumb|right|200px|Caption]]</nowiki></code>", "''A 200-pixel picture on the right, with a caption''") \
+    + row('Picture', "<code><nowiki>[[File:Example portrait.jpg|thumb|right|200px|Caption]]</nowiki></code>", "''A 200-pixel picture on the right, with a caption''") \
     + row('Template', "<code><nowiki>{{Infobox character}}</nowiki></code>", "''Adds the template; see [[Help:Templates]]''") \
     + row('Section headings',
           "<code><nowiki>== Level 1 ==</nowiki></code><br /><code><nowiki>=== Level 2 ===</nowiki></code><br /><code><nowiki>==== Level 3 ====</nowiki></code><br /><code><nowiki>===== Level 4 =====</nowiki></code>",
@@ -706,7 +706,7 @@ Click '''Choose file''' and pick the picture from your computer.
 
 {img('Adding images - choose file.png', 'Choosing the file')}
 
-Give the file a clear '''name''' in ''Destination filename''. Use what the picture shows, like ''Tony Ramirez portrait.png'' or ''Harbor Bank Heist getaway.png'', not the name your computer gave it. Add a short '''summary''' of what it shows and where it's from (whose stream, and when).
+Give the file a clear '''name''' in ''Destination filename''. Use what the picture shows, like ''Tony Ramirez portrait.jpg'' or ''Harbor Bank Heist getaway.png'', not the name your computer gave it. Add a short '''summary''' of what it shows and where it's from (whose stream, and when).
 
 {img('Adding images - file details.png', 'The file name and summary')}
 
