@@ -1,0 +1,29 @@
+{{Infobox character
+| status        = Active
+| focus         = Criminal
+| full_name     = Antonio "Tony" Ramirez
+| nicknames     = Two-Times
+| date_of_birth = 3 March 1992
+| gender        = Male
+| nationality   = American
+| occupation    = Mechanic
+| employer      = [[Big Rig Customs]]
+| affiliation   = [[Southside Saints]]
+| rank          = Soldier
+| residence     = Grove Street
+| family        = * [[Rosa Ramirez]] (mother)
+* [[Luis Ramirez]] (brother)
+| played_by     = TwoTimesTony
+| first_seen    = March 2026
+| version       = 2.0
+}}
+'''Tony Ramirez''' is a mechanic by day and the [[Southside Saints]]' getaway driver by night.
+
+== Background ==
+Born and raised on the south side, Tony learned to drive in his uncle's tow truck.
+
+== Personality ==
+Loud, loyal and impossible to stay mad at.
+
+== Notable events ==
+* Drove the getaway car in the [[Harbor Bank Heist]].

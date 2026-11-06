@@ -1,0 +1,23 @@
+# A local test copy of the Let's RP wiki. From this folder:
+#   docker compose up --build        start it (then open http://localhost:8080)
+#   docker compose down              stop it (your test wiki is kept)
+#   docker compose down -v           stop it and wipe it, to start fresh
+services:
+  wiki:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      PORT: "8080"
+      ADMIN_PASSWORD: "LocalTestPass123"
+    volumes:
+      - wiki-data:/data
+      - wiki-images:/var/www/html/images
+      - ../dist:/import/dist:ro
+      - ../files:/import/files:ro
+      - ./images:/import/test-images:ro
+      - ./test-pages:/import/test-pages:ro
+
+volumes:
+  wiki-data:
+  wiki-images:

@@ -1,0 +1,13 @@
+{{Infobox character
+| status         = Deceased
+| focus          = criminal
+| full_name      = Silas Josiah Crane
+| date_of_birth  = 1858
+| occupation     = Outlaw
+| died           = 3 October 2025
+| cause_of_death = Gunshot
+| killed_by      = [[Sheriff Eli Mercer]]
+| played_by      = ParsonSi
+| version        = 1.0
+}}
+A preacher who stopped believing.

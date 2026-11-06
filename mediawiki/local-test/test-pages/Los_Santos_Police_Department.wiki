@@ -1,0 +1,10 @@
+{{Infobox organization
+| type         = emergency
+| subtype      = Police
+| status       = Active
+| leader       = [[Chief Ray Holloway]]
+| jurisdiction = City of Los Santos
+| divisions    = Patrol, Detectives, Air Support
+| ranks        = Chief, Captain, Sergeant, Officer, Cadet
+}}
+The city's police.

@@ -1,0 +1,14 @@
+{{Infobox event
+| type         = Heist
+| date         = 14 June 2026
+| location     = Harbor Savings & Loan
+| organised_by = [[Southside Saints]]
+| participants = [[Tony Ramirez]], [[Marisol Vega]]
+| outcome      = Robbers escaped with $2.1M
+| casualties   = None
+| arrests      = One
+| next         = [[Harbor Heist II]]
+| media        = [https://example.com Chase from the helicopter]
+| version      = 2.0
+}}
+Four masked robbers took the vault in under six minutes.

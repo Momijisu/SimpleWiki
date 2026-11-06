@@ -1,0 +1,8 @@
+{{Infobox character
+| status     = Inactive
+| focus      = Public Sector
+| occupation = Police officer
+| employer   = [[Los Santos Police Department]]
+| last_seen  = August 2025
+}}
+An officer who hasn't been seen in a while.

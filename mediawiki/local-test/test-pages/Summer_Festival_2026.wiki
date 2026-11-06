@@ -1,0 +1,8 @@
+{{Infobox event
+| type         = Official server event
+| date         = 1 August 2026
+| end_date     = 3 August 2026
+| location     = Vespucci Beach
+| organised_by = Server staff
+}}
+A weekend of games and music.

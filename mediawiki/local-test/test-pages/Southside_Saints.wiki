@@ -1,0 +1,15 @@
+{{Infobox organization
+| image        = Saints logo.png
+| type         = Gang
+| subtype      = Street gang
+| status       = Active
+| leader       = [[Marisol Vega]]
+| founded      = January 2026
+| headquarters = The old laundromat
+| territory    = Grove Street, Davis
+| colours      = Purple and gold
+| activities   = Chop shops, street races
+| rivals       = [[Eastside Vipers]]
+| version      = 2.0
+}}
+The Southside Saints run Grove Street.

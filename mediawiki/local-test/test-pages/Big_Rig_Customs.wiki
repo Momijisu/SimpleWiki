@@ -1,0 +1,10 @@
+{{Infobox organization
+| type     = Business
+| subtype  = Garage
+| status   = Defunct
+| owner    = Earl Hollis
+| defunct  = December 2026
+| services = Repairs, tuning, wraps
+| hours    = Whenever Earl is awake
+}}
+Closed down.
