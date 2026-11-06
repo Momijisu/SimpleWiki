@@ -35,3 +35,8 @@ wfLoadExtension( 'Gadgets' );
 $wgEnableUploads = true;
 $wgFileExtensions[] = 'svg';
 $wgShowExceptionDetails = true;
+
+# The Let's RP logo in the corner and the menu (start.sh copies it into place)
+$wgLogos = [ '1x' => "$wgScriptPath/lrp-logo.png", 'icon' => "$wgScriptPath/lrp-logo.png" ];
+# Show the real name in pages and screenshots (the install name marks it as a test copy)
+$wgSitename = "Let's RP Wiki";

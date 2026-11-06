@@ -47,7 +47,7 @@ const { start, mark, unmark, shot, openVE, W, clickEndOf, markText, resetTony } 
     const fs = p.locator('#mw-htmlform-source'); const bb = await fs.boundingBox();
     await shot(p, 'Adding images - choose file.png', { x: 0, y: Math.max(0, bb.y - 80), width: 1280, height: Math.min(560, bb.height + 160) });
     await unmark(p);
-    await p.setInputFiles('#wpUploadFile', '/tmp/claude-0/-home-user/34c1a0e5-9da2-570e-b3ab-b8d14a9d5829/scratchpad/upl/Rosa Ramirez portrait.jpg');
+    await p.setInputFiles('#wpUploadFile', { name: 'Rosa Ramirez portrait.jpg', mimeType: 'image/jpeg', buffer: require('fs').readFileSync(__dirname + '/../../files/guides/Example portrait.jpg') });
     await p.fill('#wpUploadDescription', "Rosa Ramirez's look in Let's RP 2.0, outside the UwU Cafe. From Rosa's stream on 14 June 2026.");
     const d = p.locator('#mw-htmlform-description'); await d.scrollIntoViewIfNeeded(); const db = await d.boundingBox();
     await shot(p, 'Adding images - file details.png', { x: 0, y: Math.max(0, db.y - 20), width: 1280, height: Math.min(560, db.height + 40) });

@@ -21,6 +21,8 @@ fi
 rm -f LocalSettings.php
 echo "<?php require '/data/LocalSettings.php';" > LocalSettings.php
 chown www-data:www-data LocalSettings.php
+# The site logo (see extra-settings.php)
+cp "/import/test-images/Lets RP Wiki logo.png" lrp-logo.png && chmod 644 lrp-logo.png
 run update --quick > /dev/null
 
 echo "== Importing the files in dist/"
