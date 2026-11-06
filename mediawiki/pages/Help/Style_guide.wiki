@@ -1,0 +1,116 @@
+{{SHORTDESC:How articles on the Let's RP Wiki are written and laid out}}
+This '''style guide''' sets out how articles on the Let's RP Wiki are written and laid out, so the wiki reads as one record of the city rather than a pile of separate pages. Don't worry about getting everything right first time: a page with simple, imperfect content is better than no page, and other editors will help tidy it up.
+
+== The basics ==
+* '''The wiki is out of character.''' It records the story of the city for players and viewers. Nothing on it may be used as in-character knowledge.
+* '''Write about the story, not the players.''' Articles are about characters, groups and events in the city. Out-of-character details belong in the ''Meta'' part of the infobox (see [[#Out of character|below]]).
+* '''Be neutral.''' Describe what happened; don't take sides. "Tony is the best getaway driver in the city" is an opinion. "Tony drove the getaway car in the Harbor Bank Heist" is a fact.
+* '''Be respectful.''' Write about characters, not to score points against their players. Out-of-character drama, call-outs and in-jokes at someone's expense don't belong on the wiki.
+
+== Spelling and grammar ==
+The wiki uses '''British English''' throughout, as the server does.
+* Spell words the British way: "colour", "organisation", "centre", "licence" (the noun), "practise" (the verb).
+* Write dates as '''14 June 2026''': day, month, year, with no "th" and no comma. Where only the month is known: "June 2026".
+* Use the 24-hour clock for times where it matters: "at 23:40".
+* Write numbers from one to nine in words and 10 and above in figures, except in infoboxes and tables, where figures are fine.
+* Use sentence case: only capitalise the first word and names. "Tony works at Big Rig Customs as a mechanic", not "as a Mechanic". Ranks and job titles are capitalised only right before a name: "Captain Vega", but "Vega is a captain".
+* Slang, accents and swearing belong in quotes only. The article's own voice should be plain and readable.
+
+== Tense and point of view ==
+* Write in the '''third person''': "Tony", "he", "the Saints", never "I" or "you".
+* Write '''history in the past tense''': "Tony joined the Saints in March 2026."
+* Write '''what's true now in the present tense''': "Tony is a mechanic at Big Rig Customs." When it stops being true, change it to the past: "Tony was a mechanic at Big Rig Customs until August 2026."
+* Write about '''deceased''' characters in the past tense throughout.
+* For '''inactive''' characters (the player has stopped playing them), write about them as they were last seen. Don't invent an ending for them.
+
+== Naming pages ==
+* '''Characters''': the name they're best known by in the city, usually first name and surname: ''Tony Ramirez''. Put their full name in the infobox (<code>full_name</code>), and make [[Help:Editing/Advanced editing#Redirects and disambiguation|redirects]] from nicknames and other names: ''Two-Times'' → ''Tony Ramirez''.
+* '''Organisations''': their name as they use it: ''Southside Saints'', ''Los Santos Police Department''. Redirect common short names: ''LSPD''.
+* '''Events''': the name the city knows it by, if it has one (''Harbor Bank Heist''). If not, describe it: what, where and when, e.g. ''Grove Street shooting (June 2026)''.
+* Use sentence case: ''Grove Street shooting'', not ''Grove Street Shooting'', unless it's a proper name.
+* If two subjects share a name, add a word in brackets: ''Marisol Vega (2.0)'' and ''Marisol Vega (1.0)'', and make a [[Template:Disambiguation|disambiguation page]] for the plain name.
+
+== Article layout ==
+Every article starts with its '''infobox''' (see [[Help:Infoboxes]]), then a short '''introduction''': one to three sentences saying who or what the subject is. The first mention of the page's name in the introduction is in '''bold''': "'''Tony Ramirez''' is a mechanic by day and the Southside Saints' getaway driver by night."
+
+Then use these sections, in this order. Leave out any you have nothing to write for; don't leave empty headings. Pages started from the boxes on [[Help:Contents]] already have them.
+
+{| class="wikitable"
+! Characters !! Organisations !! Events
+|-
+| style="vertical-align: top;" |
+# Overview
+# Background
+# Personality
+# Relationships
+# Notable events
+# Trivia
+# Gallery
+# References
+| style="vertical-align: top;" |
+# Overview
+# History
+# Members
+# Relations
+# Locations
+# Trivia
+# Gallery
+# References
+| style="vertical-align: top;" |
+# Summary
+# Background
+# Timeline
+# Aftermath
+# Participants
+# Gallery
+# References
+|}
+
+=== Headings ===
+* Use sentence case: ''Notable events'', not ''Notable Events''.
+* Start at level 2 (<code><nowiki>== Heading ==</nowiki></code>). The page title is level 1.
+* Don't put links, pictures or templates in headings.
+* Use as few as the page needs: a short page doesn't need a heading for every paragraph.
+
+=== Trivia ===
+Keep trivia short, as a bulleted list of small facts that don't fit elsewhere. If a trivia point grows into a paragraph, move it into the main text.
+
+== Linking ==
+* Link the names of characters, organisations, places and events the first time they come up in an article, including in the infobox. Don't link the same thing again further down, unless the page is very long.
+* Link to the most specific page: a section if there is one, e.g. <code><nowiki>[[Tony Ramirez#Background|Tony's early life]]</nowiki></code>.
+* Red links are fine: they show a page is wanted. But check the name is spelled the way the page would be named.
+* Don't link ordinary words, or dates.
+
+== Pictures ==
+* The main picture of a character, organisation or event goes in its '''infobox''', not in the article text.
+* Prefer clear in-game screenshots. Crop out the game's interface, chat and stream overlays where you can.
+* Put pictures in the article on the left or right, beside the text they illustrate; use the centre sparingly. The infobox takes the top right, so put pictures near it on the left.
+* Give each picture a short caption. End it with a full stop only if it's a full sentence.
+* Several pictures of one subject can go in a ''Gallery'' section near the end.
+* Every upload needs a '''licence''': see [[Template:License/doc|choosing a licence]] and [[Help:Editing/Adding images|adding images]].
+* No pictures that show a player's face or real-life details without their permission.
+
+== Out of character ==
+Some out-of-character details are useful: who plays a character, and when they were around. Keep them in the infobox's '''Meta''' section (<code>played_by</code>, <code>first_seen</code>, <code>last_seen</code>, <code>version</code>).
+* <code>played_by</code> is the player's public name or handle, as they use it on stream or Discord. '''Never''' put a player's real name, age, location or other personal details anywhere on the wiki.
+* Don't write about what the player did out of character, unless it shaped the story (e.g. the character was retired because the player left the server). Keep it short and neutral.
+* If an article reveals things some characters don't know, add <code><nowiki>{{Spoiler}}</nowiki></code> at the top.
+
+== Sources and references ==
+Most of the wiki is written from what people saw happen, so not every sentence needs a source. For big moments, or anything people might disagree about, add a source: a clip, a VOD with the time, an official announcement, or a screenshot. See [[Help:Editing/Citations|citing sources]].
+
+== Notices ==
+If a page needs work you can't do yourself, flag it with a notice at the top, e.g. <code><nowiki>{{Stub}}</nowiki></code>, <code><nowiki>{{Cleanup}}</nowiki></code> or <code><nowiki>{{Outdated}}</nowiki></code>. Flagged pages appear on [[Project:Tasks|How can I help?]] for other editors to pick up. See [[Template:Notice/doc]] for all notices.
+
+== Talk pages ==
+Use a page's '''Discussion''' tab to talk about changes to it, especially big or disputed ones. Sign your messages with <code><nowiki>~~~~</nowiki></code>, which adds your name and the time. Keep discussions about the article, and keep them friendly.
+
+== When in doubt ==
+Look at a similar article that's already well written and follow its lead. If this guide doesn't cover something, ask on Discord or a talk page, or fall back on [[wikipedia:Wikipedia:Manual of Style|Wikipedia's Manual of Style]].
+
+== See also ==
+* [[Help:Infoboxes]]
+* [[Help:Templates]]
+* [[Help:Editing]]
+
+[[Category:Help]]

@@ -1,0 +1,94 @@
+{{SHORTDESC:How to add and fill in the boxes at the top of articles}}
+An '''infobox''' is the box at the top right of an article. It shows the subject's picture and key facts at a glance, and it does a lot of work behind the scenes: it adds the coloured badges, writes the grey line under the page title, links names to their pages, and puts the page in the right categories. Every character, organisation and event article should have one.
+
+== The infoboxes ==
+{| class="wikitable"
+! Infobox !! For !! Badges
+|-
+| [[Template:Infobox character|Infobox character]] || Characters || Status ({{#invoke:Infobox|values|character|status}}) and focus ({{#invoke:Infobox|values|character|focus}})
+|-
+| [[Template:Infobox organization|Infobox organization]] || Gangs, businesses and Emergency Services || Status ({{#invoke:Infobox|values|organization|status}})
+|-
+| [[Template:Infobox event|Infobox event]] || Server events: heists, gang wars, trials, elections and more || Type ({{#invoke:Infobox|values|event|type}})
+|}
+
+Each infobox's own page lists every field, what it's for, and an example. Click its name above.
+
+== Adding an infobox ==
+There are three ways, from easiest to most hands-on:
+
+; Start a new page with it ready
+: Use the ''Start a new page'' boxes on [[Help:Contents]]. Type the page's name, and it opens with the right infobox and headings already in place.
+; In VisualEditor
+: Click at the top of the page, then '''Insert → Template''' and type the infobox's name, e.g. ''Infobox character''. A form opens with every field, a description of each, and a list to choose from for fields like ''Status''. See [[Help:Editing/VisualEditor advanced#Templates|editing templates in VisualEditor]].
+; In source mode
+: Copy the blank layout from the infobox's page and paste it at the very top of the article, then fill in the values after the <code>=</code> signs.
+
+To change an infobox later, click it in VisualEditor and click ''Edit'', or change the values in source mode.
+
+== Filling it in ==
+=== Only fill in what you know ===
+Leave a field empty if you don't know it, or if it doesn't apply: empty fields are hidden, so the box only shows what's filled in. Don't write "Unknown" in every field; use it only where it's worth saying (e.g. a partner nobody has ever met).
+
+=== Fields that must be filled in ===
+A few fields decide the badges and categories, so they only accept certain values:
+{| class="wikitable"
+! Infobox !! Field !! Accepted values !! Required
+|-
+| Character || <code>status</code> || {{#invoke:Infobox|values|character|status}} || Yes
+|-
+| Character || <code>focus</code> || {{#invoke:Infobox|values|character|focus}} || Yes
+|-
+| Organisation || <code>type</code> || {{#invoke:Infobox|values|organization|type}} || Yes
+|-
+| Organisation || <code>status</code> || {{#invoke:Infobox|values|organization|status}} || No
+|-
+| Event || <code>type</code> || {{#invoke:Infobox|values|event|type}} || Yes
+|}
+
+Capitals don't matter (<code>active</code> works as well as <code>Active</code>). If one is missing or spelled wrong, a red box appears at the bottom of the infobox saying what to fix, and the page is listed in the hidden [[:Category:Pages with infobox problems]] until it's fixed.
+
+'''Status''', for characters:
+* '''Active''': the character is still being played.
+* '''Inactive''': the player has stopped playing them, but the character isn't dead.
+* '''Deceased''': the character has died. Fill in <code>died</code>, <code>cause_of_death</code> and <code>killed_by</code> if known.
+
+'''Focus''' is what the character mainly does now: '''Civilian''' (legal work and life), '''Criminal''', or '''Public Sector''' (police, medical, government). If it changes, update it, and write about the change in the article.
+
+=== Names link themselves ===
+Fields that name a person, group or event, like <code>employer</code>, <code>affiliation</code>, <code>family</code>, <code>leader</code>, <code>allies</code> or <code>participants</code>, turn plain names into links. Just type the names:
+
+<pre>| employer = Big Rig Customs
+| family   = Rosa Ramirez (mother), Luis Ramirez (brother)</pre>
+
+* Separate several names with commas, or put each on its own line.
+* A note in brackets after a name, like ''(mother)'', stays outside the link.
+* Words like ''Unknown'', ''None'', ''Various'' and ''Independent'' aren't linked.
+* To link somewhere different, or not at all, write it out yourself: anything already containing <code><nowiki>[[ ]]</nowiki></code> is left exactly as you typed it.
+
+Each infobox's page shows which of its fields link themselves.
+
+=== Pictures ===
+* <code>image</code> is the file name of the main picture, without ''File:'', e.g. <code>Rosa Ramirez portrait.jpg</code>. Upload it first: see [[Help:Editing/Adding images|adding images]].
+* <code>caption</code> is a short line under the picture (optional).
+* For more than one picture, like a character's look in different versions of the server, add <code>image2</code> with <code>image2_label</code> (and up to <code>image5</code>). The pictures become tabs, labelled with <code>image_label</code>, <code>image2_label</code> and so on.
+* With no picture, the infobox shows an ''Image unavailable'' placeholder until one is added.
+
+=== The Meta section ===
+The '''Meta''' section is for out-of-character details: who plays the character (<code>played_by</code>), when they were first and last seen, and which version of the server they're from. <code>played_by</code> should be the player's public name or handle, never their real name. Everything else in the infobox is in character.
+
+=== Server version ===
+<code>version</code> is the version of the server the subject is from, e.g. <code>2.0</code>. It shows as ''Let's RP 2.0'' and puts the page in that version's category. For pages about past versions, also add <code><nowiki>{{Archived|1.0}}</nowiki></code> at the top.
+
+== What the infobox does for you ==
+* '''Badges''': the coloured labels under the name (e.g. ''Active'', ''Criminal''). Each links to its category.
+* '''The grey line under the title''' (the short description), e.g. ''Criminal character in Let's RP 2.0''. It's written from the badges; to write your own, fill in <code>shortdesc</code>.
+* '''Categories''': the page is added to the right ones, e.g. [[:Category:Characters]], [[:Category:Active characters]] and [[:Category:Criminal characters]]. You don't need to add these by hand. See [[Help:Editing/Advanced editing#Categories|categories]].
+* '''Directories''': the counts and lists on the front page come from these categories.
+
+== See also ==
+* [[Help:Templates]]: every template on the wiki
+* [[Help:Style guide]]: how to write articles
+* [[Help:Editing/Adding images]]
+
+[[Category:Help]]
