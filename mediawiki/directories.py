@@ -278,8 +278,25 @@ Type the event's name to start its page, with the infobox and headings ready to 
 __NOTOC__"""
 
 
+# DynamicPageList4 adds pages that use it to these tracking categories. They're
+# hidden, so they don't show at the bottom of the directory and task pages.
+DPL_CATEGORIES = [
+    'Pages using DynamicPageList4',
+    'Pages using DynamicPageList4 parser tag',
+    'Pages using DynamicPageList4 Intersection parser tag',
+    'Pages using DynamicPageList4 parser function',
+    'Pages using DynamicPageList4 dplnum parser function',
+    'Pages using DynamicPageList4 dplvar parser function',
+    'Pages using DynamicPageList4 dplreplace parser function',
+    'Pages using DynamicPageList4 dplchapter parser function',
+    'Pages using DynamicPageList4 dplmatrix parser function',
+]
+
+
 def pages():
-    return [
+    return [('Category:' + c, 14, 'wikitext', 'text/x-wiki',
+             '__HIDDENCAT__\nAdded automatically to pages that use DynamicPageList4 (lists made from categories), '
+             'like the directories and [[Project:Tasks]]. Hidden from readers.') for c in DPL_CATEGORIES] + [
         ('Template:Directory card', 10, 'wikitext', 'text/x-wiki', CARD),
         ('Template:Directory card/styles.css', 10, 'sanitized-css', 'text/css', STYLES),
         ('Template:Directory card/doc', 10, 'wikitext', 'text/x-wiki', DOC),
