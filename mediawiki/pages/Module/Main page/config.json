@@ -1,35 +1,46 @@
 {
 	"title": "Welcome to the Let's RP Wiki!",
 	"subtitle": "The story of the city, written by the people who live it.",
-	"logo": "Lets RP Wiki logo.png",
+	"logo": "LetsRP wiki.png",
 	"background": "",
 	"stats": true,
-
 	"search": {
 		"text": "Search the Let's RP Wiki",
 		"shortcutHint": true,
 		"suggestions": []
 	},
-
 	"directories": [
-		{ "label": "Character Directory", "category": "Characters", "icon": "", "image": "" },
-		{ "label": "Gang Directory", "category": "Gangs", "icon": "", "image": "" },
-		{ "label": "Business Directory", "category": "Businesses", "icon": "", "image": "" },
-		{ "label": "Emergency Services", "category": "Emergency Services", "icon": "", "image": "" },
-		{ "label": "Server Events", "category": "Events", "icon": "", "image": "" }
+		{
+			"label": "Characters",
+			"category": "Characters",
+			"link": "Characters",
+			"image": "CardBackground_Characters.png"
+		},
+		{
+			"label": "Organisations",
+			"category": "Organizations",
+			"link": "Organizations",
+			"image": "CardBackground_Factions.png"
+		},
+		{
+			"label": "Server Events",
+			"category": "Events",
+			"link": "Server events",
+			"image": "CardBackground_Events.png"
+		}
 	],
-
 	"intro": {
 		"title": "What is Let's RP?",
 		"text": "Let's RP is a story-driven GTA roleplay server. This wiki is where players record their characters, crews, businesses and the events that shaped the city. Anyone with an account can write and edit."
 	},
-
 	"columns": [
 		[
 			{
 				"type": "featured",
 				"label": "Featured",
-				"pages": [],
+				"pages": [
+					"Main_Page"
+				],
 				"excerptLength": 220,
 				"moreText": "Read more"
 			}
@@ -40,7 +51,10 @@
 				"title": "Start editing",
 				"text": "The Let's RP Wiki is made by people like you! Get started here!",
 				"link": "Help:Contents",
-				"stats": ["articles", "edits"]
+				"stats": [
+					"articles",
+					"edits"
+				]
 			},
 			{
 				"type": "recentChanges",
@@ -59,24 +73,56 @@
 				"type": "links",
 				"title": "On the wiki",
 				"links": [
-					{ "label": "About the wiki", "page": "Project:About" },
-					{ "label": "Style guide", "page": "Help:Style guide" },
-					{ "label": "Help portal", "page": "Help:Contents" }
+					{
+						"label": "About the wiki",
+						"page": "Project:About"
+					},
+					{
+						"label": "Style guide",
+						"page": "Help:Style guide"
+					},
+					{
+						"label": "Help portal",
+						"page": "Help:Editing"
+					}
 				]
 			},
 			{
 				"type": "links",
 				"title": "Official links",
 				"links": [
-					{ "label": "Official Website", "url": "" },
-					{ "label": "IC Intranet", "url": "" },
-					{ "label": "Interactive Map", "url": "" },
-					{ "label": "Discord", "url": "" },
-					{ "label": "Twitter", "url": "" },
-					{ "label": "Ko-Fi", "url": "" },
-					{ "label": "YouTube", "url": "" },
-					{ "label": "TikTok", "url": "" },
-					{ "label": "Twitch", "url": "" }
+					{
+						"label": "Official Website",
+						"url": "https://v2lrpmainsite2200.live-website.com/"
+					},
+					{
+						"label": "Discord",
+						"url": "http://discord.gg/lets-rp"
+					},
+					{
+						"label": "Tebex",
+						"url": "https://lets-rp.tebex.io/category/2041238"
+					},
+					{
+						"label": "Twitter",
+						"url": "https://twitter.com/LetsRPOfficial"
+					},
+					{
+						"label": "Ko-Fi",
+						"url": "https://ko-fi.com/letsrp"
+					},
+					{
+						"label": "YouTube",
+						"url": "https://www.youtube.com/channel/UCe6-9O4zNWL8kSR-oikNZ3A"
+					},
+					{
+						"label": "TikTok",
+						"url": "https://www.tiktok.com/@letsrpofficial"
+					},
+					{
+						"label": "Twitch",
+						"url": "https://www.twitch.tv/team/letsrp"
+					}
 				]
 			}
 		]

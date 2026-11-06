@@ -3,7 +3,7 @@ for each sub-category, a box to start a new page, and a sortable table of every
 page made with DynamicPageList4. Also the {{Directory card}} template the cards
 use. build.py writes these to dist/directories.xml."""
 
-CARD = """<includeonly><templatestyles src="Template:Directory card/styles.css" /><div class="rp-dcard rp-dcard--image">{{#ifexist:File:{{{image|-}}}|<div class="rp-dcard-bg">[[File:{{{image}}}|600px|link=|alt=]]</div>|{{#ifexist:File:{{{fallback|-}}}|<div class="rp-dcard-bg">[[File:{{{fallback}}}|600px|link=|alt=]]</div>|{{#ifexist:File:CardBackground_Default.png|<div class="rp-dcard-bg">[[File:CardBackground_Default.png|600px|link=|alt=]]</div>}}}}}}<div class="rp-dcard-text"><div class="rp-dcard-label">[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]</div>{{#if:{{{category|}}}|<div class="rp-dcard-count">{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}</div>}}</div></div></includeonly><noinclude>
+CARD = """<includeonly><templatestyles src="Template:Directory card/styles.css" /><div class="rp-dcard rp-dcard--image">{{#ifexist:File:{{{image|-}}}|<div class="rp-dcard-bg">[[File:{{{image}}}|600px|link=|alt=]]</div>|{{#ifexist:File:{{{fallback|-}}}|<div class="rp-dcard-bg">[[File:{{{fallback}}}|600px|link=|alt=]]</div>|{{#ifexist:File:CardBackground_Default.png|<div class="rp-dcard-bg">[[File:CardBackground_Default.png|600px|link=|alt=]]</div>}}}}}}<div class="rp-dcard-text"><div class="rp-dcard-label">[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]</div>{{#if:{{{description|}}}|<div class="rp-dcard-count">{{{description}}}</div>|{{#if:{{{category|}}}|{{#ifeq:{{{count|}}}|no||<div class="rp-dcard-count">{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}</div>}}}}}}</div></div></includeonly><noinclude>
 {{Template:Directory card/doc}}
 </noinclude>"""
 
@@ -149,8 +149,14 @@ DOC = """A picture card linking to a category, with how many pages are in it. Us
 |-
 | <code>fallback</code> || Optional: a picture to use before the default, until <code>image</code> exists.
 |-
-| <code>link</code> || A page to link to instead of the category.
+| <code>link</code> || A page to link to instead of the category (the count still comes from <code>category</code>).
+|-
+| <code>description</code> || A short line to show instead of the count.
+|-
+| <code>count</code> || <code>no</code> hides the count.
 |}
+
+The directory buttons on the [[Main Page|front page]] are made with this template too, from the settings in [[Module:Main page/config.json]].
 
 Put the cards inside <code><nowiki><div class="rp-cards"></nowiki></code>… no: inside <code><nowiki><div class="rp-dcards"></nowiki></code> … <code><nowiki></div></nowiki></code>, which lays them out in a grid.
 

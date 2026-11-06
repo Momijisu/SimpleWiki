@@ -147,28 +147,24 @@ local function hero(cfg)
 	return box
 end
 
-local function directories(cfg)
+-- The directory buttons: one {{Directory card}} each, the same cards as on the
+-- directory pages. Settings per button: label, category (links there and shows
+-- its count), link (a page to go to instead), image, description (instead of
+-- the count), showCount: false.
+local function directories(frame, cfg)
 	if count(cfg.directories) == 0 then return nil end
 	local row = mw.html.create('div'):addClass('mp-directories')
 	for _, d in ipairs(cfg.directories) do
-		local link = d.link or (d.category and (':Category:' .. d.category)) or d.label
-		if link:match('^[Cc]ategory:') then link = ':' .. link end
-		local item = row:tag('div'):addClass('mp-dir')
-		if d.image and fileExists(d.image) then
-			item:addClass('mp-dir--image')
-			item:tag('div'):addClass('mp-dir-bg'):wikitext(string.format('[[File:%s|600px|link=|alt=]]', cleanFile(d.image)))
-		end
-		local text = item:tag('div'):addClass('mp-dir-text')
-		text:tag('div'):addClass('mp-dir-label'):wikitext(string.format('[[%s|%s]]', link, d.label))
-		if d.category and d.showCount ~= false then
-			local n = mw.site.stats.pagesInCategory(d.category, 'pages')
-			text:tag('div'):addClass('mp-dir-count'):wikitext(lang:formatNum(n) .. (n == 1 and ' page' or ' pages'))
-		elseif d.description then
-			text:tag('div'):addClass('mp-dir-count'):wikitext(d.description)
-		end
-		if d.icon and fileExists(d.icon) then
-			item:tag('div'):addClass('mp-dir-icon'):wikitext(string.format('[[File:%s|40px|link=|alt=]]', cleanFile(d.icon)))
-		end
+		local link = d.link
+		if not link and not d.category then link = d.label end
+		row:wikitext(frame:expandTemplate{ title = 'Directory card', args = {
+			label = d.label,
+			category = d.category,
+			link = link,
+			image = cleanFile(d.image),
+			description = d.description,
+			count = (d.showCount == false) and 'no' or nil,
+		} })
 	end
 	return row
 end
@@ -312,7 +308,7 @@ function p.render(frame)
 
 	local page = mw.html.create('div'):addClass('mp')
 	page:node(hero(cfg))
-	local dirs = directories(cfg)
+	local dirs = directories(frame, cfg)
 	if dirs then page:node(dirs) end
 	local i = intro(cfg)
 	if i then page:node(i) end

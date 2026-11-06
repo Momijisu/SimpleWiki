@@ -3,7 +3,7 @@
     <title>Main Page</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -15,7 +15,7 @@
     <title>Module:Main page</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>Scribunto</model>
@@ -169,28 +169,24 @@ local function hero(cfg)
 	return box
 end
 
-local function directories(cfg)
+-- The directory buttons: one {{Directory card}} each, the same cards as on the
+-- directory pages. Settings per button: label, category (links there and shows
+-- its count), link (a page to go to instead), image, description (instead of
+-- the count), showCount: false.
+local function directories(frame, cfg)
 	if count(cfg.directories) == 0 then return nil end
 	local row = mw.html.create('div'):addClass('mp-directories')
 	for _, d in ipairs(cfg.directories) do
-		local link = d.link or (d.category and (':Category:' .. d.category)) or d.label
-		if link:match('^[Cc]ategory:') then link = ':' .. link end
-		local item = row:tag('div'):addClass('mp-dir')
-		if d.image and fileExists(d.image) then
-			item:addClass('mp-dir--image')
-			item:tag('div'):addClass('mp-dir-bg'):wikitext(string.format('[[File:%s|600px|link=|alt=]]', cleanFile(d.image)))
-		end
-		local text = item:tag('div'):addClass('mp-dir-text')
-		text:tag('div'):addClass('mp-dir-label'):wikitext(string.format('[[%s|%s]]', link, d.label))
-		if d.category and d.showCount ~= false then
-			local n = mw.site.stats.pagesInCategory(d.category, 'pages')
-			text:tag('div'):addClass('mp-dir-count'):wikitext(lang:formatNum(n) .. (n == 1 and ' page' or ' pages'))
-		elseif d.description then
-			text:tag('div'):addClass('mp-dir-count'):wikitext(d.description)
-		end
-		if d.icon and fileExists(d.icon) then
-			item:tag('div'):addClass('mp-dir-icon'):wikitext(string.format('[[File:%s|40px|link=|alt=]]', cleanFile(d.icon)))
-		end
+		local link = d.link
+		if not link and not d.category then link = d.label end
+		row:wikitext(frame:expandTemplate{ title = 'Directory card', args = {
+			label = d.label,
+			category = d.category,
+			link = link,
+			image = cleanFile(d.image),
+			description = d.description,
+			count = (d.showCount == false) and 'no' or nil,
+		} })
 	end
 	return row
 end
@@ -334,7 +330,7 @@ function p.render(frame)
 
 	local page = mw.html.create('div'):addClass('mp')
 	page:node(hero(cfg))
-	local dirs = directories(cfg)
+	local dirs = directories(frame, cfg)
 	if dirs then page:node(dirs) end
 	local i = intro(cfg)
 	if i then page:node(i) end
@@ -366,7 +362,7 @@ return p
     <title>Module:Main page/config.json</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>json</model>
@@ -374,35 +370,46 @@ return p
       <text xml:space="preserve">{
 	"title": "Welcome to the Let's RP Wiki!",
 	"subtitle": "The story of the city, written by the people who live it.",
-	"logo": "Lets RP Wiki logo.png",
+	"logo": "LetsRP wiki.png",
 	"background": "",
 	"stats": true,
-
 	"search": {
 		"text": "Search the Let's RP Wiki",
 		"shortcutHint": true,
 		"suggestions": []
 	},
-
 	"directories": [
-		{ "label": "Character Directory", "category": "Characters", "icon": "", "image": "" },
-		{ "label": "Gang Directory", "category": "Gangs", "icon": "", "image": "" },
-		{ "label": "Business Directory", "category": "Businesses", "icon": "", "image": "" },
-		{ "label": "Emergency Services", "category": "Emergency Services", "icon": "", "image": "" },
-		{ "label": "Server Events", "category": "Events", "icon": "", "image": "" }
+		{
+			"label": "Characters",
+			"category": "Characters",
+			"link": "Characters",
+			"image": "CardBackground_Characters.png"
+		},
+		{
+			"label": "Organisations",
+			"category": "Organizations",
+			"link": "Organizations",
+			"image": "CardBackground_Factions.png"
+		},
+		{
+			"label": "Server Events",
+			"category": "Events",
+			"link": "Server events",
+			"image": "CardBackground_Events.png"
+		}
 	],
-
 	"intro": {
 		"title": "What is Let's RP?",
 		"text": "Let's RP is a story-driven GTA roleplay server. This wiki is where players record their characters, crews, businesses and the events that shaped the city. Anyone with an account can write and edit."
 	},
-
 	"columns": [
 		[
 			{
 				"type": "featured",
 				"label": "Featured",
-				"pages": [],
+				"pages": [
+					"Main_Page"
+				],
 				"excerptLength": 220,
 				"moreText": "Read more"
 			}
@@ -413,7 +420,10 @@ return p
 				"title": "Start editing",
 				"text": "The Let's RP Wiki is made by people like you! Get started here!",
 				"link": "Help:Contents",
-				"stats": ["articles", "edits"]
+				"stats": [
+					"articles",
+					"edits"
+				]
 			},
 			{
 				"type": "recentChanges",
@@ -432,24 +442,56 @@ return p
 				"type": "links",
 				"title": "On the wiki",
 				"links": [
-					{ "label": "About the wiki", "page": "Project:About" },
-					{ "label": "Style guide", "page": "Help:Style guide" },
-					{ "label": "Help portal", "page": "Help:Contents" }
+					{
+						"label": "About the wiki",
+						"page": "Project:About"
+					},
+					{
+						"label": "Style guide",
+						"page": "Help:Style guide"
+					},
+					{
+						"label": "Help portal",
+						"page": "Help:Editing"
+					}
 				]
 			},
 			{
 				"type": "links",
 				"title": "Official links",
 				"links": [
-					{ "label": "Official Website", "url": "" },
-					{ "label": "IC Intranet", "url": "" },
-					{ "label": "Interactive Map", "url": "" },
-					{ "label": "Discord", "url": "" },
-					{ "label": "Twitter", "url": "" },
-					{ "label": "Ko-Fi", "url": "" },
-					{ "label": "YouTube", "url": "" },
-					{ "label": "TikTok", "url": "" },
-					{ "label": "Twitch", "url": "" }
+					{
+						"label": "Official Website",
+						"url": "https://v2lrpmainsite2200.live-website.com/"
+					},
+					{
+						"label": "Discord",
+						"url": "http://discord.gg/lets-rp"
+					},
+					{
+						"label": "Tebex",
+						"url": "https://lets-rp.tebex.io/category/2041238"
+					},
+					{
+						"label": "Twitter",
+						"url": "https://twitter.com/LetsRPOfficial"
+					},
+					{
+						"label": "Ko-Fi",
+						"url": "https://ko-fi.com/letsrp"
+					},
+					{
+						"label": "YouTube",
+						"url": "https://www.youtube.com/channel/UCe6-9O4zNWL8kSR-oikNZ3A"
+					},
+					{
+						"label": "TikTok",
+						"url": "https://www.tiktok.com/@letsrpofficial"
+					},
+					{
+						"label": "Twitch",
+						"url": "https://www.twitch.tv/team/letsrp"
+					}
 				]
 			}
 		]
@@ -462,7 +504,7 @@ return p
     <title>Module:Main page/doc</title>
     <ns>828</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>wikitext</model>
@@ -517,7 +559,7 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
     <title>Template:Main page/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Front page</comment>
       <model>sanitized-css</model>
@@ -680,114 +722,7 @@ To try changes before they go live, preview any page with &lt;code&gt;&lt;nowiki
 	gap: 10px;
 	margin-bottom: 20px;
 }
-.mp-dir {
-	position: relative;
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	min-height: 64px;
-	padding: 12px 16px;
-	overflow: hidden;
-	border: 1px solid rgba( 127, 127, 127, 0.28 );
-	border-radius: 12px;
-	background: rgba( 127, 127, 127, 0.07 );
-	transition: border-color 0.15s, transform 0.15s;
-}
-.mp-dir:hover {
-	border-color: rgba( 127, 127, 127, 0.55 );
-	transform: translateY( -2px );
-}
-/* Picture buttons: the art (skyline and icon, see-through) sits on the right, over a
-   dark fade that runs from solid on the left to clear on the right, so the label
-   always reads and the icon is never cut off. */
-.mp-dir--image {
-	min-height: 52px;
-	padding: 10px 16px;
-	border-color: transparent;
-	border-radius: 8px;
-	background: linear-gradient( to right, #000 0%, rgba( 0, 0, 0, 0.85 ) 35%, rgba( 0, 0, 0, 0.35 ) 100% );
-}
-.mp-dir--image:hover {
-	border-color: rgba( 255, 255, 255, 0.25 );
-}
-.mp-dir-bg {
-	position: absolute;
-	inset: 0;
-}
-.mp-dir-bg span,
-.mp-dir-bg a {
-	display: block;
-	width: 100%;
-	height: 100%;
-}
-.mp-dir-bg img {
-	display: block;
-	width: 100%;
-	height: 100%;
-	max-width: none;
-	object-fit: cover;
-	object-position: right center;
-}
-/* The fade also goes over the left of the picture, for art that isn't see-through */
-.mp-dir--image::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: 1;
-	background: linear-gradient( to right, rgba( 0, 0, 0, 0.9 ) 0%, rgba( 0, 0, 0, 0.5 ) 35%, rgba( 0, 0, 0, 0 ) 65% );
-}
-.mp-dir--image .mp-dir-text,
-.mp-dir--image .mp-dir-icon {
-	z-index: 2;
-}
-.mp-dir--image .mp-dir-text {
-	text-shadow: 0 1px 3px rgba( 0, 0, 0, 0.7 );
-}
-.mp-dir--image .mp-dir-label a,
-.mp-dir--image .mp-dir-count {
-	color: #fff;
-}
-.mp-dir--image .mp-dir-count {
-	opacity: 0.8;
-}
-.mp-dir-text {
-	text-shadow: 0 1px 3px rgba( 0, 0, 0, 0.6 );
-}
-.mp-dir--image .mp-dir-label a,
-.mp-dir--image .mp-dir-count {
-	color: #fff;
-}
-.mp-dir--image .mp-dir-count {
-	opacity: 0.85;
-}
-.mp-dir-text {
-	position: relative;
-	flex: 1;
-	min-width: 0;
-}
-.mp-dir-label {
-	font-weight: 600;
-}
-/* The whole tile is clickable: the label's link stretches over it */
-.mp-dir-label a::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: 1;
-}
-.mp-dir-label a {
-	color: inherit;
-}
-.mp-dir-count {
-	margin-top: 2px;
-	font-size: 0.8125rem;
-	opacity: 0.65;
-}
-.mp-dir-icon {
-	position: relative;
-	flex: none;
-	opacity: 0.85;
-}
+/* The buttons themselves are {{Directory card}} (Template:Directory card/styles.css). */
 
 /* ---------- Cards ---------- */
 .mp-card {

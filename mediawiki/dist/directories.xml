@@ -3,7 +3,7 @@
     <title>Category:Pages using DynamicPageList4</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -16,7 +16,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Category:Pages using DynamicPageList4 parser tag</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -29,7 +29,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Category:Pages using DynamicPageList4 Intersection parser tag</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -42,7 +42,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Category:Pages using DynamicPageList4 parser function</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -55,7 +55,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Category:Pages using DynamicPageList4 dplnum parser function</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -68,7 +68,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Category:Pages using DynamicPageList4 dplvar parser function</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -81,7 +81,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Category:Pages using DynamicPageList4 dplreplace parser function</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -94,7 +94,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Category:Pages using DynamicPageList4 dplchapter parser function</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -107,7 +107,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Category:Pages using DynamicPageList4 dplmatrix parser function</title>
     <ns>14</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -120,12 +120,12 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Template:Directory card</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
-      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Directory card/styles.css" /&gt;&lt;div class="rp-dcard rp-dcard--image"&gt;{{#ifexist:File:{{{image|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{image}}}|600px|link=|alt=]]&lt;/div&gt;|{{#ifexist:File:{{{fallback|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{fallback}}}|600px|link=|alt=]]&lt;/div&gt;|{{#ifexist:File:CardBackground_Default.png|&lt;div class="rp-dcard-bg"&gt;[[File:CardBackground_Default.png|600px|link=|alt=]]&lt;/div&gt;}}}}}}&lt;div class="rp-dcard-text"&gt;&lt;div class="rp-dcard-label"&gt;[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]&lt;/div&gt;{{#if:{{{category|}}}|&lt;div class="rp-dcard-count"&gt;{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}&lt;/div&gt;}}&lt;/div&gt;&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+      <text xml:space="preserve">&lt;includeonly&gt;&lt;templatestyles src="Template:Directory card/styles.css" /&gt;&lt;div class="rp-dcard rp-dcard--image"&gt;{{#ifexist:File:{{{image|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{image}}}|600px|link=|alt=]]&lt;/div&gt;|{{#ifexist:File:{{{fallback|-}}}|&lt;div class="rp-dcard-bg"&gt;[[File:{{{fallback}}}|600px|link=|alt=]]&lt;/div&gt;|{{#ifexist:File:CardBackground_Default.png|&lt;div class="rp-dcard-bg"&gt;[[File:CardBackground_Default.png|600px|link=|alt=]]&lt;/div&gt;}}}}}}&lt;div class="rp-dcard-text"&gt;&lt;div class="rp-dcard-label"&gt;[[:{{#if:{{{link|}}}|{{{link}}}|Category:{{{category}}}}}|{{{label|{{{category}}}}}}]]&lt;/div&gt;{{#if:{{{description|}}}|&lt;div class="rp-dcard-count"&gt;{{{description}}}&lt;/div&gt;|{{#if:{{{category|}}}|{{#ifeq:{{{count|}}}|no||&lt;div class="rp-dcard-count"&gt;{{PAGESINCATEGORY:{{{category}}}|pages}} {{#ifeq:{{PAGESINCATEGORY:{{{category}}}|pages|R}}|1|page|pages}}&lt;/div&gt;}}}}}}&lt;/div&gt;&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
 {{Template:Directory card/doc}}
 &lt;/noinclude&gt;</text>
     </revision>
@@ -134,7 +134,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Template:Directory card/styles.css</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>sanitized-css</model>
@@ -266,7 +266,7 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
     <title>Template:Directory card/doc</title>
     <ns>10</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -291,8 +291,14 @@ Added automatically to pages that use DynamicPageList4 (lists made from categori
 |-
 | &lt;code&gt;fallback&lt;/code&gt; || Optional: a picture to use before the default, until &lt;code&gt;image&lt;/code&gt; exists.
 |-
-| &lt;code&gt;link&lt;/code&gt; || A page to link to instead of the category.
+| &lt;code&gt;link&lt;/code&gt; || A page to link to instead of the category (the count still comes from &lt;code&gt;category&lt;/code&gt;).
+|-
+| &lt;code&gt;description&lt;/code&gt; || A short line to show instead of the count.
+|-
+| &lt;code&gt;count&lt;/code&gt; || &lt;code&gt;no&lt;/code&gt; hides the count.
 |}
+
+The directory buttons on the [[Main Page|front page]] are made with this template too, from the settings in [[Module:Main page/config.json]].
 
 Put the cards inside &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-dcards"&gt;&lt;/nowiki&gt;&lt;/code&gt; … &lt;code&gt;&lt;nowiki&gt;&lt;/div&gt;&lt;/nowiki&gt;&lt;/code&gt;, which lays them out in a grid.
 
@@ -303,7 +309,7 @@ Put the cards inside &lt;code&gt;&lt;nowiki&gt;&lt;div class="rp-dcards"&gt;&lt;
     <title>Characters</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -360,7 +366,7 @@ __NOTOC__</text>
     <title>Organizations</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
@@ -425,7 +431,7 @@ __NOTOC__</text>
     <title>Server events</title>
     <ns>0</ns>
     <revision>
-      <timestamp>2026-11-06T21:13:44Z</timestamp>
+      <timestamp>2026-11-06T21:17:02Z</timestamp>
       <contributor><username>Wiki setup import</username></contributor>
       <comment>Directories</comment>
       <model>wikitext</model>
