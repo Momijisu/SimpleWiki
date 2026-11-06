@@ -24,7 +24,7 @@ chown www-data:www-data LocalSettings.php
 run update --quick > /dev/null
 
 echo "== Importing the files in dist/"
-for f in /import/dist/infoboxes.xml /import/dist/mainpage.xml /import/dist/licenses.xml /import/dist/help.xml; do
+for f in /import/dist/infoboxes.xml /import/dist/mainpage.xml /import/dist/licenses.xml /import/dist/help.xml /import/dist/guides.xml; do
 	if [ -f "$f" ]; then
 		run importDump --username-prefix=tpl "$f" > /dev/null 2>&1 && echo "   $(basename "$f"): imported" || echo "   $(basename "$f"): FAILED"
 	fi
@@ -43,6 +43,7 @@ run getText "Module:Main page/config.json" \
 
 echo "== Uploading pictures"
 run importImages --user=Admin --skip-dupes /import/files > /dev/null 2>&1 || true
+run importImages --user=Admin --skip-dupes /import/files/guides > /dev/null 2>&1 || true
 run importImages --user=Admin --skip-dupes /import/test-images > /dev/null 2>&1 || true
 
 echo "== Adding example pages (only ones that don't exist yet)"

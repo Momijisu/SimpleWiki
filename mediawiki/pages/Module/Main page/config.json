@@ -39,7 +39,7 @@
 				"type": "startEditing",
 				"title": "Start editing",
 				"text": "The Let's RP Wiki is made by people like you! Get started here!",
-				"link": "Project:Help portal",
+				"link": "Help:Contents",
 				"stats": ["articles", "edits"]
 			},
 			{
@@ -60,8 +60,8 @@
 				"title": "On the wiki",
 				"links": [
 					{ "label": "About the wiki", "page": "Project:About" },
-					{ "label": "Style guide", "page": "Project:Style guide" },
-					{ "label": "Help portal", "page": "Project:Help portal" }
+					{ "label": "Style guide", "page": "Help:Style guide" },
+					{ "label": "Help portal", "page": "Help:Contents" }
 				]
 			},
 			{

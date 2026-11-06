@@ -148,7 +148,7 @@ DOC = """A card with a title, some text and a coloured button along the bottom. 
 {{Card
  | title  = Your first edits
  | text   = A beginner's guide to VisualEditor.
- | link   = Project:Editing/Your first edit
+ | link   = Help:Editing/Your first edit
  | button = Read this guide
  | colour = blue
 }}
@@ -186,7 +186,7 @@ Take a look through the below categories to find out where we can help you best.
 {{Card
  | heading = yes
  | title   = I want to ''EDIT'' an Article
- | text    = Contributing to the wiki is simple; check out our [[Help:Getting Started|Getting Started]] guide to get started, the [[Project:Editing/Cheat sheet|cheat sheet]] page for a syntax guide, or practice in your own [[Special:MyPage/Sandbox|Sandbox]] to get the hang of wikicode; or simply take a chance and edit your first article!
+ | text    = Contributing to the wiki is simple; check out our [[Help:Getting Started|Getting Started]] guide to get started, the [[Help:Editing/Cheat sheet|cheat sheet]] page for a syntax guide, or practice in your own [[Special:MyPage/Sandbox|Sandbox]] to get the hang of wikicode; or simply take a chance and edit your first article!
 
 Don't be afraid to edit any page that needs updates, fixes, or more content; we would rather that you created an article with simple, limited content and request some assistance than to create no article at all.
  | link    = Help:Getting Started
@@ -265,12 +265,12 @@ Anyone can edit any page and improve articles immediately for all readers. You j
 {{Card
  | title = Your first edits
  | text  = A beginner's guide on how to use VisualEditor, a user-friendly system that allows you to edit without the need to learn wikitext.
- | link  = Project:Editing/Your first edit
+ | link  = Help:Editing/Your first edit
 }}
 {{Card
  | title = The basics of VisualEditor
  | text  = Some more detailed tips on editing using VisualEditor, including how to add links and format bold and italic text.
- | link  = Project:Editing/VisualEditor basics
+ | link  = Help:Editing/VisualEditor basics
 }}
 </div>
 
@@ -281,12 +281,12 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
 {{Card
  | title = Introduction to source mode
  | text  = Editing using the classic source mode, which allows you to view and change wikitext directly.
- | link  = Project:Editing/Source mode basics
+ | link  = Help:Editing/Source mode basics
 }}
 {{Card
  | title = Cheat sheet for source mode
  | text  = A short guide that lists the syntax needed to create font styles, links, templates, and headers in source mode.
- | link  = Project:Editing/Cheat sheet
+ | link  = Help:Editing/Cheat sheet
 }}
 </div>
 
@@ -295,17 +295,17 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
 {{Card
  | title = Advanced guide to VisualEditor
  | text  = Making more complicated edits using the default editor.
- | link  = Project:Editing/VisualEditor advanced
+ | link  = Help:Editing/VisualEditor advanced
 }}
 {{Card
  | title = What's possible with source mode
  | text  = Examples of some of the more complicated types of edits that can be made on the wiki.
- | link  = Project:Editing/Advanced editing
+ | link  = Help:Editing/Advanced editing
 }}
 {{Card
  | title = Tables
  | text  = More details about editing tables in source mode.
- | link  = Project:Editing/Tables
+ | link  = Help:Editing/Tables
 }}
 {{Card
  | title  = Finding images
@@ -352,9 +352,9 @@ Source mode allows you to see all of the wikitext on a page and to edit it direc
 |- style="vertical-align: top;"
 |
 * [[Help:Getting Started|Getting Started]]
-* [[Project:Editing|Editing Guide]]
-* [[Project:Editing/Cheat sheet|A basic overview of editing syntax]]
-* [[Project:Style guide|General style guide]]
+* [[Help:Editing|Editing Guide]]
+* [[Help:Editing/Cheat sheet|A basic overview of editing syntax]]
+* [[Help:Style guide|General style guide]]
 * [[wikipedia:Help:Link#Wikilinks|Linking to other pages]]
 * [[Help:Images|Inserting images into pages]]
 * [[wikipedia:Help:Table#Pipe syntax tutorial|Inserting tables into pages]]

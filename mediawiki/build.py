@@ -7,6 +7,7 @@
   dist/licenses.xml   the upload licences: the list on Special:Upload, the licence
                       templates and their categories (see licenses.py)
   dist/help.xml       the help hub (Help:Contents) and the Card template (see help.py)
+  dist/guides.xml     the editing guides, Help:Editing and its sub-pages (see guides.py)
 
 Hand-written pages live in pages/ (the Lua module and the CSS). The
 templates, their documentation and their "preload" starter pages are
@@ -14,6 +15,7 @@ generated here from FIELDS, so the docs always match the templates."""
 
 import json
 
+import guides
 import help as helppages
 import licenses
 from datetime import datetime, timezone
@@ -411,7 +413,8 @@ if __name__ == '__main__':
     dist.mkdir(exist_ok=True)
     for name, built, summary in (('infoboxes.xml', pages(), 'Infobox templates'), ('mainpage.xml', mainpage_pages(), 'Front page'),
                                   ('licenses.xml', licenses.pages(), 'Upload licences'),
-                                  ('help.xml', helppages.pages(), 'Help pages')):
+                                  ('help.xml', helppages.pages(), 'Help pages'),
+                                  ('guides.xml', guides.pages(), 'Editing guides')):
         (dist / name).write_text(xml(built, summary))
         print(f'Wrote {dist / name} with {len(built)} pages:')
         for p in built:
