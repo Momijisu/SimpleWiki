@@ -111,8 +111,12 @@ local function hero(cfg)
 	end
 
 	local logo = cleanFile(cfg.logo)
-	if logo and fileExists(logo) then
-		inner:tag('div'):addClass('mp-logo'):wikitext(string.format('[[File:%s|180px|link=|alt=%s]]', logo, cfg.title or ''))
+	if logo and logo ~= '' then
+		if fileExists(logo) then
+			inner:tag('div'):addClass('mp-logo'):wikitext(string.format('[[File:%s|180px|link=|alt=%s]]', logo, cfg.title or ''))
+		else
+			inner:node(problem(string.format('the logo file “%s” doesn’t exist. Upload it with exactly that name, or change "logo" to the name of a file you have.', logo)))
+		end
 	end
 
 	if cfg.title then inner:tag('div'):addClass('mp-title'):wikitext(cfg.title) end
