@@ -1,0 +1,31 @@
+/* The password login fields are hidden unless Special:UserLogin has ?local=1 */
+.discordlogin-hidden {
+	display: none !important;
+}
+
+/* The Discord button in Discord's colour */
+.mw-htmlform .discordlogin-button .cdx-button,
+.mw-htmlform .discordlogin-button button,
+.mw-htmlform .discordlogin-button .oo-ui-buttonElement-button {
+	background-color: #5865f2 !important;
+	border-color: #5865f2 !important;
+	color: #fff !important;
+	width: 100%;
+	font-weight: 600;
+}
+.mw-htmlform .discordlogin-button .cdx-button:hover,
+.mw-htmlform .discordlogin-button button:hover,
+.mw-htmlform .discordlogin-button .oo-ui-buttonElement-button:hover {
+	background-color: #4752c4 !important;
+	border-color: #4752c4 !important;
+}
+
+/* With the password fields hidden the form would shrink to the button's width */
+.mw-htmlform:has( .discordlogin-button ) {
+	min-width: 280px;
+	max-width: 100%;
+}
+.mw-htmlform .discordlogin-button,
+.mw-htmlform .discordlogin-button .cdx-field__control {
+	width: 100%;
+}

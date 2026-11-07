@@ -1,0 +1,12 @@
+{
+	"@metadata": { "authors": [ "Let's RP Wiki" ] },
+	"discordlogin-desc": "{{desc|name=DiscordLogin}}",
+	"discordlogin-loginbutton": "Label of the login button on Special:UserLogin.",
+	"discordlogin-error-state": "Error when the OAuth state check fails.",
+	"discordlogin-error-denied": "Error when the user cancels on Discord.",
+	"discordlogin-error-discord": "Error when Discord's API fails. $1 is a short reason.",
+	"discordlogin-error-notmember": "Error when the user isn't in the required Discord server.",
+	"discordlogin-error-pending": "Error when the user hasn't passed the server's membership screening.",
+	"discordlogin-error-config": "Error when required settings are missing.",
+	"discordlogin-error-noname": "Error when no valid username can be made."
+}

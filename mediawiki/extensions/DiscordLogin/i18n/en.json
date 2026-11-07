@@ -1,0 +1,12 @@
+{
+	"@metadata": { "authors": [ "Let's RP Wiki" ] },
+	"discordlogin-desc": "Log in with Discord, for members of one Discord server, with Discord roles mapped to wiki groups",
+	"discordlogin-loginbutton": "Log in with Discord",
+	"discordlogin-error-state": "The login took too long or was started in another tab. Please try again.",
+	"discordlogin-error-denied": "Discord login was cancelled.",
+	"discordlogin-error-discord": "Couldn't talk to Discord ($1). Please try again in a moment.",
+	"discordlogin-error-notmember": "Only members of the Let's RP Discord server can log in. Join the server, then try again.",
+	"discordlogin-error-pending": "Your Discord server membership isn't complete yet. Accept the server rules in Discord, then try again.",
+	"discordlogin-error-config": "Discord login isn't set up correctly. Please tell a wiki administrator.",
+	"discordlogin-error-noname": "Couldn't make a wiki username from your Discord name. Please tell a wiki administrator."
+}

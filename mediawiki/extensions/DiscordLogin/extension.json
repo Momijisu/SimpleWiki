@@ -1,0 +1,55 @@
+{
+	"name": "DiscordLogin",
+	"version": "1.0.0",
+	"author": [ "Let's RP Wiki" ],
+	"url": "https://github.com/Momijisu/SimpleWiki/tree/main/mediawiki/extensions/DiscordLogin",
+	"descriptionmsg": "discordlogin-desc",
+	"license-name": "MIT",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.42.0",
+		"extensions": {
+			"PluggableAuth": ">= 7.0"
+		}
+	},
+	"MessagesDirs": {
+		"DiscordLogin": [ "i18n" ]
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\DiscordLogin\\": "includes/"
+	},
+	"attributes": {
+		"PluggableAuth": {
+			"DiscordLogin": {
+				"class": "MediaWiki\\Extension\\DiscordLogin\\DiscordLogin",
+				"services": [ "HttpRequestFactory", "UserOptionsManager", "ConnectionProvider", "UserNameUtils", "UserIdentityLookup" ]
+			}
+		}
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\DiscordLogin\\Hooks"
+		}
+	},
+	"Hooks": {
+		"GetPreferences": "main",
+		"AuthChangeFormFields": "main",
+		"BeforePageDisplay": "main"
+	},
+	"ResourceModules": {
+		"ext.discordLogin.styles": {
+			"styles": [ "modules/discordlogin.css" ]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "DiscordLogin"
+	},
+	"config": {
+		"DiscordLoginLocalParam": {
+			"description": "Add ?local=<this> to Special:UserLogin to show the password form (for admins). Empty: always show it.",
+			"value": "1"
+		}
+	},
+	"manifest_version": 2
+}
